@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/entrance_fragment">
+
+    <fragment
+        android:id="@+id/entrance_fragment"
+        android:name="ua.com.biz_s.highroad.EntranceFragment"
+        android:label="Entrance"
+        tools:layout="@layout/fragment_entrance">
+        <action
+            android:id="@+id/action_entranceFragment_to_motionFragment"
+            app:destination="@id/motion_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_entrance_fragment_to_articlesFragment"
+            app:destination="@id/articles_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/motion_fragment"
+        android:name="ua.com.biz_s.highroad.MotionFragment"
+        android:label="Motion case"
+        tools:layout="@layout/fragment_motion">
+        <action
+            android:id="@+id/action_motionFragment_to_entranceFragment"
+            app:destination="@id/entrance_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/articles_fragment"
+        android:name="ua.com.biz_s.highroad.articles.ui.ArticlesFragment"
+        android:label="Articles case"
+        tools:layout="@layout/fragment_articles">
+        <action
+            android:id="@+id/action_motionFragment_to_entranceFragment"
+            app:destination="@id/entrance_fragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_articlesFragment_to_articlesDetailFragment"
+            app:destination="@id/articles_detail_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <deepLink
+            android:id="@+id/deepLink"
+            app:uri="http://highroad.com/articles" />
+    </fragment>
+    <fragment
+        android:id="@+id/articles_detail_fragment"
+        android:name="ua.com.biz_s.highroad.articles.ui.ArticleDetailFragment"
+        android:label=""
+        tools:layout="@layout/fragment_articles_detail">
+        <action
+            android:id="@+id/action_articlesDetailFragment_next"
+            app:destination="@id/articles_detail_fragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/articles_fragment"
+            app:popUpToInclusive="false"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_articlesDetailFragment_prev"
+            app:destination="@id/articles_detail_fragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/articles_fragment"
+            app:popUpToInclusive="false"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="id"
+            android:defaultValue="0"
+            app:argType="integer" />
+    </fragment>
+</navigation>
