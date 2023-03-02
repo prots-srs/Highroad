@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="ua.com.biz_s.highroad.tictactoe.viewmodels.TictaktoeViewModel" />
+
+        <variable
+            name="cellCode"
+            type="ua.com.biz_s.highroad.tictactoe.viewmodels.BoardCellCode" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/text_border"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/cross"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/tictaktoe_mark_cross"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/cross_win"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:text="@{viewModel.scoreCross, default=0}"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                tools:text="-" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/text_border"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/nought"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/tictaktoe_mark_nought"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:id="@+id/nought_win"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:text="@{viewModel.scoreNought, default=0}"
+                android:textAppearance="?attr/textAppearanceHeadline5"
+                tools:text="-" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/field"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/turn_pic"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                app:turn="@{viewModel.turn}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Turn"
+                android:textAppearance="?attr/textAppearanceHeadline6" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/field"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:background="@drawable/tictaktoe_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/cellA1"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.A1)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.A1}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellA2"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellA1"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.A2)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.A2}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellA3"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellA2"
+                app:layout_constraintTop_toTopOf="parent"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.A3)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.A3}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellB1"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cellA1"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.B1)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.B1}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellB2"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellB1"
+                app:layout_constraintTop_toBottomOf="@id/cellA2"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.B2)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.B2}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellB3"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellB2"
+                app:layout_constraintTop_toBottomOf="@id/cellA3"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.B3)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.B3}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellC1"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cellB1"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.C1)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.C1}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellC2"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellC1"
+                app:layout_constraintTop_toBottomOf="@id/cellB2"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.C2)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.C2}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/cellC3"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cellC2"
+                app:layout_constraintTop_toBottomOf="@id/cellB3"
+                android:onClick="@{(view) -> viewModel.onSelectCell(cellCode.C3)}"
+                app:boardCells="@{viewModel.boardCells}"
+                app:cellCode="@{cellCode.C3}"
+                tools:srcCompat="@tools:sample/avatars" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/reload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Restart game"
+            android:onClick="@{() -> viewModel.clearBoard()}"
+            android:textAppearance="?attr/textAppearanceHeadline5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/field" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

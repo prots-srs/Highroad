@@ -24,6 +24,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_entrance_fragment_to_tictaktoeFragment"
+            app:destination="@id/tictaktoe_fragment" />
     </fragment>
     <fragment
         android:id="@+id/motion_fragment"
@@ -82,5 +85,13 @@
             android:name="id"
             android:defaultValue="0"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/tictaktoe_fragment"
+        android:name="ua.com.biz_s.highroad.tictactoe.ui.TictaktoeFragment"
+        android:label="Tic Tak Toe case" >
+        <action
+            android:id="@+id/action_tictaktoeFragment_to_entrance_fragment"
+            app:destination="@id/entrance_fragment" />
     </fragment>
 </navigation>

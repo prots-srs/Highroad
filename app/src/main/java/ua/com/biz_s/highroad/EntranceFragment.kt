@@ -31,6 +31,9 @@ class EntranceFragment : Fragment() {
         binding.picArticle.setOnClickListener {
             view.findNavController().navigate(EntranceFragmentDirections.actionEntranceFragmentToArticlesFragment())
         }
+        binding.picTictaktoe.setOnClickListener {
+            view.findNavController().navigate(EntranceFragmentDirections.actionEntranceFragmentToTictaktoeFragment())
+        }
     }
 
     override fun onDestroyView() {
