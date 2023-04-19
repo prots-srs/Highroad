@@ -15,7 +15,7 @@ data class NetworkArticle(
     val id: Int,
     val title: String,
     val sort: Int?,
-    @Json(name = "detail") val description: String?,
+    val description: String?,
     @Json(name = "picture") val thumbnail: String?
 )
 
@@ -33,6 +33,17 @@ data class NetworkArticle(
 
 fun NetworkArticleContainer.asDatabaseModel(): List<DatabaseArticle> {
     return items.map {
+        DatabaseArticle(
+            id = it.id,
+            title = it.title,
+            sort = it.sort ?: 0,
+            description = it.description ?: "",
+            thumbnail = it.thumbnail ?: ""
+        )
+    }
+}
+fun List<NetworkArticle>.asDatabaseModel(): List<DatabaseArticle> {
+    return map {
         DatabaseArticle(
             id = it.id,
             title = it.title,

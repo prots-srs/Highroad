@@ -5,6 +5,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 private val moshi = Moshi.Builder()
@@ -12,16 +13,17 @@ private val moshi = Moshi.Builder()
     .build()
 
 private val retrofit = Retrofit.Builder()
-    .baseUrl("https://biz-s.com.ua/")
+    .baseUrl("https://protsprog.com/")
     .addConverterFactory(MoshiConverterFactory.create(moshi))
     .build()
 
 interface ArticleApiService {
-    @GET("rest.php?target=articles")
-    suspend fun getList(): NetworkArticleContainer
+    @GET("article")
+//    suspend fun getList(): NetworkArticleContainer
+    suspend fun getList(): List<NetworkArticle>
 
-    @GET("rest.php?target=articles")
-    suspend fun getItem(@Query("id") id: Int): NetworkArticle
+    @GET("article/{id}")
+    suspend fun getItem(@Path("id") id: Int): NetworkArticle
 }
 
 object ArticlesApi {

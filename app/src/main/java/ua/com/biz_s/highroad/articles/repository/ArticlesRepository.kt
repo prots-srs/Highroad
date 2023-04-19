@@ -26,8 +26,9 @@ class ArticlesRepository(private val dao: ArticleDao) {
     suspend fun refreshNetwork() {
         withContext(Dispatchers.IO) {
             val requestData = ArticlesApi.service.getList()
-            _title = requestData.title
+            _title = "abc"//requestData.title
             dao.insertAll(requestData.asDatabaseModel())
+//            dao.insertAll(requestData)
         }
     }
 
