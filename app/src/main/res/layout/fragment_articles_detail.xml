@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="ua.com.biz_s.highroad.articles.viewmodels.ArticleViewModel" />
+            type="com.protsprog.highroad.articles.viewmodels.ArticleViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

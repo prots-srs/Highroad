@@ -7,11 +7,11 @@
     <data>
         <variable
             name="viewModel"
-            type="ua.com.biz_s.highroad.tictactoe.viewmodels.TictaktoeViewModel" />
+            type="com.protsprog.highroad.tictactoe.viewmodels.TictaktoeViewModel" />
 
         <variable
             name="cellCode"
-            type="ua.com.biz_s.highroad.tictactoe.viewmodels.BoardCellCode" />
+            type="com.protsprog.highroad.tictactoe.viewmodels.BoardCellCode" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

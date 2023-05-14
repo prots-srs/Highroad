@@ -7,7 +7,7 @@
 
         <variable
             name="articleItem"
-            type="ua.com.biz_s.highroad.articles.domain.Article" />
+            type="com.protsprog.highroad.articles.domain.Article" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

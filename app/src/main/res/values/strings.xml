@@ -1,11 +1,49 @@
 <resources>
     <string name="app_name">Highroad</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_entrance_fragment">Hello entrance fragment</string>
     <string name="hello_motion_fragment">Hello motion fragment</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+    <string name="basiclayout_favorite_collections">Favorite Collections</string>
+    <string name="basiclayout_align_your_body">Align your body</string>
+    <string name="basiclayout_ab1_inversions">Inversions</string>
+    <string name="basiclayout_ab2_quick_yoga">Quick yoga</string>
+    <string name="basiclayout_ab3_stretching">Stretching</string>
+    <string name="basiclayout_ab4_tabata">Tabata</string>
+    <string name="basiclayout_ab5_hiit">HIIT</string>
+    <string name="basiclayout_ab6_pre_natal_yoga">Pre-natal yoga</string>
+    <string name="basiclayout_fc1_short_mantras">Short mantras</string>
+    <string name="basiclayout_fc2_nature_meditations">Nature meditations</string>
+    <string name="basiclayout_fc3_stress_and_anxiety">Stress and anxiety</string>
+    <string name="basiclayout_fc4_self_massage">Self massage</string>
+    <string name="basiclayout_fc5_overwhelmed">Overwhelmed</string>
+    <string name="basiclayout_fc6_nightly_wind_down">Nightly wind down</string>
+    <string name="basiclayout_cd_fab_start">start</string>
+    <string name="basiclayout_bottom_navigation_home">HOME</string>
+    <string name="basiclayout_bottom_navigation_profile">PROFILE</string>
+    <string name="basiclayout_placeholder_search">Search</string>
+
+    <string name="theming_navigation_drawer">Navigation Drawer</string>
+    <string name="theming_tab_inbox">Inbox</string>
+    <string name="theming_tab_article">Articles</string>
+    <string name="theming_tab_dm">Direct Messages</string>
+    <string name="theming_tab_groups">Groups</string>
+    <string name="theming_profile">Profile</string>
+    <string name="theming_search">Search</string>
+    <string name="theming_search_replies">Search replies</string>
+    <string name="theming_reply">Reply</string>
+    <string name="theming_reply_all">Reply All</string>
+    <string name="theming_edit">Edit</string>
+    <string name="theming_compose">Compose</string>
+    <string name="theming_empty_screen_title">Screen under construction</string>
+    <string name="theming_empty_screen_subtitle">This screen is still under construction.</string>
+    <string name="theming_back_button">Back</string>
+    <string name="theming_more_options_button">More options</string>
+    <string name="theming_messages">Messages</string>
+    <string name="theming_four_hours_ago">4 hrs ago</string>
+    <string name="theming_twenty_mins_ago">20 mins ago</string>
+    <string name="theming_description_favorite">Favorite</string>
 </resources>
