@@ -8,7 +8,6 @@ https://kotlinlang.org/docs/delegated-properties.html
 
 package com.protsprog.highroad.compose.states
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,16 +29,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.protsprog.highroad.compose.states.theme.StatesTheme
 
-@Preview(widthDp = 360, heightDp = 640)
+@Preview(widthDp = 360, heightDp = 640, showBackground = true)
 @Composable
-fun StatesApp(modifier: Modifier = Modifier) {
+fun StatesApp() {
     StatesTheme {
-        WellnessScreen(modifier.fillMaxSize())
+        WellnessScreen(Modifier.fillMaxSize())
     }
 }
 
 @Composable
-private fun WellnessScreen(
+fun WellnessScreen(
     modifier: Modifier = Modifier,
     wellnessViewModel: WellnessViewModel = viewModel()
 ) {

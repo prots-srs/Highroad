@@ -2,9 +2,9 @@ package com.protsprog.highroad.entrance.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val md_theme_light_primary = Color(0xFF146E00)
+val md_theme_light_primary = Color(0xFF2196F3)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
-val md_theme_light_primaryContainer = Color(0xFF8CFC6D)
+val md_theme_light_primaryContainer = Color(0xFF03A9F4)
 val md_theme_light_onPrimaryContainer = Color(0xFF022100)
 val md_theme_light_secondary = Color(0xFF54624D)
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)

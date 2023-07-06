@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
+import com.protsprog.highroad.ReplyHomeUIState
 import com.protsprog.highroad.compose.theming.data.Email
 import com.protsprog.highroad.compose.theming.ui.components.EmailDetailAppBar
 import com.protsprog.highroad.compose.theming.ui.components.ReplyEmailListItem

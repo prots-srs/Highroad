@@ -8,7 +8,7 @@ import com.protsprog.highroad.nav.TicTacToe
 data class EntranceItem(
     val picture: Int,
     val title: String,
-    val destination: String//HighroadDestination
+    val destination: String
 )
 
 val entranceItems = listOf<EntranceItem>(

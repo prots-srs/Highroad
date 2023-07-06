@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Highroad</string>
+    <string name="app_name">Highroad codesample</string>
     <string name="hello_entrance_fragment">Hello entrance fragment</string>
     <string name="hello_motion_fragment">Hello motion fragment</string>
     <string name="drawer_open">Open</string>
@@ -46,4 +46,64 @@
     <string name="theming_four_hours_ago">4 hrs ago</string>
     <string name="theming_twenty_mins_ago">20 mins ago</string>
     <string name="theming_description_favorite">Favorite</string>
+
+    <string name="animating_home">Home</string>
+    <string name="animating_work">Work</string>
+    <string name="animating_weather">Weather</string>
+    <string name="animating_temperature">18 ℃</string>
+    <string name="animating_tasks">Tasks</string>
+    <string name="animating_add_tasks">ADD TASKS</string>
+    <string-array name="animating_tasks">
+        <item>Buy milk</item>
+        <item>Choose curtain</item>
+        <item>Plant rosemary</item>
+        <item>Finish the essay</item>
+        <item>Receive new packages</item>
+        <item>Take a photo</item>
+    </string-array>
+    <string name="animating_topics">Topics</string>
+    <string-array name="animating_topics">
+        <item>2 new packages arrived</item>
+        <item>DIY project recommendation</item>
+        <item>Festival next month</item>
+        <item>New flower seeds available</item>
+    </string-array>
+    <string name="animating_lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="animating_edit">EDIT</string>
+    <string name="animating_edit_message">Edit feature is not supported</string>
+    <string name="animating_refresh">Refresh</string>
+
+    <string name="sideeffects_cd_menu">Menu</string>
+    <string name="sideeffects_cd_back">Back</string>
+    <string name="sideeffects_cd_loading">Loading</string>
+    <string name="sideeffects_cd_drawer">Open drawer</string>
+	
+    <string name="navigation_total">Total</string>
+    <string name="navigation_due">Due</string>
+    <string name="navigation_account_redacted">• • • • • </string>
+    <string name="navigation_accounts">Accounts</string>
+    <string name="navigation_bills">Bills</string>
+    <string name="navigation_sort">Sort</string>
+    <string name="navigation_see_all">SEE ALL</string>
+
+    <string name="jetnews_app_name">Jetnews</string>
+    <string name="jetnews_load_error">Can\'t update latest news</string>
+    <string name="jetnews_retry">Retry</string>
+    <string name="jetnews_home_popular_section_title">Popular on Jetnews</string>
+    <string name="jetnews_home_post_min_read">%1$s - %2$d min read</string>
+    <string name="jetnews_cd_navigate_up">Navigate up</string>
+    <string name="jetnews_cd_add_to_favorites">Add to favorites</string>
+    <string name="jetnews_cd_share">Share</string>
+    <string name="jetnews_cd_text_settings">Text settings</string>
+    <string name="jetnews_cd_open_navigation_drawer">Open navigation drawer</string>
+    <string name="jetnews_cd_show_fewer">Show fewer like this</string>
+    <string name="jetnews_cd_bookmark">Bookmark</string>
+    <string name="jetnews_unbookmark">unbookmark</string>
+    <string name="jetnews_bookmark">bookmark</string>
+    <string name="jetnews_fewer_stories">Show fewer stories like this?</string>
+    <string name="jetnews_fewer_stories_content">This feature is not yet implemented</string>
+    <string name="jetnews_agree">AGREE</string>
+    <string name="jetnews_action_read_article">read article</string>
+    <string name="jetnews_state_not_subscribed">not subscribed</string>
+    <string name="jetnews_state_subscribed">subscribed</string>
 </resources>

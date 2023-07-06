@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ExpandLess
-import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,19 +41,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
 import com.protsprog.highroad.ui.theme.IntroduceTheme
-
-@Composable
-fun IntroduceApp() {
-    IntroduceTheme {
-        LessonApp(Modifier.fillMaxSize())
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
@@ -64,6 +57,7 @@ private fun OnboardingScreenPreview() {
         OnboardingScreen(onContinueClicked = { })
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun GreetingsPreview() {
@@ -73,7 +67,7 @@ private fun GreetingsPreview() {
 }
 
 @Composable
-private fun LessonApp(modifier: Modifier = Modifier) {
+fun LessonApp(modifier: Modifier = Modifier) {
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
     Surface(
         modifier = modifier,
@@ -186,7 +180,10 @@ private fun CardContent(name: String) {
             onClick = { expanded = !expanded }
         ) {
             Icon(
-                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+//                imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                imageVector = if (expanded)
+                    ImageVector.vectorResource(R.drawable.ic_expand_less)
+                else ImageVector.vectorResource(R.drawable.ic_expand_more),
                 contentDescription = if (expanded) stringResource(R.string.show_less) else stringResource(
                     R.string.show_more
                 )

@@ -1,5 +1,6 @@
 package com.protsprog.highroad.compose.theming.ui.components
 
+import android.graphics.drawable.VectorDrawable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
 import com.protsprog.highroad.compose.theming.data.Email
@@ -65,7 +67,9 @@ fun ReplyEmailThreadItem(
                     .clip(CircleShape)
             ) {
                 Icon(
-                    imageVector = if (email.isStarred) Icons.Default.Star else Icons.Default.StarBorder,
+                    imageVector = if (email.isStarred)
+                        Icons.Default.Star else
+                            ImageVector.vectorResource(id = R.drawable.ic_star_border),
                     contentDescription = stringResource(id = R.string.theming_description_favorite),
                     tint = if (email.isStarred) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.outline
                 )

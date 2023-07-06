@@ -6,7 +6,7 @@
         android:title="Motion case" />
     <item
         android:id="@+id/articles_fragment"
-        android:icon="@drawable/feed"
+        android:icon="@drawable/ic_feed"
         android:title="Articles case" />
 
 </menu>

@@ -21,5 +21,21 @@ val composePathways = listOf<ComposePathway>(
     ComposePathway(
         caseId = 4,
         title = "Compose theming",
+    ),
+    ComposePathway(
+        caseId = 5,
+        title="Compose animating elements"
+    ),
+    ComposePathway(
+        caseId = 6,
+        title="Advanced State and Side Effects"
+    ),
+    ComposePathway(
+        caseId = 7,
+        title="Rally navigation"
+    ),
+    ComposePathway(
+        caseId = 8,
+        title="Accessibility case"
     )
 )

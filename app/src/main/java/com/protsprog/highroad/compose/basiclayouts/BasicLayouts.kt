@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -34,10 +33,6 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,30 +40,33 @@ import com.protsprog.highroad.compose.basiclayouts.theme.BasicLayoutsTheme
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import com.protsprog.highroad.R
 import java.util.Locale
 
-@Preview(widthDp = 360, heightDp = 640)
 @Composable
 fun BasicLayoutsApp(modifier: Modifier = Modifier) {
-    BasicLayoutsTheme {
-        Scaffold(
-            bottomBar = { SootheBottomNavigation() }
-        ) { padding -> HomeScreen(Modifier.padding(padding)) }
-    }
+    Scaffold(
+        bottomBar = { SootheBottomNavigation() }
+    ) { padding -> HomeScreen(Modifier.padding(padding)) }
+}
+
+@Preview(widthDp = 360, heightDp = 640)
+@Composable
+fun BasicLayoutsPreview(modifier: Modifier = Modifier) {
+    BasicLayoutsTheme { BasicLayoutsApp() }
 }
 
 @Composable
@@ -100,7 +98,9 @@ private fun SearchBar(modifier: Modifier = Modifier) {
 fun SearchBarPreview() {
     BasicLayoutsTheme { SearchBar(Modifier.padding(8.dp)) }
 }
+
  */
+
 
 @Composable
 private fun AlignYourBodyElement(
@@ -122,7 +122,8 @@ private fun AlignYourBodyElement(
         )
         Text(
             modifier = modifier.paddingFromBaseline(top = 24.dp, bottom = 8.dp),
-            text = stringResource(text)
+            text = stringResource(text),
+//            color = Color(0xFF8BC34A)
         )
     }
 }
@@ -141,6 +142,7 @@ private fun AlignYourBodyElementPreview() {
 }
 
  */
+
 
 @Composable
 fun FavoriteCollectionCard(
@@ -186,6 +188,7 @@ fun FavoriteCollectionCardPreview() {
 
  */
 
+
 @Composable
 private fun AlignYourBodyRow(modifier: Modifier = Modifier) {
     LazyRow(
@@ -205,8 +208,8 @@ private fun AlignYourBodyRow(modifier: Modifier = Modifier) {
 private fun AlignYourBodyRowPreview() {
     BasicLayoutsTheme { AlignYourBodyRow() }
 }
+*/
 
- */
 
 @Composable
 private fun FavoriteCollectionsGrid(
@@ -235,8 +238,8 @@ private fun FavoriteCollectionsGrid(
 private fun FavoriteCollectionsGridPreview() {
     BasicLayoutsTheme { FavoriteCollectionsGrid() }
 }
+*/
 
- */
 
 @Composable
 private fun HomeSection(
@@ -255,7 +258,6 @@ private fun HomeSection(
         content()
     }
 }
-
 /*
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
@@ -266,8 +268,8 @@ private fun HomeSectionPreview() {
         }
     }
 }
-
  */
+
 
 @Composable
 private fun HomeScreen(modifier: Modifier = Modifier) {
@@ -288,15 +290,14 @@ private fun HomeScreen(modifier: Modifier = Modifier) {
         Spacer(Modifier.height(16.dp))
     }
 }
-
 /*
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2, heightDp = 180)
 @Composable
 private fun ScreenContentPreview() {
     BasicLayoutsTheme { HomeScreen() }
 }
+*/
 
- */
 
 @Composable
 private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
@@ -307,7 +308,7 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
         BottomNavigationItem(
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Spa,
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_spa),
                     contentDescription = null
                 )
             },
@@ -332,15 +333,13 @@ private fun SootheBottomNavigation(modifier: Modifier = Modifier) {
         )
     }
 }
-
 /*
 @Preview(showBackground = true, backgroundColor = 0xFFF0EAE2)
 @Composable
 private fun BottomNavigationPreview() {
     BasicLayoutsTheme { SootheBottomNavigation(Modifier.padding(top = 24.dp)) }
-}
+}*/
 
- */
 
 /*
 simple data
