@@ -12,7 +12,7 @@ import com.protsprog.highroad.compose.basiclayouts.theme.BasicLayoutsTheme
 import com.protsprog.highroad.compose.navigation.ui.theme.RallyTheme
 import com.protsprog.highroad.compose.sideeffects.ui.CraneTheme
 import com.protsprog.highroad.compose.states.theme.StatesTheme
-import com.protsprog.highroad.compose.theming.ui.theme.ThemingTheme
+import com.protsprog.highroad.compose.theming.ui.theme.ReplyTheme
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 import com.protsprog.highroad.ui.theme.IntroduceTheme
@@ -243,7 +243,7 @@ fun NavigationThemeSwitcher(
         TYPE_THEME.COMPOSE_INTRODUCE -> IntroduceTheme(content = content)
         TYPE_THEME.COMPOSE_BASICLAYOUT -> BasicLayoutsTheme(content = content)
         TYPE_THEME.COMPOSE_STATES -> StatesTheme(content = content)
-        TYPE_THEME.COMPOSE_THEMING -> ThemingTheme(content = content)
+        TYPE_THEME.COMPOSE_THEMING -> ReplyTheme(content = content)
         TYPE_THEME.COMPOSE_ANIMATION -> AnimationCodelabTheme(content = content)
         TYPE_THEME.COMPOSE_CRANE -> CraneTheme(content = content)
         TYPE_THEME.COMPOSE_RALLY -> RallyTheme(content = content)

@@ -174,6 +174,8 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:${rootProject.ext.get("mochiVersion")}")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:${rootProject.ext.get("mochiVersion")}")
 
+    implementation("androidx.window:window:1.0.0")
+
 //    TEST
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test:core-ktx:1.5.0")

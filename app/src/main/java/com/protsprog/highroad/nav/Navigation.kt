@@ -4,27 +4,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -33,8 +23,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
-import com.protsprog.highroad.CommonViewModel
-import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.compose.ComposeScreen
 import com.protsprog.highroad.compose.accessibility.data.AppJetNewsContainer
@@ -50,25 +38,25 @@ import com.protsprog.highroad.compose.navigation.ui.overview.OverviewScreen
 import com.protsprog.highroad.compose.sideeffects.MainScreen
 import com.protsprog.highroad.compose.sideeffects.details.DetailScreenLaunch
 import com.protsprog.highroad.compose.states.WellnessScreen
-import com.protsprog.highroad.compose.theming.ui.ThemingReplyApp
 import com.protsprog.highroad.entrance.EntranceScreen
 import com.protsprog.highroad.entrance.entranceItems
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.ui.components.AppBar
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.protsprog.highroad.compose.accessibility.ui.AppDrawer
 import com.protsprog.highroad.compose.accessibility.ui.article.JetNewsArticleScreen
-import com.protsprog.highroad.compose.accessibility.ui.home.HomeScreen
 import com.protsprog.highroad.compose.accessibility.ui.home.JetNewsHomeScreen
-import com.protsprog.highroad.compose.accessibility.ui.interests.InterestsScreen
 import com.protsprog.highroad.compose.accessibility.ui.interests.JetNewsInterestsScreen
+import com.protsprog.highroad.compose.theming.ReplyScreen
 import com.protsprog.highroad.nav.MainJetNewsDestinations.ARTICLE_ID_KEY
+import com.protsprog.highroad.util.DevicePosture
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun HighroadNavigation(
     appJetNewsContainer: AppJetNewsContainer,
     windowWidthClass: WindowWidthSizeClass,
+    devicePosture: DevicePosture,
     viewModel: NavigationViewModel = viewModel()
 ) {
     val navController: NavHostController = rememberNavController()
@@ -129,6 +117,7 @@ fun HighroadNavigation(
                         )
                     }
                     else -> {
+                        Text("ABC")
                     }
                 }
             }
@@ -136,6 +125,7 @@ fun HighroadNavigation(
             HighroadNavHost(
                 appJetNewsContainer = appJetNewsContainer,
                 windowWidthClass = windowWidthClass,
+                devicePosture = devicePosture,
                 innerPadding = innerPadding,
                 navController = navController,
                 state = { config -> viewModel.configStates(config) },
@@ -149,6 +139,7 @@ fun HighroadNavigation(
 fun HighroadNavHost(
     appJetNewsContainer: AppJetNewsContainer,
     windowWidthClass: WindowWidthSizeClass,
+    devicePosture: DevicePosture,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     state: (CONFIGS_STATES) -> Unit,
@@ -215,22 +206,10 @@ fun HighroadNavHost(
                 1 -> LessonApp(Modifier.fillMaxSize())
                 2 -> BasicLayoutsApp()
                 3 -> WellnessScreen(Modifier.fillMaxSize())
-                4 -> {
-                    val viewModel: CommonViewModel = viewModel()
-                    val uiState by viewModel.uiState.collectAsState()
-                    androidx.compose.material3.Surface(tonalElevation = 5.dp) {
-                        ThemingReplyApp(
-                            replyHomeUIState = uiState,
-                            closeDetailScreen = {
-                                viewModel.closeDetailScreen()
-                            },
-                            navigateToDetail = { emailId ->
-                                viewModel.setSelectedEmail(emailId)
-                            }
-                        )
-                    }
-                }
-
+                4 -> ReplyScreen(
+                    windowWidthClass = windowWidthClass,
+                    foldingDevicePosture = devicePosture
+                )
                 5 -> Home()
 
 //                Crane

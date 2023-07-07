@@ -20,7 +20,7 @@ val composePathways = listOf<ComposePathway>(
     ),
     ComposePathway(
         caseId = 4,
-        title = "Compose theming",
+        title = "Compose theming and adaptive",
     ),
     ComposePathway(
         caseId = 5,

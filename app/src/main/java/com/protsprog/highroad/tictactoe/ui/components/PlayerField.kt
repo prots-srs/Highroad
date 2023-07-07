@@ -36,10 +36,10 @@ import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 fun PreviewPlayerFieldCross() {
     TicTacToeTheme {
         PlayerField(
-            type = PlayerType.CROSS,
+            type = {PlayerType.CROSS},
             name = "Cross",
             score = 12.toString(),
-            turn = true
+            turn = {true}
         )
     }
 }
@@ -49,7 +49,7 @@ fun PreviewPlayerFieldCross() {
 fun PreviewPlayerFieldNought() {
     TicTacToeTheme {
         PlayerField(
-            type = PlayerType.NOUGHT,
+            type = {PlayerType.NOUGHT},
             name = "Nought",
             score = 17.toString(),
         )
@@ -58,10 +58,11 @@ fun PreviewPlayerFieldNought() {
 
 @Composable
 fun PlayerField(
-    type: PlayerType,
+//    type: PlayerType,
+    type: () -> PlayerType,
     name: String = "",
     score: String = "-",
-    turn: Boolean = false,
+    turn: () -> Boolean = {false},
     onValueChange: (String) -> Unit = {}
 ) {
     Column(modifier = Modifier.width(170.dp)) {
@@ -70,7 +71,7 @@ fun PlayerField(
                 .fillMaxWidth()
                 .height(42.dp),
             shape = MaterialTheme.shapes.medium,
-            color = if (turn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
+            color = if (turn()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimary,
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
         ) {
             Row(
@@ -79,9 +80,9 @@ fun PlayerField(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Icon(
-                    tint = if (turn) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
-                    imageVector = if (type == PlayerType.CROSS) Icons.Outlined.Close else Icons.Outlined.Circle,
-                    contentDescription = if (type == PlayerType.CROSS) "Cross" else "Nought",
+                    tint = if (turn()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                    imageVector = if (type() == PlayerType.CROSS) Icons.Outlined.Close else Icons.Outlined.Circle,
+                    contentDescription = if (type() == PlayerType.CROSS) "Cross" else "Nought",
                     modifier = Modifier
                         .size(36.dp)
                         .padding(start = 4.dp)
@@ -93,7 +94,7 @@ fun PlayerField(
                         .width(90.dp)
                         .padding(all = 0.dp),
                     textStyle = TextStyle(
-                        color = if (turn) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
+                        color = if (turn()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary,
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     ),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
@@ -105,11 +106,11 @@ fun PlayerField(
                     text = score,
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(end = 10.dp),
-                    color = if (turn) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
+                    color = if (turn()) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
                 )
             }
         }
-        if (turn) {
+        if (turn()) {
             Text(
                 modifier = Modifier.padding(start = 8.dp),
                 text = "Your turn",

@@ -114,7 +114,7 @@ fun TicTacToeScreen(
                 } else {
                     Text(" ")
                 }
-                RestartButton(onClickRestart = { viewModel.clearGame() })
+                RestartButton(onClickRestart = viewModel::clearGame)
             }
             Row(
                 modifier = Modifier
@@ -129,10 +129,10 @@ fun TicTacToeScreen(
             ) {
                 PlayerType.values().forEach { type ->
                     PlayerField(
-                        type = type,
+                        type = {type},
                         name = if (type == PlayerType.CROSS) viewModel.gameState.nameCross else viewModel.gameState.nameNought,
                         score = if (type == PlayerType.CROSS) viewModel.gameState.scoreCross.toString() else viewModel.gameState.scoreNought.toString(),
-                        turn = type == viewModel.gameState.playerTurn,
+                        turn = {type == viewModel.gameState.playerTurn},
                         onValueChange = { username ->
                             viewModel.updateUsername(
                                 type = type,

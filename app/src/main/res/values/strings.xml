@@ -106,4 +106,16 @@
     <string name="jetnews_action_read_article">read article</string>
     <string name="jetnews_state_not_subscribed">not subscribed</string>
     <string name="jetnews_state_subscribed">subscribed</string>
+
+    <string name="reply_app_name">Reply</string>
+    <string name="reply_navigation_drawer">Navigation Drawer</string>
+    <string name="reply_tab_inbox">Inbox</string>
+    <string name="reply_tab_article">Articles</string>
+    <string name="reply_tab_dm">Direct Messages</string>
+    <string name="reply_tab_groups">Groups</string>
+    <string name="reply_profile">Profile</string>
+    <string name="reply_search">Search</string>
+    <string name="reply_search_replies">search replies</string>
+    <string name="reply_reply">Reply</string>
+    <string name="reply_reply_all">Reply All</string>
 </resources>

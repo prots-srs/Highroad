@@ -1,139 +1,283 @@
-package com.protsprog.highroad.compose.theming.ui
+/*
+ * Copyright 2022 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+package com.example.reply.ui
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
-import com.protsprog.highroad.ReplyHomeUIState
+import com.protsprog.highroad.compose.theming.ReplyHomeUIState
 import com.protsprog.highroad.compose.theming.data.Email
-import com.protsprog.highroad.compose.theming.ui.components.EmailDetailAppBar
-import com.protsprog.highroad.compose.theming.ui.components.ReplyEmailListItem
-import com.protsprog.highroad.compose.theming.ui.components.ReplyEmailThreadItem
-import com.protsprog.highroad.compose.theming.ui.components.ReplySearchBar
-
 
 @Composable
-fun ReplyInboxScreen(
+fun ReplyListOnlyContent(
     replyHomeUIState: ReplyHomeUIState,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
-    val emailLazyListState = rememberLazyListState()
-
-    Box(modifier = modifier.fillMaxSize()) {
-        ReplyEmailListContent(
-            replyHomeUIState = replyHomeUIState,
-            emailLazyListState = emailLazyListState,
-            modifier = Modifier.fillMaxSize(),
-            closeDetailScreen = closeDetailScreen,
-            navigateToDetail = navigateToDetail
-        )
-
-        LargeFloatingActionButton(
-//        FloatingActionButton(
-            onClick = { /*Click Implementation*/ },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-            shape = MaterialTheme.shapes.large
-        ) {
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = stringResource(id = R.string.theming_edit),
-                modifier = Modifier.size(28.dp)
-            )
-        }
-
-    }
-}
-
-@Composable
-fun ReplyEmailListContent(
-    replyHomeUIState: ReplyHomeUIState,
-    emailLazyListState: LazyListState,
-    modifier: Modifier = Modifier,
-    closeDetailScreen: () -> Unit,
-    navigateToDetail: (Long) -> Unit
-) {
-    if (replyHomeUIState.selectedEmail != null && replyHomeUIState.isDetailOnlyOpen) {
-        BackHandler {
-            closeDetailScreen()
-        }
-        ReplyEmailDetail(email = replyHomeUIState.selectedEmail) {
-            closeDetailScreen()
-        }
-    } else {
-        ReplyEmailList(
-            emails = replyHomeUIState.emails,
-            emailLazyListState = emailLazyListState,
-            modifier = modifier,
-            navigateToDetail = navigateToDetail
-        )
-    }
-}
-
-@Composable
-fun ReplyEmailList(
-    emails: List<Email>,
-    emailLazyListState: LazyListState,
-    selectedEmail: Email? = null,
-    modifier: Modifier = Modifier,
-    navigateToDetail: (Long) -> Unit
-) {
-    LazyColumn(modifier = modifier, state = emailLazyListState) {
+    LazyColumn(modifier = modifier) {
         item {
             ReplySearchBar(modifier = Modifier.fillMaxWidth())
         }
-        items(items = emails, key = { it.id }) { email ->
-            ReplyEmailListItem(
-                email = email,
-                isSelected = email.id == selectedEmail?.id
-            ) { emailId ->
-                navigateToDetail(emailId)
-            }
+        items(replyHomeUIState.emails) { email ->
+            ReplyEmailListItem(email = email)
         }
     }
 }
 
 @Composable
-fun ReplyEmailDetail(
-    email: Email,
-    isFullScreen: Boolean = true,
-    modifier: Modifier = Modifier.fillMaxSize(),
-    onBackPressed: () -> Unit = {}
+fun ReplyListAndDetailContent(
+    replyHomeUIState: ReplyHomeUIState,
+    modifier: Modifier = Modifier,
+    selectedItemIndex: Int = 0
 ) {
-    LazyColumn(
-        modifier = modifier
-            .padding(top = 16.dp)
-    ) {
-        item {
-            EmailDetailAppBar(email, isFullScreen) {
-                onBackPressed()
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(replyHomeUIState.emails) { email ->
+                ReplyEmailListItem(email = email)
             }
         }
-        items(items = email.threads, key = { it.id }) { email ->
-            ReplyEmailThreadItem(email = email)
+        LazyColumn(modifier = modifier.weight(1f)) {
+            items(replyHomeUIState.emails[selectedItemIndex].threads) { email ->
+                ReplyEmailThreadItem(email = email)
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReplyEmailListItem(
+    email: Email,
+    modifier: Modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+    Card(modifier = modifier,) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                ReplyProfileImage(
+                    drawableResource = email.sender.avatar,
+                    description = email.sender.fullName,
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = email.sender.firstName,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = email.createAt,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.StarBorder,
+                        contentDescription = "Favorite",
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            Text(
+                text = email.subject,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+            )
+            Text(
+                text = email.body,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 2,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ReplyEmailThreadItem(
+    email: Email,
+    modifier: Modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+    Card(modifier = modifier,  colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+        ) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                ReplyProfileImage(
+                    drawableResource = email.sender.avatar,
+                    description = email.sender.fullName,
+                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = email.sender.firstName,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                    Text(
+                        text = email.createAt,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+                IconButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.StarBorder,
+                        contentDescription = "Favorite",
+                        tint = MaterialTheme.colorScheme.outline
+                    )
+                }
+            }
+
+            Text(
+                text = email.subject,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.outline,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+            )
+            
+            Text(
+                text = email.body,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.reply_reply),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.inverseOnSurface)
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.reply_reply_all),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ReplyProfileImage(
+    drawableResource: Int,
+    description: String,
+    modifier: Modifier = Modifier.size(40.dp),
+) {
+    Image(
+        modifier = modifier.clip(CircleShape),
+        painter = painterResource(id = drawableResource),
+        contentDescription = description,
+    )
+}
+
+@Composable
+fun ReplySearchBar(modifier: Modifier = Modifier) {
+    Row(modifier = modifier
+        .fillMaxWidth()
+        .padding(16.dp)
+        .background(MaterialTheme.colorScheme.surface, CircleShape),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = stringResource(id = R.string.reply_search),
+            modifier = Modifier.padding(start = 16.dp),
+            tint = MaterialTheme.colorScheme.outline
+        )
+        Text(text = stringResource(id = R.string.reply_search_replies),
+            modifier = Modifier
+            .weight(1f)
+            .padding(16.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.outline
+        )
+        ReplyProfileImage(
+            drawableResource = R.drawable.reply_avatar_6,
+            description = stringResource(id = R.string.reply_profile),
+            modifier = Modifier.padding(12.dp).size(32.dp)
+        )
     }
 }
