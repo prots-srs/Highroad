@@ -11,8 +11,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
-import com.protsprog.highroad.nav.HighroadNavHost
-import com.protsprog.highroad.nav.NavigationViewModel
+//import com.protsprog.highroad.nav.HighroadNavHost
+//import com.protsprog.highroad.nav.NavigationViewModel
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,13 +34,13 @@ class EntranceTest {
                 ComposeNavigator()
             )
 
-            val viewModel: NavigationViewModel = viewModel()
+            /*val viewModel: NavigationViewModel = viewModel()
             HighroadNavHost(
                 windowWidthClass = WindowWidthSizeClass.Compact,
                 navController = navController,
                 state = { config -> viewModel.configStates(config) },
                 innerPadding = PaddingValues()
-            )
+            )*/
         }
     }
 

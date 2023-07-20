@@ -118,4 +118,33 @@
     <string name="reply_search_replies">search replies</string>
     <string name="reply_reply">Reply</string>
     <string name="reply_reply_all">Reply All</string>
+
+    <string name="inventory_app_name">Inventory</string>
+    <string name="inventory_attention">Attention</string>
+    <string name="inventory_back_button">Back</string>
+    <string name="inventory_delete">Delete</string>
+    <string name="inventory_delete_question">Are you sure you want to delete?</string>
+    <string name="inventory_no_item_description">Oops!\nNo items in the inventory.\nTap + to add.</string>
+    <string name="inventory_edit_item_title">Edit Item</string>
+    <string name="inventory_item">Item</string>
+    <string name="inventory_item_detail_title">Item Details</string>
+    <string name="inventory_item_entry_title">Add Item</string>
+    <string name="inventory_item_name_req">Item Name*</string>
+    <string name="inventory_item_price_req">Item Price*</string>
+    <string name="inventory_no">No</string>
+    <string name="inventory_price">Price</string>
+    <string name="inventory_quantity_in_stock">Quantity in stock</string>
+    <string name="inventory_in_stock">%d in stock</string>
+    <string name="inventory_quantity_req">Quantity in Stock*</string>
+    <string name="inventory_save_action">Save</string>
+    <string name="inventory_sell">Sell</string>
+    <string name="inventory_yes">Yes</string>
+    <string name="inventory_required_fields">*required fields</string>
+
+    <string name="bus_schedule_app_name">Bus Schedule</string>
+    <string name="bus_schedule_full_schedule">Bus Schedule</string>
+    <string name="bus_schedule_back">Back</string>
+    <string name="bus_schedule_stop_name">Stop Name</string>
+    <string name="bus_schedule_route_stop_name">Stop</string>
+    <string name="bus_schedule_arrival_time">Arrival Time</string>
 </resources>

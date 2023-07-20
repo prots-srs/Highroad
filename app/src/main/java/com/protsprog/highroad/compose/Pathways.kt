@@ -8,34 +8,42 @@ data class ComposePathway(
 val composePathways = listOf<ComposePathway>(
     ComposePathway(
         caseId = 1,
-        title = "Compose introduce",
+        title = "1. Compose introduce",
     ),
     ComposePathway(
         caseId = 2,
-        title = "Compose basic layout",
+        title = "2. Compose basic layout",
     ),
     ComposePathway(
         caseId = 3,
-        title = "Compose states",
+        title = "3. Compose states",
     ),
     ComposePathway(
         caseId = 4,
-        title = "Compose theming and adaptive",
+        title = "4. Compose theming and adaptive",
     ),
     ComposePathway(
         caseId = 5,
-        title="Compose animating elements"
+        title="5. Compose animating elements"
     ),
     ComposePathway(
         caseId = 6,
-        title="Advanced State and Side Effects"
+        title="6. Advanced State and Side Effects"
     ),
     ComposePathway(
         caseId = 7,
-        title="Rally navigation"
+        title="7. Rally navigation"
     ),
     ComposePathway(
         caseId = 8,
-        title="Accessibility case"
+        title="8. Accessibility case"
+    ),
+    ComposePathway(
+        caseId = 9,
+        title="9. Persist data with Room"
+    ),
+    ComposePathway(
+        caseId = 10,
+        title="10. Bus Schedule app"
     )
 )

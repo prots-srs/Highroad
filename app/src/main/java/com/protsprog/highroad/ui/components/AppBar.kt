@@ -35,11 +35,11 @@ import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 @Composable
 fun AppBar(
     title:String,
-//    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     onBackPressed: () -> Unit
 ) {
     TopAppBar(
-//        modifier = modifier,
+        modifier = modifier,
         backgroundColor = MaterialTheme.colorScheme.surface,
         title = {
             Column(

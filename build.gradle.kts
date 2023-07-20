@@ -39,6 +39,7 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "17"
 //             Use experimental APIs
         freeCompilerArgs = listOf("-progressive", "-opt-in=kotlin.RequiresOptIn")
+//        freeCompilerArgs = listOf("-progressive", "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }
 

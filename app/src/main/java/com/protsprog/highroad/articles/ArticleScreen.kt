@@ -76,6 +76,7 @@ import com.protsprog.highroad.data.model.ArticleAnonce
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ArticleScreen(
+    modifier: Modifier = Modifier,
     windowWidthClass: WindowWidthSizeClass,
     viewModel: ArticleViewModel = hiltViewModel()
 ) {

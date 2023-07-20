@@ -66,6 +66,7 @@ fun PreviewHorizontalTicTacToeScreen() {
 
 @Composable
 fun TicTacToeScreen(
+    modifier: Modifier = Modifier,
     viewModel: TictaktoeViewModel = viewModel()
 ) {
 //    val uiState by viewModel.uiState.collectAsStateWithLifecycle()

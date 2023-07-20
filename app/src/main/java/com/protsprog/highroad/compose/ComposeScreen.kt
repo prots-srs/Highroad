@@ -36,7 +36,10 @@ fun PathwayOptionPreview() {
 }
 
 @Composable
-fun ComposeScreen(navigations: Map<Int, () -> Unit>) {
+fun ComposeScreen(
+    modifier: Modifier = Modifier,
+    navigations: Map<Int, () -> Unit>
+) {
     LazyColumn {
         items(composePathways) { item ->
             navigations.get(item.caseId)?.let {

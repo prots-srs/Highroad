@@ -1,5 +1,6 @@
 package com.protsprog.highroad.nav
 
+import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Money
@@ -7,10 +8,12 @@ import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material.icons.filled.PieChart
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.compose.ComposeScreen
 import com.protsprog.highroad.compose.navigation.ui.accounts.AccountsScreen
@@ -28,7 +31,7 @@ interface HighroadDestination {
 
 object Entrance : HighroadDestination {
     override val icon = null
-    override val title = ""
+    override val title = "Highroad application codesamples"
     override val route = "entrance"
 }
 
@@ -62,7 +65,7 @@ object ComposeCaseMap : HighroadDestination {
 
 object Articles : HighroadDestination {
     override val icon = null
-    override val title = "Articles case"
+    override val title = "Network Articles case"
     override val route = "articles"
 }
 
@@ -103,7 +106,7 @@ object RallySingleAccount : HighroadDestination {
         navArgument(accountTypeArg) { type = NavType.StringType }
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "highroad://$route/{$accountTypeArg}"}
+        navDeepLink { uriPattern = "highroad://$route/{$accountTypeArg}" }
     )
 }
 
@@ -120,9 +123,6 @@ object MainJetNewsDestinations {
     const val ARTICLE_ID_KEY = "jetnews_postId"
 }
 
-/**
- * Models the navigation actions in the app.
- */
 class MainJetNewsActions(navController: NavHostController) {
     val navigateToArticle: (String) -> Unit = { postId: String ->
         navController.navigate("${MainJetNewsDestinations.ARTICLE_ROUTE}/$postId")
@@ -130,4 +130,44 @@ class MainJetNewsActions(navController: NavHostController) {
     val upPress: () -> Unit = {
         navController.navigateUp()
     }
+}
+
+/*
+Inventory Application
+ */
+interface InventoryDestination {
+    val route: String
+    val titleRes: Int
+}
+
+object InventoryHomeDestination : InventoryDestination {
+    override val route = "inventory_home"
+    override val titleRes = R.string.inventory_app_name
+}
+
+object InventoryItemDetailsDestination : InventoryDestination {
+    override val route = "inventory_item_details"
+    override val titleRes = R.string.inventory_item_detail_title
+    const val itemIdArg = "itemId"
+    val routeWithArgs = "$route/{$itemIdArg}"
+}
+
+object InventoryItemEntryDestination : InventoryDestination {
+    override val route = "inventory_item_entry"
+    override val titleRes = R.string.inventory_item_entry_title
+}
+
+object InventoryItemEditDestination : InventoryDestination {
+    override val route = "inventory_item_edit"
+    override val titleRes = R.string.inventory_edit_item_title
+    const val itemIdArg = "itemId"
+    val routeWithArgs = "$route/{$itemIdArg}"
+}
+
+/*
+Bus Schedule app
+ */
+enum class BusScheduleDestinations {
+    FullSchedule,
+    RouteSchedule
 }

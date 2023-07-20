@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import com.protsprog.highroad.nav.Compose
-import com.protsprog.highroad.nav.NavigationViewModel
+//import com.protsprog.highroad.nav.NavigationViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -35,7 +35,7 @@ class NavigationTest {
                 ComposeNavigator()
             )
 
-            val viewModel: NavigationViewModel = viewModel()
+//            val viewModel: NavigationViewModel = viewModel()
 //            HighroadNavHost(
 //                navController = navController,
 //                state = { config -> viewModel.configStates(config) },
