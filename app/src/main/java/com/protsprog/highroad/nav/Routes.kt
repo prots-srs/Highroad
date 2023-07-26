@@ -75,6 +75,12 @@ object TicTacToe : HighroadDestination {
     override val route = "tictactoe"
 }
 
+object FlightSearch : HighroadDestination {
+    override val icon = null
+    override val title = "Flight Search"
+    override val route = "flightsearch"
+}
+
 /**
  * Rally app navigation destinations
  */

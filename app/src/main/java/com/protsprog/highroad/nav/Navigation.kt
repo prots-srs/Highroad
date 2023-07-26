@@ -63,6 +63,8 @@ import com.protsprog.highroad.compose.bus_schedule.ui.RouteScheduleScreen
 import com.protsprog.highroad.compose.bus_schedule.ui.components.BusScheduleTopAppBar
 import com.protsprog.highroad.compose.bus_schedule.ui.theme.BusScheduleTheme
 import com.protsprog.highroad.compose.composePathways
+import com.protsprog.highroad.compose.datastore.ui.DessertReleaseApp
+import com.protsprog.highroad.compose.datastore.ui.theme.DessertReleaseTheme
 import com.protsprog.highroad.compose.introduce.LessonApp
 import com.protsprog.highroad.compose.navigation.ui.accounts.AccountsScreen
 import com.protsprog.highroad.compose.navigation.ui.accounts.SingleAccountScreen
@@ -86,6 +88,8 @@ import com.protsprog.highroad.compose.theming.ui.theme.ReplyTheme
 import com.protsprog.highroad.entrance.EntranceScreen
 import com.protsprog.highroad.entrance.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
+import com.protsprog.highroad.flightsearch.ui.FlightSearchScreen
+import com.protsprog.highroad.flightsearch.ui.theme.FlightSearchTheme
 import com.protsprog.highroad.nav.MainJetNewsDestinations.ARTICLE_ID_KEY
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
@@ -198,6 +202,7 @@ fun HighroadNavigation(
                     4 -> caseTheme = TYPE_THEME.COMPOSE_THEMING
                     5 -> caseTheme = TYPE_THEME.COMPOSE_ANIMATION
                     6 -> caseTheme = TYPE_THEME.COMPOSE_CRANE
+                    11 -> caseTheme = TYPE_THEME.COMPOSE_DATASTORE
                     else -> caseTheme = TYPE_THEME.MAIN
                 }
 
@@ -218,6 +223,8 @@ fun HighroadNavigation(
                             navController.navigate("${ComposeCaseMap.route}/${cityName}")
                         }
                     )
+
+                    11 -> DessertReleaseApp()
 
                     else -> {}
                 }
@@ -397,6 +404,16 @@ fun HighroadNavigation(
                     )
                 }
             }
+
+            composable(route = FlightSearch.route) {
+                caseTheme = TYPE_THEME.FLIGHT_SEARCH
+                FlightSearchScreen(
+                    titleScreen = FlightSearch.title,
+                    scaffoldState = scaffoldState,
+                    onBackPressed = { navController.navigateUp() }
+                )
+            }
+
         }
     }
 }
@@ -619,8 +636,10 @@ enum class TYPE_THEME {
     COMPOSE_JETNEWS,
     COMPOSE_INVENTORY,
     COMPOSE_BUSSCHEDULE,
+    COMPOSE_DATASTORE,
     ARTICLES,
-    TICTACTOE
+    TICTACTOE,
+    FLIGHT_SEARCH
 }
 
 @Composable
@@ -650,5 +669,7 @@ fun NavigationThemeSwitcher(
         }
 
         TYPE_THEME.COMPOSE_BUSSCHEDULE -> BusScheduleTheme(content = content)
+        TYPE_THEME.COMPOSE_DATASTORE -> DessertReleaseTheme(content = content)
+        TYPE_THEME.FLIGHT_SEARCH -> FlightSearchTheme(content = content)
     }
 }

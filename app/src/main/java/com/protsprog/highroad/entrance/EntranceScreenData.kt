@@ -3,6 +3,7 @@ package com.protsprog.highroad.entrance
 import com.protsprog.highroad.R
 import com.protsprog.highroad.nav.Articles
 import com.protsprog.highroad.nav.Compose
+import com.protsprog.highroad.nav.FlightSearch
 import com.protsprog.highroad.nav.TicTacToe
 
 data class EntranceItem(
@@ -27,10 +28,9 @@ val entranceItems = listOf<EntranceItem>(
         title = "TicTacToe case",
         destination = TicTacToe.route
     ),
-//    EntranceItem(
-//        picture = R.drawable.banner_motion,
-//        title = "Motion case",
-//        screen = EntranceRoute.MOTION,
-//        action = { }
-//    )
+    EntranceItem(
+        picture = R.drawable.banner_tictaktoe,
+        title = "Flight Search case",
+        destination = FlightSearch.route
+    ),
 )

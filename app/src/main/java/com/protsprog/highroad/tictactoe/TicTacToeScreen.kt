@@ -18,6 +18,7 @@ https://betterprogramming.pub/jetpack-compose-theming-colors-1cf86754d5b9
 https://foso.github.io/Jetpack-Compose-Playground/foundation/shape/
 https://stackoverflow.com/questions/67708713/equal-width-height-in-jetpack-compose-box
  */
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
@@ -31,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.protsprog.highroad.tictactoe.ui.components.GameBoard
 import com.protsprog.highroad.tictactoe.ui.components.PlayerField
@@ -67,9 +71,10 @@ fun PreviewHorizontalTicTacToeScreen() {
 @Composable
 fun TicTacToeScreen(
     modifier: Modifier = Modifier,
-    viewModel: TictaktoeViewModel = viewModel()
+    viewModel: TictaktoeViewModel = viewModel(factory = TictaktoeViewModel.Factory)
 ) {
-//    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val gameUiState = viewModel.gameUiState
+    val playersUiState = viewModel.playersUiState
 
     Surface(
         modifier = Modifier
@@ -92,22 +97,22 @@ fun TicTacToeScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (viewModel.gameState.playerWin == PlayerType.CROSS) {
+                if (gameUiState.playerWin == PlayerType.CROSS) {
                     Row(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = "Player ${viewModel.gameState.nameCross} won",
+                            text = "Player ${playersUiState.nameCross} won",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.tertiary
                         )
                     }
-                } else if (viewModel.gameState.playerWin == PlayerType.NOUGHT) {
+                } else if (gameUiState.playerWin == PlayerType.NOUGHT) {
                     Row(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         Text(
-                            text = "Player ${viewModel.gameState.nameNought} won",
+                            text = "Player ${playersUiState.nameNought} won",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.tertiary
                         )
@@ -130,10 +135,10 @@ fun TicTacToeScreen(
             ) {
                 PlayerType.values().forEach { type ->
                     PlayerField(
-                        type = {type},
-                        name = if (type == PlayerType.CROSS) viewModel.gameState.nameCross else viewModel.gameState.nameNought,
-                        score = if (type == PlayerType.CROSS) viewModel.gameState.scoreCross.toString() else viewModel.gameState.scoreNought.toString(),
-                        turn = {type == viewModel.gameState.playerTurn},
+                        type = { type },
+                        name = if (type == PlayerType.CROSS) playersUiState.nameCross else playersUiState.nameNought,
+                        score = if (type == PlayerType.CROSS) playersUiState.scoreCross.toString() else playersUiState.scoreNought.toString(),
+                        turn = { type == gameUiState.playerTurn },
                         onValueChange = { username ->
                             viewModel.updateUsername(
                                 type = type,
@@ -142,20 +147,21 @@ fun TicTacToeScreen(
                         }
                     )
                 }
-                /*uiState.players.forEach { player ->
-                    PlayerField(
-                        type = player.key,
-                        name = if (player.key == PlayerType.CROSS) viewModel.nameCross else viewModel.nameNought, // player.value.name,
-                        score = player.value.score.toString(),
-                        turn = uiState.playerTurn == player.key,
-                        onValueChange = { username ->
-                            viewModel.updateUsername(
-                                player.key,
-                                username
-                            )
-                        }
-                    )
-                }*/
+            }
+
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                AnimatedVisibility(
+                    visible = gameUiState.isShowClear
+                ) {
+                    Button(onClick = viewModel::clearPlayerData) {
+                        Text("Clear game store")
+                    }
+                }
             }
 
             Row(
@@ -169,7 +175,7 @@ fun TicTacToeScreen(
                     .padding(all = 8.dp)
             ) {
                 GameBoard(
-                    state = viewModel.gameState.board,
+                    state = gameUiState.board,
                     onTurn = { field -> viewModel.makeTurn(field) }
                 )
             }

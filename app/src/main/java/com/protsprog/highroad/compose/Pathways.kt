@@ -45,5 +45,9 @@ val composePathways = listOf<ComposePathway>(
     ComposePathway(
         caseId = 10,
         title="10. Bus Schedule app"
+    ),
+    ComposePathway(
+        caseId = 11,
+        title="11. Save preferences locally with DataStore"
     )
 )

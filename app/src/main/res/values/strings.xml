@@ -147,4 +147,9 @@
     <string name="bus_schedule_stop_name">Stop Name</string>
     <string name="bus_schedule_route_stop_name">Stop</string>
     <string name="bus_schedule_arrival_time">Arrival Time</string>
+
+    <string name="datastore_app_name">Dessert Release</string>
+    <string name="datastore_top_bar_name">Android Dessert Release</string>
+    <string name="datastore_grid_layout_toggle">Grid layout</string>
+    <string name="datastore_linear_layout_toggle">Linear layout</string>
 </resources>

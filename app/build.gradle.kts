@@ -189,6 +189,8 @@ dependencies {
     implementation("com.google.accompanist:accompanist-insets:${rootProject.ext.get("accompanistVersion")}")
     implementation("com.google.accompanist:accompanist-systemuicontroller:${rootProject.ext.get("accompanistVersion")}")
 
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 //    testImplementation("junit:junit:4.13.2")
 
 //    androidTestImplementation( "androidx.test.espresso:espresso-contrib:$espressoVersion")
