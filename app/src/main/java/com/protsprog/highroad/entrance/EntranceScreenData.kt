@@ -14,6 +14,16 @@ data class EntranceItem(
 
 val entranceItems = listOf<EntranceItem>(
     EntranceItem(
+        picture = R.drawable.banner_flight_search,
+        title = "Flight Search case",
+        destination = FlightSearch.route
+    ),
+    EntranceItem(
+        picture = R.drawable.banner_tictaktoe,
+        title = "TicTacToe case",
+        destination = TicTacToe.route
+    ),
+    EntranceItem(
         picture = R.drawable.banner_compose,
         title = "Compose case",
         destination = Compose.route
@@ -24,13 +34,8 @@ val entranceItems = listOf<EntranceItem>(
         destination = Articles.route
     ),
     EntranceItem(
-        picture = R.drawable.banner_tictaktoe,
-        title = "TicTacToe case",
-        destination = TicTacToe.route
-    ),
-    EntranceItem(
-        picture = R.drawable.banner_tictaktoe,
-        title = "Flight Search case",
-        destination = FlightSearch.route
+        picture = R.drawable.banner_motion,
+        title = "Motion case",
+        destination = ""
     ),
 )

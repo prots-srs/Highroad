@@ -1,45 +1,28 @@
 package com.protsprog.highroad.nav
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
@@ -47,11 +30,6 @@ import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
 import com.protsprog.highroad.compose.ComposeScreen
-import com.protsprog.highroad.compose.accessibility.data.AppJetNewsContainer
-import com.protsprog.highroad.compose.accessibility.ui.AppDrawer
-import com.protsprog.highroad.compose.accessibility.ui.article.JetNewsArticleScreen
-import com.protsprog.highroad.compose.accessibility.ui.home.JetNewsHomeScreen
-import com.protsprog.highroad.compose.accessibility.ui.interests.JetNewsInterestsScreen
 import com.protsprog.highroad.compose.accessibility.ui.theme.JetnewsTheme
 import com.protsprog.highroad.compose.animating.ui.Home
 import com.protsprog.highroad.compose.animating.ui.theme.AnimationCodelabTheme
@@ -66,13 +44,7 @@ import com.protsprog.highroad.compose.composePathways
 import com.protsprog.highroad.compose.datastore.ui.DessertReleaseApp
 import com.protsprog.highroad.compose.datastore.ui.theme.DessertReleaseTheme
 import com.protsprog.highroad.compose.introduce.LessonApp
-import com.protsprog.highroad.compose.navigation.ui.accounts.AccountsScreen
-import com.protsprog.highroad.compose.navigation.ui.accounts.SingleAccountScreen
-import com.protsprog.highroad.compose.navigation.ui.bills.BillsScreen
-import com.protsprog.highroad.compose.navigation.ui.components.RallyTopAppBar
-import com.protsprog.highroad.compose.navigation.ui.overview.OverviewScreen
 import com.protsprog.highroad.compose.navigation.ui.theme.RallyTheme
-import com.protsprog.highroad.compose.persistroom.data.AppInventoryContainer
 import com.protsprog.highroad.compose.persistroom.ui.home.InventoryHomeScreen
 import com.protsprog.highroad.compose.persistroom.ui.item.InventoryItemDetailsScreen
 import com.protsprog.highroad.compose.persistroom.ui.item.InventoryItemEditScreen
@@ -90,13 +62,11 @@ import com.protsprog.highroad.entrance.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import com.protsprog.highroad.flightsearch.ui.FlightSearchScreen
 import com.protsprog.highroad.flightsearch.ui.theme.FlightSearchTheme
-import com.protsprog.highroad.nav.MainJetNewsDestinations.ARTICLE_ID_KEY
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 import com.protsprog.highroad.ui.components.AppBar
 import com.protsprog.highroad.ui.theme.IntroduceTheme
 import com.protsprog.highroad.util.DevicePosture
-import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,42 +89,21 @@ fun HighroadNavigation(
         NavHost(
             navController = navController,
             startDestination = Entrance.route,
+//            startDestination = FlightSearch.route,
             modifier = Modifier
         ) {
             composable(route = Entrance.route) {
                 caseTheme = TYPE_THEME.MAIN
-                Scaffold(
+
+                EntranceScreen(
                     scaffoldState = scaffoldState,
-                    topBar = {
-                        TopAppBar(
-                            modifier = Modifier,
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            title = {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = Entrance.title,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
-                                }
-                            }
-                        )
-                    }
-                ) { innerPadding ->
-                    EntranceScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        windowWidthClass = windowWidthClass,
-                        navigations = entranceItems.map {
-                            it.destination to {
-                                navController.navigate(it.destination)
-                            }
-                        }.toMap()
-                    )
-                }
+                    windowWidthClass = windowWidthClass,
+                    navigations = entranceItems.map {
+                        it.destination to {
+                            navController.navigate(it.destination)
+                        }
+                    }.toMap()
+                )
             }
 
             composable(route = Compose.route) {
@@ -189,10 +138,8 @@ fun HighroadNavigation(
                 route = ComposeCase.routeWithArgs,
                 arguments = ComposeCase.arguments
             ) { backStackEntry ->
-                val caseId = backStackEntry?.let {
-                    it.arguments?.let {
-                        it.getInt("case_id", 1) ?: 1
-                    }
+                val caseId = backStackEntry.let {
+                    it.arguments?.getInt("case_id", 1)
                 }
 //                set theme
                 when (caseId) {
@@ -408,8 +355,7 @@ fun HighroadNavigation(
             composable(route = FlightSearch.route) {
                 caseTheme = TYPE_THEME.FLIGHT_SEARCH
                 FlightSearchScreen(
-                    titleScreen = FlightSearch.title,
-                    scaffoldState = scaffoldState,
+//                    scaffoldState = scaffoldState,
                     onBackPressed = { navController.navigateUp() }
                 )
             }
@@ -608,6 +554,7 @@ fun HighroadNavHost(
 }
 */
 
+/*
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {
         popUpTo(
@@ -618,11 +565,14 @@ fun NavHostController.navigateSingleTopTo(route: String) =
         }
 //        restoreState = true
         launchSingleTop = true
-    }
+    }*/
 
+/*
 private fun NavHostController.navigateToSingleAccount(accountType: String) {
     this.navigate("${RallySingleAccount.route}/$accountType")
 }
+
+ */
 
 enum class TYPE_THEME {
     MAIN,

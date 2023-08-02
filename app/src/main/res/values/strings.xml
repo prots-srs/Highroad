@@ -152,4 +152,6 @@
     <string name="datastore_top_bar_name">Android Dessert Release</string>
     <string name="datastore_grid_layout_toggle">Grid layout</string>
     <string name="datastore_linear_layout_toggle">Linear layout</string>
+
+    <string name="flight_search_app_name">Flight Search</string>
 </resources>
