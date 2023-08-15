@@ -20,11 +20,11 @@ import kotlinx.coroutines.delay
 
 private const val SplashWaitTime: Long = 1000
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, backgroundColor = 0xFFF0F0FF)
 @Composable
 fun LandingScreen(
-    onTimeout: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onTimeout: () -> Unit = {}
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         // LaunchedEffect and rememberUpdatedState step

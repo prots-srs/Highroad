@@ -62,6 +62,7 @@ import com.protsprog.highroad.entrance.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import com.protsprog.highroad.flightsearch.ui.FlightSearchScreen
 import com.protsprog.highroad.flightsearch.ui.theme.FlightSearchTheme
+import com.protsprog.highroad.motioncase.MotionScreen
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 import com.protsprog.highroad.ui.components.AppBar
@@ -89,7 +90,7 @@ fun HighroadNavigation(
         NavHost(
             navController = navController,
             startDestination = Entrance.route,
-//            startDestination = FlightSearch.route,
+//            startDestination = MotionCase.route,
             modifier = Modifier
         ) {
             composable(route = Entrance.route) {
@@ -355,7 +356,13 @@ fun HighroadNavigation(
             composable(route = FlightSearch.route) {
                 caseTheme = TYPE_THEME.FLIGHT_SEARCH
                 FlightSearchScreen(
-//                    scaffoldState = scaffoldState,
+                    onBackPressed = { navController.navigateUp() }
+                )
+            }
+            composable(route = MotionCase.route) {
+                caseTheme = TYPE_THEME.MOTION_CASE
+                MotionScreen(
+                    windowWidthClass = windowWidthClass,
                     onBackPressed = { navController.navigateUp() }
                 )
             }
@@ -589,7 +596,8 @@ enum class TYPE_THEME {
     COMPOSE_DATASTORE,
     ARTICLES,
     TICTACTOE,
-    FLIGHT_SEARCH
+    FLIGHT_SEARCH,
+    MOTION_CASE
 }
 
 @Composable
@@ -621,5 +629,6 @@ fun NavigationThemeSwitcher(
         TYPE_THEME.COMPOSE_BUSSCHEDULE -> BusScheduleTheme(content = content)
         TYPE_THEME.COMPOSE_DATASTORE -> DessertReleaseTheme(content = content)
         TYPE_THEME.FLIGHT_SEARCH -> FlightSearchTheme(content = content)
+        TYPE_THEME.MOTION_CASE -> FlightSearchTheme(content = content)
     }
 }

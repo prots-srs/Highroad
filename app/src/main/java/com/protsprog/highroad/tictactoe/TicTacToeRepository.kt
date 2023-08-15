@@ -7,10 +7,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.protsprog.highroad.data.TictactoeDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
 
 data class GamePreferences(
     val nameCross: String = "",
@@ -19,8 +21,8 @@ data class GamePreferences(
     val scoreNought: Int = 0
 )
 
-class TicTacToeRepository(
-    private val dataStore: DataStore<Preferences>
+class TicTacToeRepository @Inject constructor(
+    @TictactoeDataStore private val dataStore: DataStore<Preferences>
 ) {
     val gamePreferences: Flow<GamePreferences> = dataStore.data
         .catch {

@@ -81,6 +81,12 @@ object FlightSearch : HighroadDestination {
     override val route = "flightsearch"
 }
 
+object MotionCase : HighroadDestination {
+    override val icon = null
+    override val title = "Motion case"
+    override val route = "motioncase"
+}
+
 /**
  * Rally app navigation destinations
  */

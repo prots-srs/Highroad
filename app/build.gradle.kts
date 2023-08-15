@@ -177,6 +177,10 @@ dependencies {
     implementation("androidx.window:window:1.0.0")
 
 //    TEST
+    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("org.robolectric:robolectric:4.9.2")
+
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test:core-ktx:1.5.0")
     androidTestImplementation("androidx.test:runner:1.5.2")
@@ -224,9 +228,7 @@ dependencies {
 //        "androidx.test.espresso:espresso-core:3.4.0"
 //    )
 
-//    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
-//    testImplementation("androidx.test:core-ktx:1.5.0")
-//    testImplementation("org.robolectric:robolectric:4.9.2")
+
 
 //    implementation("com.github.bumptech.glide:glide:${glide_version}")
 //    annotationProcessor("com.github.bumptech.glide:compiler:${glide_version}")

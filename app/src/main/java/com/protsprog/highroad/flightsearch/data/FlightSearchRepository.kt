@@ -5,16 +5,20 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.protsprog.highroad.data.FlightSearchDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+import javax.inject.Inject
 
-class FlightSearchRepository(
+class FlightSearchRepository @Inject constructor(
     private val dao: FlightSearchDao,
-    private val store: DataStore<Preferences>
+    @FlightSearchDataStore private val store: DataStore<Preferences>
 ) {
-    fun getAirportBySearch(search: String): Flow<List<AirportEntity>> = dao.getAirportBySearch(search)
+    fun getAirportBySearch(search: String): Flow<List<AirportEntity>> =
+        dao.getAirportBySearch(search)
+
     suspend fun getAllFlight(): List<AirportEntity> = dao.getAirports()
     fun getAllFavoritesStream(): Flow<List<FavoriteEntity>> = dao.getFavorits()
 

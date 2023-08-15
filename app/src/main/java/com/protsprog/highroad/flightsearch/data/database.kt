@@ -4,6 +4,7 @@ package com.protsprog.highroad.flightsearch.data
 TO READ
 https://www.sqlite.org/lang_select.html
 https://developer.android.com/codelabs/basic-android-kotlin-compose-sql
+https://medium.com/androiddevelopers/database-relations-with-room-544ab95e4542
  */
 import android.content.Context
 import androidx.room.ColumnInfo
@@ -19,6 +20,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.protsprog.highroad.flightsearch.ui.AirportUIState
 import com.protsprog.highroad.flightsearch.ui.FavoriteState
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "airport")
@@ -56,6 +63,7 @@ fun FavoriteEntity.asUiState() = FavoriteState(
 interface FlightSearchDao {
     @Query("SELECT * FROM airport WHERE name LIKE '%'||:search||'%' OR iata_code = UPPER(:search) ORDER BY passengers DESC")
     fun getAirportBySearch(search: String): Flow<List<AirportEntity>>
+
     @Query("SELECT * from airport ORDER BY passengers DESC")
     suspend fun getAirports(): List<AirportEntity>
 
@@ -75,7 +83,7 @@ private const val databaseNameFlight = "flights"
 abstract class FlightSearchDatabase : RoomDatabase() {
     abstract fun flightDao(): FlightSearchDao
 
-    companion object {
+    /*companion object {
         @Volatile
         private var Instance: FlightSearchDatabase? = null
 
@@ -86,5 +94,20 @@ abstract class FlightSearchDatabase : RoomDatabase() {
                 .build()
                 .also { Instance = it }
         }
-    }
+    }*/
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+object DatabaseModule {
+    @Provides
+    fun provideDao(database: FlightSearchDatabase): FlightSearchDao = database.flightDao()
+
+    @ViewModelScoped
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context): FlightSearchDatabase =
+        Room.databaseBuilder(context, FlightSearchDatabase::class.java, databaseNameFlight)
+            .createFromAsset("database/flight_search.db")
+            .fallbackToDestructiveMigration()
+            .build()
 }

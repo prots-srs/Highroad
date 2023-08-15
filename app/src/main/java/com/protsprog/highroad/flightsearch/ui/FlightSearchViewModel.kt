@@ -3,23 +3,23 @@ package com.protsprog.highroad.flightsearch.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.protsprog.highroad.HighroadApplication
 import com.protsprog.highroad.flightsearch.data.FlightSearchRepository
 import com.protsprog.highroad.flightsearch.data.asUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 //private val DEBUG_TAG = "DEBUG_FLIGHT_VM"
-
-class FlightSearchViewModel(
+@HiltViewModel
+class FlightSearchViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val repo: FlightSearchRepository
 ) : ViewModel() {
     var uiState by mutableStateOf(ListsUiState())
@@ -31,8 +31,6 @@ class FlightSearchViewModel(
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
             initialValue = emptyList()
         )
-//        .catch {  }
-//        .collectAsState()
 
     init {
         collectStoredSearchRequest()
@@ -189,7 +187,7 @@ class FlightSearchViewModel(
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
 
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
+        /*val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application =
                     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as HighroadApplication)
@@ -200,6 +198,6 @@ class FlightSearchViewModel(
                     )
                 )
             }
-        }
+        }*/
     }
 }

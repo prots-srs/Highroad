@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.protsprog.highroad.tictactoe.ui.components.GameBoard
 import com.protsprog.highroad.tictactoe.ui.components.PlayerField
@@ -71,7 +72,7 @@ fun PreviewHorizontalTicTacToeScreen() {
 @Composable
 fun TicTacToeScreen(
     modifier: Modifier = Modifier,
-    viewModel: TictaktoeViewModel = viewModel(factory = TictaktoeViewModel.Factory)
+    viewModel: TictaktoeViewModel = hiltViewModel()
 ) {
     val gameUiState = viewModel.gameUiState
     val playersUiState = viewModel.playersUiState
