@@ -3,9 +3,11 @@ package com.protsprog.highroad.compose.persistroom.data
 /*
 TO READ
 https://developer.android.com/reference/androidx/room/RoomDatabase.Builder#fallbackToDestructiveMigration()
-https://medium.com/androiddevelopers/understanding-migrations-with-room-f01e04b07929
-https://sqlite.org/lang_altertable.html
 https://developer.android.com/studio/inspect/database
+
+https://medium.com/androiddevelopers/understanding-migrations-with-room-f01e04b07929
+
+https://sqlite.org/lang_altertable.html
  */
 import android.content.Context
 import androidx.room.Database

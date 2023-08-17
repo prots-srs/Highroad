@@ -3,8 +3,11 @@ package com.protsprog.highroad.flightsearch.data
 /*
 TO READ
 https://www.sqlite.org/lang_select.html
+
 https://developer.android.com/codelabs/basic-android-kotlin-compose-sql
+
 https://medium.com/androiddevelopers/database-relations-with-room-544ab95e4542
+
  */
 import android.content.Context
 import androidx.room.ColumnInfo

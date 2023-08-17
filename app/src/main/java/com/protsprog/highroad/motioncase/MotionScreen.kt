@@ -5,9 +5,12 @@ TO READ
 https://developer.android.com/jetpack/compose/graphics/images/customize
 https://developer.android.com/jetpack/compose/touch-input/pointer-input/drag-swipe-fling
 https://developer.android.com/jetpack/compose/modifiers-list#Position
-https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Density#(androidx.compose.ui.unit.Dp).roundToPx()
 https://developer.android.com/jetpack/compose/tooling/previews#ui-mode
 https://developer.android.com/jetpack/compose/tooling
+
+https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Density#(androidx.compose.ui.unit.Dp).roundToPx()
+
+https://www.youtube.com/watch?v=EOQB8PTLkpY&t=37s
  */
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing
