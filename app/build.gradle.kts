@@ -69,12 +69,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    /*
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-     */
 }
 kotlin {
     jvmToolchain(17)
@@ -96,6 +90,7 @@ dependencies {
 
 //    https://m2.material.io/develop/android/docs/getting-started
     implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.leanback:leanback:1.0.0")
 
     // Compose
     //https://developer.android.com/jetpack/compose/bom/bom-mapping
@@ -195,56 +190,5 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-//    testImplementation("junit:junit:4.13.2")
-
-//    androidTestImplementation( "androidx.test.espresso:espresso-contrib:$espressoVersion")
-//    androidTestImplementation( "androidx.test.espresso:espresso-intents:$espressoVersion")
-//    androidTestImplementation( "androidx.test.espresso:espresso-accessibility:$espressoVersion")
-//    androidTestImplementation( "androidx.test.espresso:espresso-web:$espressoVersion")
-//    androidTestImplementation( "androidx.test.espresso.idling:idling-concurrent:$espressoVersion")
-
-//    implementation("com.google.accompanist:accompanist-themeadapter-material:0.28.0")
+//    implementation("androidx.credentials:credentials:1.2.0-beta02")
 }
-
-//    testOptions.unitTests {
-//        includeAndroidResources = true
-//    }
-//    packagingOptions {
-//        resources {
-//            excludes += listOf("/META-INF/AL2.0", "/META-INF/LGPL2.1")
-//        }
-//    }
-//    packaging {
-//        resources {
-//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-//        }
-//    }
-
-//--------------------------------/////////////////////////
-
-//    testImplementation("junit:junit:4.13.2")
-//    androidTestImplementation("androidx.test.ext:junit:1.1.3")
-//    androidTestImplementation(
-//        "androidx.test.espresso:espresso-core:3.4.0"
-//    )
-
-
-
-//    implementation("com.github.bumptech.glide:glide:${glide_version}")
-//    annotationProcessor("com.github.bumptech.glide:compiler:${glide_version}")
-
-// UI Tests
-//    androidTestImplementation(
-//        "androidx.compose.ui:ui-test-junit4"
-//    )
-//    debugImplementation("androidx.compose.ui:ui-test-manifest")
-
-//    androidTestImplementation("junit:junit:4.13.2")
-//    androidTestImplementation("androidx.test:core:1.5.0")
-//    androidTestImplementation("androidx.test:runner:1.5.2")
-//    androidTestImplementation("androidx.test:rules:1.5.0")
-//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-//    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-//    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
-
-//    kaptAndroidTest("com.google.dagger:hilt-compiler:2.46")

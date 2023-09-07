@@ -36,7 +36,7 @@ val composePathways = listOf<ComposePathway>(
     ),
     ComposePathway(
         caseId = 8,
-        title="8. Accessibility case"
+        title="8. Accessibility case - closed"
     ),
     ComposePathway(
         caseId = 9,

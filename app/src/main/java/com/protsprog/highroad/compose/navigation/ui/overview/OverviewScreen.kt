@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Sort
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -50,7 +53,10 @@ import com.protsprog.highroad.compose.navigation.ui.components.RallyAlertDialog
 import com.protsprog.highroad.compose.navigation.ui.components.RallyDivider
 import com.protsprog.highroad.compose.navigation.ui.components.formatAmount
 import com.protsprog.highroad.R
+import com.protsprog.highroad.compose.navigation.ui.components.RallyTopAppBar
 import com.protsprog.highroad.compose.navigation.ui.theme.RallyTheme
+import com.protsprog.highroad.nav.RallyOverview
+import com.protsprog.highroad.nav.rallyTabRowScreens
 import java.util.Locale
 
 @Preview(showBackground = true)
@@ -63,26 +69,38 @@ fun AlertCardPreview() {
 
 @Composable
 fun OverviewScreen(
+    onTabSelected: (String) -> Unit = {},
     onClickSeeAllAccounts: () -> Unit = {},
     onClickSeeAllBills: () -> Unit = {},
     onAccountClick: (String) -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-            .semantics { contentDescription = "Overview Screen" }
-    ) {
-        AlertCard()
-        Spacer(Modifier.height(RallyDefaultPadding))
-        AccountsCard(
-            onClickSeeAll = onClickSeeAllAccounts,
-            onAccountClick = onAccountClick
-        )
-        Spacer(Modifier.height(RallyDefaultPadding))
-        BillsCard(
-            onClickSeeAll = onClickSeeAllBills
-        )
+    Scaffold(
+        topBar = {
+            RallyTopAppBar(
+                allScreens = rallyTabRowScreens,
+                onTabSelected = onTabSelected,
+                currentScreenRoute = RallyOverview.route
+            )
+        }
+    ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState())
+                    .semantics { contentDescription = "Overview Screen" }
+            ) {
+                AlertCard()
+                Spacer(Modifier.height(RallyDefaultPadding))
+                AccountsCard(
+                    onClickSeeAll = onClickSeeAllAccounts,
+                    onAccountClick = onAccountClick
+                )
+                Spacer(Modifier.height(RallyDefaultPadding))
+                BillsCard(
+                    onClickSeeAll = onClickSeeAllBills
+                )
+            }
     }
 }
 

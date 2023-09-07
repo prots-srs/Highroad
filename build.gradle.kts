@@ -42,21 +42,3 @@ tasks.withType<KotlinCompile> {
 //        freeCompilerArgs = listOf("-progressive", "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
     }
 }
-
-//    apply(plugin = "com.diffplug.spotless")
-//    spotless {
-//        kotlin {
-//            target = "**/*.kt"
-//            targetExclude("$buildDir/**/*.kt")
-//            targetExclude("bin/**/*.kt")
-//            ktlint("0.45.2")
-//            licenseHeaderFile = rootProject.file("spotless/copyright.kt")
-//        }
-//    }
-// androidx.test and hilt are forcing JUnit, 4.12. This forces them to use 4.13
-//    configurations.configureEach {
-//        resolutionStrategy {
-//            force("junit:junit:4.13.2")
-//        }
-//    }
-//}

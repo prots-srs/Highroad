@@ -4,10 +4,12 @@ package com.protsprog.highroad.compose.introduce
 /*
 TO READ
 https://developer.android.com/jetpack/compose/modifiers-list
-https://m3.material.io/develop/android/jetpack-compose
-https://developer.android.com/jetpack/compose/designsystems/material2-material3#m3
-https://m3.material.io/components/buttons/overview
 https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
+https://developer.android.com/jetpack/compose/designsystems/material2-material3#m3
+
+https://m3.material.io/develop/android/jetpack-compose
+https://m3.material.io/components/buttons/overview
+
  */
 
 import androidx.compose.animation.animateContentSize

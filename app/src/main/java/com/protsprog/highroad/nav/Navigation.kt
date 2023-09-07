@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,9 +27,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.protsprog.highroad.ApplicationViewModel
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
+import com.protsprog.highroad.authentication.ui.LoginScreen
+import com.protsprog.highroad.authentication.ui.ProfileEditScreen
+import com.protsprog.highroad.authentication.ui.ProfileScreen
+import com.protsprog.highroad.authentication.ui.theme.AuthTheme
 import com.protsprog.highroad.compose.ComposeScreen
 import com.protsprog.highroad.compose.accessibility.ui.theme.JetnewsTheme
 import com.protsprog.highroad.compose.animating.ui.Home
@@ -44,6 +50,10 @@ import com.protsprog.highroad.compose.composePathways
 import com.protsprog.highroad.compose.datastore.ui.DessertReleaseApp
 import com.protsprog.highroad.compose.datastore.ui.theme.DessertReleaseTheme
 import com.protsprog.highroad.compose.introduce.LessonApp
+import com.protsprog.highroad.compose.navigation.ui.accounts.AccountsScreen
+import com.protsprog.highroad.compose.navigation.ui.accounts.SingleAccountScreen
+import com.protsprog.highroad.compose.navigation.ui.bills.BillsScreen
+import com.protsprog.highroad.compose.navigation.ui.overview.OverviewScreen
 import com.protsprog.highroad.compose.navigation.ui.theme.RallyTheme
 import com.protsprog.highroad.compose.persistroom.ui.home.InventoryHomeScreen
 import com.protsprog.highroad.compose.persistroom.ui.item.InventoryItemDetailsScreen
@@ -76,7 +86,8 @@ fun HighroadNavigation(
 //    appJetNewsContainer: AppJetNewsContainer,
 //    appInventoryContainer: AppInventoryContainer,
     windowWidthClass: WindowWidthSizeClass,
-    devicePosture: DevicePosture
+    devicePosture: DevicePosture,
+    viewModel: ApplicationViewModel = hiltViewModel()
 ) {
     val navController: NavHostController = rememberNavController()
 //    val coroutineScope = rememberCoroutineScope()
@@ -103,7 +114,12 @@ fun HighroadNavigation(
                         it.destination to {
                             navController.navigate(it.destination)
                         }
-                    }.toMap()
+                    }.toMap(),
+                    hasBack = navController.previousBackStackEntry != null,
+                    userUIState = viewModel.authUIStates,
+                    onBackPressed = { navController.navigateUp() },
+                    onClickLogin = { navController.navigate(route = AuthDestinations.loginPage) },
+                    onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) }
                 )
             }
 
@@ -367,6 +383,111 @@ fun HighroadNavigation(
                 )
             }
 
+//        RALLY
+            composable(route = RallyOverview.route) {
+                caseTheme = TYPE_THEME.COMPOSE_RALLY
+
+                OverviewScreen(
+                    onTabSelected = { route ->
+                        navController.navigateSingleTopTo(route)
+                    },
+                    onClickSeeAllAccounts = {
+                        navController.navigate(RallyAccounts.route)
+                    },
+                    onClickSeeAllBills = {
+                        navController.navigate(RallyBills.route)
+                    },
+                    onAccountClick = { accountType ->
+                        navController.navigateToSingleAccount(accountType)
+                    }
+                )
+            }
+            composable(route = RallyAccounts.route) {
+                caseTheme = TYPE_THEME.COMPOSE_RALLY
+
+                AccountsScreen(
+                    onTabSelected = { route ->
+                        navController.navigateSingleTopTo(route)
+                    },
+                    onAccountClick = { accountType ->
+                        navController.navigateToSingleAccount(accountType)
+                    }
+                )
+            }
+            composable(route = RallyBills.route) {
+                caseTheme = TYPE_THEME.COMPOSE_RALLY
+
+                BillsScreen(
+                    onTabSelected = { route ->
+                        navController.navigateSingleTopTo(route)
+                    },
+                )
+            }
+            composable(
+                route = RallySingleAccount.routeWithArgs,
+                arguments = RallySingleAccount.arguments,
+                deepLinks = RallySingleAccount.deepLinks
+            ) { navBackStackEntry ->
+                caseTheme = TYPE_THEME.COMPOSE_RALLY
+
+                val accountType =
+                    navBackStackEntry.arguments?.getString(RallySingleAccount.accountTypeArg)
+
+                SingleAccountScreen(
+                    onTabSelected = { route ->
+                        navController.navigateSingleTopTo(route)
+                    },
+                    accountType
+                )
+            }
+
+//        JetNews
+            composable(MainJetNewsDestinations.HOME_ROUTE) {
+                caseTheme = TYPE_THEME.COMPOSE_JETNEWS
+
+                /*JetNewsHomeScreen(
+                    postsRepository = appJetNewsContainer.postsRepository,
+                    navigateToArticle = actionsJetNews.navigateToArticle,
+                    openDrawer = openDrawer,
+                )*/
+            }
+
+            composable(route = AuthDestinations.loginPage) {
+                caseTheme = TYPE_THEME.AUTH
+                LoginScreen(
+                    email = viewModel.authUIStates.user.email,
+                    password = viewModel.authUIStates.password,
+                    sendRequest = viewModel.authUIStates.sendRequest,
+                    loginError = viewModel.authUIStates.errorLogin,
+                    hasAuth = viewModel.authUIStates.hasAuth,
+                    onNavigateUp = { navController.navigateUp() },
+                    onChangeEmail = viewModel::onChangeEmail,
+                    onChangePassword = viewModel::onChangePassword,
+                    clearForm = viewModel::clearLoginForm,
+                    onSubmit = viewModel::onSubmitLogin,
+                )
+            }
+
+            composable(route = AuthDestinations.profilePage) {
+                caseTheme = TYPE_THEME.AUTH
+                ProfileScreen(
+                    user = viewModel.authUIStates.user,
+                    onNavigateUp = { navController.navigateUp() },
+                    sendRequest = viewModel.authUIStates.sendRequest,
+                    onSwipeUpdateData = viewModel::updateUserData,
+                    onClickEdit = { navController.navigate(AuthDestinations.profileEditPage) }
+                )
+            }
+
+            composable(route = AuthDestinations.profileEditPage) {
+                caseTheme = TYPE_THEME.AUTH
+                ProfileEditScreen(
+                    user = viewModel.authUIStates.user,
+                    onNavigateUp = { navController.navigateUp() },
+                    onClickSave = viewModel::saveUserData
+                )
+            }
+
         }
     }
 }
@@ -403,15 +524,7 @@ fun HighroadNavigation(
                                 )
                             }
 
-                            TYPE_TOPBAR.RALLY -> {
-                                RallyTopAppBar(
-                                    allScreens = rallyTabRowScreens,
-                                    onTabSelected = { route ->
-                                        navController.navigateSingleTopTo(route)
-                                    },
-                                    currentScreenRoute = viewModel.uiState.currentScreenRoute
-                                )
-                            }
+
 
                             else -> {}
                         }
@@ -474,70 +587,6 @@ fun HighroadNavHost(
     ) {
 
 
-
-
-
-//        RALLY
-        composable(route = RallyOverview.route) {
-            state(CONFIGS_STATES.COMPOSE_RALLY_OVERVIEW)
-
-            Box(Modifier.padding(innerPadding)) {
-                OverviewScreen(
-                    onClickSeeAllAccounts = {
-                        navController.navigate(RallyAccounts.route)
-                    },
-                    onClickSeeAllBills = {
-                        navController.navigate(RallyBills.route)
-                    },
-                    onAccountClick = { accountType ->
-                        navController.navigateToSingleAccount(accountType)
-                    }
-                )
-            }
-        }
-        composable(route = RallyAccounts.route) {
-            state(CONFIGS_STATES.COMPOSE_RALLY_ACCOUNTS)
-
-            Box(Modifier.padding(innerPadding)) {
-                AccountsScreen(
-                    onAccountClick = { accountType ->
-                        navController.navigateToSingleAccount(accountType)
-                    }
-                )
-            }
-        }
-        composable(route = RallyBills.route) {
-            state(CONFIGS_STATES.COMPOSE_RALLY_BILLS)
-
-            Box(Modifier.padding(innerPadding)) {
-                BillsScreen()
-            }
-        }
-        composable(
-            route = RallySingleAccount.routeWithArgs,
-            arguments = RallySingleAccount.arguments,
-            deepLinks = RallySingleAccount.deepLinks
-        ) { navBackStackEntry ->
-            state(CONFIGS_STATES.COMPOSE_RALLY_SINGLE_ACCOUNT)
-
-            val accountType =
-                navBackStackEntry.arguments?.getString(RallySingleAccount.accountTypeArg)
-
-            Box(Modifier.padding(innerPadding)) {
-                SingleAccountScreen(accountType)
-            }
-        }
-
-//        JetNews
-        composable(MainJetNewsDestinations.HOME_ROUTE) {
-            state(CONFIGS_STATES.COMPOSE_CASE_JETNEWS_HOME)
-
-            JetNewsHomeScreen(
-                postsRepository = appJetNewsContainer.postsRepository,
-                navigateToArticle = actionsJetNews.navigateToArticle,
-                openDrawer = openDrawer,
-            )
-        }
         composable(MainJetNewsDestinations.INTERESTS_ROUTE) {
             state(CONFIGS_STATES.COMPOSE_CASE_JETNEWS_INTERESTS)
 
@@ -561,7 +610,6 @@ fun HighroadNavHost(
 }
 */
 
-/*
 fun NavHostController.navigateSingleTopTo(route: String) =
     this.navigate(route) {
         popUpTo(
@@ -572,14 +620,12 @@ fun NavHostController.navigateSingleTopTo(route: String) =
         }
 //        restoreState = true
         launchSingleTop = true
-    }*/
+    }
 
-/*
+
 private fun NavHostController.navigateToSingleAccount(accountType: String) {
     this.navigate("${RallySingleAccount.route}/$accountType")
 }
-
- */
 
 enum class TYPE_THEME {
     MAIN,
@@ -597,7 +643,8 @@ enum class TYPE_THEME {
     ARTICLES,
     TICTACTOE,
     FLIGHT_SEARCH,
-    MOTION_CASE
+    MOTION_CASE,
+    AUTH
 }
 
 @Composable
@@ -630,5 +677,6 @@ fun NavigationThemeSwitcher(
         TYPE_THEME.COMPOSE_DATASTORE -> DessertReleaseTheme(content = content)
         TYPE_THEME.FLIGHT_SEARCH -> FlightSearchTheme(content = content)
         TYPE_THEME.MOTION_CASE -> FlightSearchTheme(content = content)
+        TYPE_THEME.AUTH -> AuthTheme(content = content)
     }
 }

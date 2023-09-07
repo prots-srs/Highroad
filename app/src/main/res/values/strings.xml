@@ -155,4 +155,11 @@
 
     <string name="flight_search_app_name">Flight Search</string>
     <string name="motioncase_app_name">15 pazzle (Boss Puzzle)</string>
+
+    <string name="auth"></string>
+    <string name="auth_show_user_menu">Show user menu</string>
+    <string name="auth_sign_in">Sign in</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_hide_password">Hide password</string>
+    <string name="auth_escape">Escape</string>
 </resources>

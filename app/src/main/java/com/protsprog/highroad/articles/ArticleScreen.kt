@@ -1,11 +1,16 @@
 package com.protsprog.highroad.articles
 
 /*
-READ
+TO READ
 https://foso.github.io/Jetpack-Compose-Playground/foundation/shape/
+
 https://developer.android.com/jetpack/compose/modifiers-list#Size
 https://developer.android.com/jetpack/compose/animation/composables-modifiers#animatedvisibility
+
 https://developer.android.com/reference/kotlin/androidx/compose/material/pullrefresh/package-summary
+
+to flow fron network and db
+https://developer.android.com/codelabs/advanced-kotlin-coroutines?hl=en#0
  */
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutLinearInEasing

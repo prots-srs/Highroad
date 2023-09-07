@@ -183,3 +183,12 @@ enum class BusScheduleDestinations {
     FullSchedule,
     RouteSchedule
 }
+
+/*
+Authorization
+ */
+object AuthDestinations {
+    val loginPage = "AuthLogin"
+    val profilePage = "AuthProfile"
+    val profileEditPage = "AuthProfileEdit"
+}

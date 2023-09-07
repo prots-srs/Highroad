@@ -1,7 +1,8 @@
 package com.protsprog.highroad.compose.sideeffects.details
 
 /*
-READ
+TO READ
+
 https://developer.android.com/reference/kotlin/androidx/compose/runtime/package-summary#produceState(kotlin.Any,kotlin.coroutines.SuspendFunction1)
  */
 import android.content.Context
@@ -100,7 +101,6 @@ fun DetailScreenLaunch(
     Surface {
         DetailsScreen(
             cityDetails = viewModel.cityDetails,
-//            cityName = cityName,
             onErrorLoading = { },
             modifier = modifier
         )
@@ -110,11 +110,9 @@ fun DetailScreenLaunch(
 
 @Composable
 fun DetailsScreen(
-//    cityName: String,
     cityDetails: Result<ExploreModel>,
     onErrorLoading: () -> Unit,
     modifier: Modifier = Modifier,
-//    viewModel: DetailsViewModel = hiltViewModel()
 ) {
     // produceState step - Show loading screen while fetching city details
     val uiState by produceState(initialValue = DetailsUiState(isLoading = true)) {

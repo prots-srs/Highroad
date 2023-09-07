@@ -4,7 +4,9 @@ package com.protsprog.highroad.compose.animating.ui
 READ
 https://developer.android.com/jetpack/compose/touch-input/pointer-input
 https://developer.android.com/jetpack/compose/animation
+
 https://m2.material.io/components/snackbars/android#using-snackbars
+
 https://github.com/android/animation-samples/tree/main/Motion
  */
 import androidx.compose.animation.AnimatedVisibility
