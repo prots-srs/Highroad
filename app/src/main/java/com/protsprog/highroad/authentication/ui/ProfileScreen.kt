@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.protsprog.highroad.UserUIState
 import com.protsprog.highroad.authentication.ui.theme.AuthTheme
 import com.protsprog.highroad.ui.components.AppBar
 
@@ -45,7 +44,7 @@ private val layoutStep = 8.dp
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    user: UserUIState,
+    user: UserState,
     onNavigateUp: () -> Unit = {},
     onClickEdit: () -> Unit = {},
     sendRequest: Boolean = false,
@@ -117,7 +116,7 @@ fun ProfileScreen(
 fun ProfileScreenPrevie() {
     AuthTheme {
         ProfileScreen(
-            user = UserUIState(
+            user = UserState(
                 name = "Serhii",
                 email = "my@internet.com"
             )

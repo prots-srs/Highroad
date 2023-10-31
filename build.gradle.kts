@@ -9,6 +9,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "1.8.20" apply false
 //https://kotlinlang.org/docs/kapt.html
     kotlin("kapt") version "1.8.20" apply false
+    kotlin("plugin.serialization") version "1.8.20" apply false
 //https://github.com/google/ksp/releases
     id("com.google.devtools.ksp") version "1.8.20-1.0.11" apply false
 //https://plugins.gradle.org/plugin/com.diffplug.spotless

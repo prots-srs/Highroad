@@ -1,7 +1,22 @@
 <resources>
     <string name="app_name">Highroad codesample</string>
+<!--    auth-->
+    <string name="secret_key_name">biometric_highroad_encryption_key</string>
+    <string name="prompt_info_title">Highroad App Authentication</string>
+    <string name="prompt_info_subtitle">Please login to get access</string>
+    <string name="prompt_info_description">Highroad App is using Android biometric authentication</string>
+    <string name="prompt_info_use_app_password">Use app password</string>
+
     <string name="hello_entrance_fragment">Hello entrance fragment</string>
     <string name="hello_motion_fragment">Hello motion fragment</string>
+    <string name="entrance_todo_case_title">To-Do list case</string>
+    <string name="entrance_title_case_motion">Motion case</string>
+    <string name="entrance_title_case_flight_search">Flight Search case</string>
+    <string name="entrance_title_case_tictactoe">TicTacToe case</string>
+    <string name="entrance_title_case_compose">Compose case</string>
+    <string name="entrance_title_case_article">Articles case</string>
+    <string name="entrance_bluetooth">Bluetooth case</string>
+
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="menu_refresh">Refresh</string>
@@ -162,4 +177,43 @@
     <string name="auth_show_password">Show password</string>
     <string name="auth_hide_password">Hide password</string>
     <string name="auth_escape">Escape</string>
+
+    <string name="customlayout_app_name">JetLagged</string>
+    <string name="customlayout_label_back">Back</string>
+    <string name="customlayout_jetlagged_app_heading">JetLagged</string>
+    <string name="customlayout_average_time_in_bed_heading">AVG. TIME IN BED</string>
+    <string name="customlayout_average_sleep_time_heading">AVG. SLEEP TIME</string>
+    <string name="customlayout_not_implemented">Not implemented yet</string>
+    <string name="customlayout_placeholder_text_ave_time">8h2min</string>
+    <string name="customlayout_placeholder_text_ave_time_2">7h15min</string>
+    <string name="customlayout_sleep_type_awake">Awake</string>
+    <string name="customlayout_sleep_type_rem">REM</string>
+    <string name="customlayout_sleep_type_light">Light</string>
+    <string name="customlayout_sleep_type_deep">Deep</string>
+    <string name="customlayout_sleep_tab_day_heading">Day</string>
+    <string name="customlayout_sleep_tab_week_heading">Week</string>
+    <string name="customlayout_sleep_tab_month_heading">Month</string>
+    <string name="customlayout_sleep_tab_six_months_heading">6M</string>
+    <string name="customlayout_sleep_tab_one_year_heading">1Y</string>
+
+    <string name="glance_buttons_title">Items collection</string>
+    <string name="glance_radio_button1">Radio Button 1</string>
+    <string name="glance_radio_button2">Radio Button 2</string>
+    <string name="glance_check_box">Check box</string>
+    <string name="glance_buttons_glance_widget_description">Glance Widget of CompoundButtons</string>
+    <string name="glance_todo_list">Glance todo list</string>
+    <string name="glance_grocery_list_milk">Milk</string>
+    <string name="glance_grocery_list_eggs">Eggs</string>
+    <string name="glance_grocery_list_tomatoes">Tomatoes</string>
+    <string name="glance_grocery_list_bacon">Bacon</string>
+    <string name="glance_grocery_list_butter">Butter</string>
+    <string name="glance_grocery_list_cheese">Cheese</string>
+    <string name="glance_grocery_list_potatoes">Potatoes</string>
+    <string name="glance_grocery_list_broccoli">Broccoli</string>
+    <string name="glance_grocery_list_salmon">Salmon</string>
+    <string name="glance_grocery_list_yogurt">Yogurt</string>
+
+    <string name="glance_timebutton_title">Current time</string>
+    <string name="glance_todo_list_title">Simple ToDo list</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.protsprog.highroad.authentication.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -15,14 +15,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.protsprog.highroad.UserUIState
 import com.protsprog.highroad.ui.components.AppBar
 
 private val layoutStep = 8.dp
@@ -30,11 +28,14 @@ private val layoutStep = 8.dp
 @Composable
 fun ProfileEditScreen(
     modifier: Modifier = Modifier,
-    user: UserUIState,
+    user: UserState,
+    saveError: String = "",
     onNavigateUp: () -> Unit = {},
-    onClickSave: (String) -> Boolean
+    onClickSave: (String) -> Unit,
+    isError: Boolean = false
 ) {
     var name: String by rememberSaveable { mutableStateOf(user.name) }
+    val isError = saveError.isNotEmpty()
 
     Scaffold(modifier = modifier.fillMaxSize(), topBar = {
         AppBar(
@@ -42,11 +43,7 @@ fun ProfileEditScreen(
         )
     }, floatingActionButton = {
         ExtendedFloatingActionButton(
-            onClick = {
-                if(onClickSave(name)) {
-                    onNavigateUp()
-                }
-            },
+            onClick = { onClickSave(name) },
             icon = { Icon(Icons.Outlined.Save, "Save") },
             text = { Text(text = "Save profile") },
         )
@@ -65,8 +62,11 @@ fun ProfileEditScreen(
                 onValueChange = {
                     name = it
                 },
-                isError = name.isEmpty()
+                isError = isError
             )
+            AnimatedVisibility(isError) {
+                ErrorForInput(text = saveError)
+            }
         }
     }
 }

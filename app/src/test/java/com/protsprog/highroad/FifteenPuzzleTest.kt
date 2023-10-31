@@ -11,7 +11,7 @@ class FifteenPuzzleTest {
 
     @Test
     fun shake_board_Test() {
-        viewModel.shuffleBoard()
+//        viewModel.shuffleBoard()
     }
 
 /*

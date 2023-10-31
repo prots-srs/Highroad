@@ -2,12 +2,16 @@ package com.protsprog.highroad.authentication.data
 
 /*
 TO READ
+https://developer.android.com/codelabs/android-network-security-config#0
 
 https://developer.android.com/reference/android/os/Build
 
 https://developer.android.com/codelabs/advanced-kotlin-coroutines?hl=en#0
 
 https://github.com/android/codelab-kotlin-coroutines
+
+LOOK FOR
+wrapContentSize
  */
 import android.util.Log
 import androidx.compose.runtime.Immutable
@@ -17,6 +21,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import javax.inject.Inject
 
 sealed interface AuthResponseResource<out T> {
@@ -36,65 +44,68 @@ class AuthRepository @Inject constructor() {
 
     private val deviceName: String = android.os.Build.FINGERPRINT
 
-    fun requestLogin(
+    suspend fun requestLogin(
         email: String, password: String
     ): Flow<AuthResponseResource<String>> = flow {
-        delay(1000)
-
-        if (passwdBackEnd.containsKey(email)) {
-            if (passwdBackEnd[email] == password) {
-                emit(AuthResponseResource.Success(tokenByEmailBackEnd[email]!!))
+        try {
+            val response = AuthService.authService.login(
+                email = email,
+                password = password,
+                deviceName = deviceName
+            )
+            val body: AuthTokenResponse = response.body() ?: AuthTokenResponse()
+            if (response.code() == 200) {
+                if (body.token.isNotEmpty()) {
+                    emit(AuthResponseResource.Success(body.token))
+                } else {
+                    emit(AuthResponseResource.Error(body.error))
+                }
             } else {
-                emit(AuthResponseResource.Error("Password wrong"))
+                emit(AuthResponseResource.Error("Authorized error"))
             }
-        } else {
-            emit(AuthResponseResource.Error("Email not found"))
+        } catch (e: Exception) {
+            emit(AuthResponseResource.Error("Network error: ${e.message.toString()}"))
+        }
+    }.onStart { emit(AuthResponseResource.Loading(true)) }
+        .onCompletion { emit(AuthResponseResource.Loading(false)) }
+        .catch { error ->
+            emit(AuthResponseResource.Error(error.message.toString()))
+            emit(AuthResponseResource.Loading(false))
+        }
+
+    suspend fun requestUserData(token: String): Flow<AuthResponseResource<UserModel>> = flow {
+        try {
+            val response = AuthService.authService.getUser("Bearer ${token}")
+            val body: AuthUserResponse = response.body() ?: AuthUserResponse()
+            if (response.code() == 200) {
+                emit(AuthResponseResource.Success(body.asModel()))
+            } else {
+                emit(AuthResponseResource.Error("Token wrong"))
+            }
+        } catch (e: Exception) {
+            emit(AuthResponseResource.Error("Network error: ${e.message.toString()}"))
         }
     }.onStart { emit(AuthResponseResource.Loading(true)) }
         .onCompletion { emit(AuthResponseResource.Loading(false)) }
         .catch { error -> emit(AuthResponseResource.Error(error.message.toString())) }
 
-    fun requestUserData(token: String): Flow<AuthResponseResource<UserModel>> = flow {
-        delay(1000)
-        if (usersByTokenBackEnd.containsKey(token)) {
-            emit(AuthResponseResource.Success(usersByTokenBackEnd[token]!!))
-        } else {
-            emit(AuthResponseResource.Error("Token wrong"))
-        }
-    }.onStart { emit(AuthResponseResource.Loading(true)) }
-        .onCompletion { emit(AuthResponseResource.Loading(false)) }
-        .catch { error -> emit(AuthResponseResource.Error(error.message.toString())) }
-
-    fun saveUserData(user: UserModel) {
-
-    }
+    suspend fun saveUserData(token: String, user: UserModel): Flow<AuthResponseResource<Boolean>> =
+        flow {
+            try {
+                val response = AuthService.authService.updateUser(
+                    token = "Bearer ${token}",
+                    name = user.name
+                )
+                val body: AuthUpdateAnswer = response.body() ?: AuthUpdateAnswer()
+                if (response.code() == 200 && body.result == "OK") {
+                    emit(AuthResponseResource.Success(true))
+                } else {
+                    emit(AuthResponseResource.Error(body.result))
+                }
+            } catch (e: Exception) {
+                emit(AuthResponseResource.Error("Network error: ${e.message.toString()}"))
+            }
+        }.onStart { emit(AuthResponseResource.Loading(true)) }
+            .onCompletion { emit(AuthResponseResource.Loading(false)) }
+            .catch { error -> emit(AuthResponseResource.Error(error.message.toString())) }
 }
-
-/*
-to test
- */
-private val emailsBackEnd: List<String> = listOf(
-    "testlogin@protsprog.com",
-    "wolf@a.com"
-)
-private val passwdBackEnd: Map<String, String> = mapOf(
-    emailsBackEnd[0] to "123",
-    emailsBackEnd[1] to "abc"
-)
-
-private val tokenByEmailBackEnd: Map<String, String> = mapOf(
-    emailsBackEnd[0] to "test0token",
-    emailsBackEnd[1] to "wolf0token"
-)
-
-private val usersByTokenBackEnd: Map<String, UserModel> = mapOf(
-    tokenByEmailBackEnd[emailsBackEnd[0]]!! to UserModel(
-        name = "Jone",
-        email = emailsBackEnd[0]
-    ),
-    tokenByEmailBackEnd[emailsBackEnd[1]]!! to UserModel(
-        name = "one blood",
-        email = emailsBackEnd[1]
-    )
-)
-

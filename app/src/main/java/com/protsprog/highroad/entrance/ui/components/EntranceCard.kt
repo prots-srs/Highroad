@@ -15,12 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.protsprog.highroad.entrance.EntranceItem
-import com.protsprog.highroad.entrance.entranceItems
+import com.protsprog.highroad.entrance.data.EntranceItem
+import com.protsprog.highroad.entrance.data.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 
 @Preview(showBackground = true, widthDp = 360)
@@ -50,11 +51,12 @@ fun EntranceCardVertical(
     item: EntranceItem,
     onNavigationToScreen: () -> Unit
 ) {
+    val desc = stringResource(id = item.title.value)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onNavigationToScreen)
-            .semantics { contentDescription = item.title },
+            .semantics { contentDescription = desc },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
@@ -62,7 +64,7 @@ fun EntranceCardVertical(
     ) {
         Image(
             painter = painterResource(item.picture),
-            contentDescription = item.title,
+            contentDescription = stringResource(id = item.title.value),
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
@@ -71,7 +73,7 @@ fun EntranceCardVertical(
         )
 
         Text(
-            text = item.title,
+            text = stringResource(id = item.title.value),
             color = MaterialTheme.colorScheme.onSecondary,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
@@ -85,11 +87,12 @@ fun EntranceCardHorizontal(
     item: EntranceItem,
     onNavigationToScreen: () -> Unit
 ) {
+    val desc = stringResource(id = item.title.value)
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onNavigationToScreen)
-            .semantics { contentDescription = item.title },
+            .semantics { contentDescription = desc },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondary
@@ -102,7 +105,7 @@ fun EntranceCardHorizontal(
         ) {
             Image(
                 painter = painterResource(item.picture),
-                contentDescription = item.title,
+                contentDescription = stringResource(id = item.title.value),
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .width(320.dp)
@@ -110,7 +113,7 @@ fun EntranceCardHorizontal(
                     .clip(MaterialTheme.shapes.medium)
             )
             Text(
-                text = item.title,
+                text = stringResource(id = item.title.value),
                 color = MaterialTheme.colorScheme.onSecondary,
                 style = MaterialTheme.typography.titleLarge,
             )

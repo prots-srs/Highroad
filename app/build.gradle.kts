@@ -8,6 +8,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     kotlin("kapt")
+    kotlin("plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
@@ -18,7 +19,7 @@ val keystoreProperties = Properties().apply {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
     namespace = "com.protsprog.highroad"
     defaultConfig {
         applicationId = "com.protsprog.highroad"
@@ -90,7 +91,7 @@ dependencies {
 
 //    https://m2.material.io/develop/android/docs/getting-started
     implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.leanback:leanback:1.0.0")
+//    implementation("androidx.leanback:leanback:1.0.0")
 
     // Compose
     //https://developer.android.com/jetpack/compose/bom/bom-mapping
@@ -123,6 +124,9 @@ dependencies {
 //???    kapt("com.google.dagger:hilt-compiler:${rootProject.ext.get("hiltVersion")}")
 //----    ksp("com.google.dagger:hilt-compiler:${rootProject.ext.get("hiltVersion")}")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    implementation("com.google.dagger:dagger:2.48.1")
+    implementation("com.google.dagger:dagger-compiler:2.48.1")
 //    androidTestImplementation("com.google.dagger:hilt-android:${rootProject.ext.get("hiltVersion")}")
 //    androidTestImplementation("com.google.dagger:hilt-android-testing:${rootProject.ext.get("hiltVersion")}")
 
@@ -163,6 +167,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:${rootProject.ext.get("retrofitVersion")}")
 // Retrofit with Moshi Converter
     implementation("com.squareup.retrofit2:converter-moshi:${rootProject.ext.get("retrofitVersion")}")
+//    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
 // Moshi
 //https://github.com/square/moshi#codegen
@@ -190,5 +196,24 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation("androidx.compose.ui:ui-text-google-fonts")
+    implementation("androidx.compose.ui:ui-util")
+
+//    implementation("androidx.biometric:biometric:1.1.0")
+    implementation("androidx.biometric:biometric-ktx:1.2.0-alpha05")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+
+    // https://developer.android.com/jetpack/androidx/releases/glance
+    // For Glance support
+    implementation("androidx.glance:glance:1.0.0")
+    // For AppWidgets support
+    implementation("androidx.glance:glance-appwidget:1.0.0")
+    // For interop APIs with Material 2
+//    implementation("androidx.glance:glance-material:1.0.0")
+    // For interop APIs with Material 3
+    implementation("androidx.glance:glance-material3:1.0.0")
+
 //    implementation("androidx.credentials:credentials:1.2.0-beta02")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--https://developer.android.com/develop/ui/views/appwidgets#MetaData-->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/glance_todo_list_title"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewImage="@drawable/buttons_widget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="3"
+    android:targetCellHeight="2"></appwidget-provider>
+
+    <!--    android:initialLayout="@layout/widget_buttons"-->
+    <!--    android:previewLayout="@layout/widget_buttons_preview"-->
+    <!--    android:minWidth="180dp"-->
+    <!--    android:minHeight="180dp"-->
+    <!--    android:minResizeWidth="130dp"-->
+    <!--    android:minResizeHeight="96dp"-->
+    <!--    android:widgetCategory="home_screen"-->

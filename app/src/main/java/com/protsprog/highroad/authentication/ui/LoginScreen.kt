@@ -12,13 +12,13 @@ https://developer.android.com/codelabs/biometric-login?hl=en#0
 https://developer.android.com/jetpack/compose/tooling
 https://developer.android.com/jetpack/compose/animation/composables-modifiers#animatedvisibility
  */
+import androidx.biometric.BiometricManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,11 +31,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,32 +48,30 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
+import com.protsprog.highroad.authentication.ui.components.AuthFormButtonEscape
+import com.protsprog.highroad.authentication.ui.components.AuthFormButtonSubmit
 import com.protsprog.highroad.authentication.ui.components.LoadScreen
-import com.protsprog.highroad.authentication.ui.theme.AuthTheme
+import com.protsprog.highroad.authentication.ui.components.TouchBiometric
 
 private val layoutStep = 8.dp
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    email: String = "",
-    password: String = "",
-    sendRequest: Boolean = false,
-    loginError: String = "",
-    hasAuth: Boolean = false,
+    auth: AuthUIState = AuthUIState(),
+    login: LoginState = LoginState(),
     onChangeEmail: (String) -> Unit = {},
     onChangePassword: (String) -> Unit = {},
-    onSignIn: () -> Unit = {},
     onSubmit: () -> Unit = {},
     onNavigateUp: () -> Unit = {},
-    clearForm: () -> Unit = {}
+    clearForm: () -> Unit = {},
+    biometricStrings: BiometricManager.Strings? = null,
+    showBiometricButton: Boolean = false,
+    onClickBiometric: () -> Unit = {},
 ) {
-    val isError = loginError.isNotEmpty()
-
-    if (hasAuth) onNavigateUp()
+    val isError = auth.errorLogin.isNotEmpty()
 
     Column(
         modifier = modifier
@@ -92,20 +88,20 @@ fun LoginScreen(
             Spacer(modifier.height(layoutStep * 2))
             AuthFormFieldEmail(
                 modifier = modifier,
-                value = email,
+                value = login.email,
                 onValueChange = onChangeEmail,
                 isError = isError
             )
             Spacer(modifier.height(layoutStep * 2))
             AuthFormFieldPassword(
                 modifier = modifier,
-                value = password,
+                value = login.password,
                 onValueChange = onChangePassword,
                 onClickLogin = onSubmit,
                 isError = isError,
             )
             AnimatedVisibility(isError) {
-                ErrorForInput(text = loginError)
+                ErrorForInput(text = auth.errorLogin)
             }
             Spacer(modifier.height(layoutStep * 3))
             Row(
@@ -124,10 +120,17 @@ fun LoginScreen(
                     onClick = onSubmit
                 )
             }
+            if (showBiometricButton) {
+                Spacer(modifier.height(layoutStep * 3))
+                TouchBiometric(
+                    biometricStrings = biometricStrings,
+                    onClickShowBiometric = onClickBiometric
+                )
+            }
         }
     }
     AnimatedVisibility(
-        visible = sendRequest,
+        visible = auth.sendRequest,
         enter = fadeIn(
             initialAlpha = 0.4f
         ),
@@ -140,15 +143,15 @@ fun LoginScreen(
 }
 
 
-@Preview(device = "id:pixel_5", showBackground = true, backgroundColor = 0xFFF0F0FF)
-@Composable
-fun LoginScreenPreview() {
-    AuthTheme {
-        LoginScreen(
-            loginError = "Test error string",
-        )
-    }
-}
+//@Preview(device = "id:pixel_5", showBackground = true, backgroundColor = 0xFFF0F0FF)
+//@Composable
+//fun LoginScreenPreview() {
+//    AuthTheme {
+//        LoginScreen(
+//            loginError = "Test error string",
+//        )
+//    }
+//}
 
 @Composable
 fun AuthFormTitle() {
@@ -274,55 +277,5 @@ fun AuthFormFieldPasswordPreview() {
     }
 }
 */
-@Composable
-fun AuthFormButtonEscape(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    OutlinedButton(
-        modifier = modifier
-            .height(layoutStep * 6),
-        onClick = onClick,
-        contentPadding = PaddingValues(horizontal = layoutStep * 5)
-    ) {
-        Text(stringResource(R.string.auth_escape))
-    }
-}
 
-/*
-@Preview
-@Composable
-fun AuthFormButtonEscapePreview() {
-    AuthTheme {
-        AuthFormButtonEscape()
-    }
-}
-*/
-@Composable
-fun AuthFormButtonSubmit(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
-) {
-    Button(
-        modifier = modifier
-            .height(layoutStep * 6),
-        onClick = onClick,
-        contentPadding = PaddingValues(horizontal = layoutStep * 5)
-    ) {
-        Text(
-            text = stringResource(R.string.auth_sign_in),
-            maxLines = 1,
-            minLines = 1
-        )
-    }
-}
-
-/*
-@Preview
-@Composable
-fun AuthFormButtonSubmitPreview() {
-    AuthTheme {
-        AuthFormButtonSubmit()
-    }
-}*/
 

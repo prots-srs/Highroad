@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Input
+import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -60,6 +61,7 @@ fun AuthAppBar(
     onBackPressed: () -> Unit = {},
     onClickLogin: () -> Unit = {},
     onClickProfile: () -> Unit = {},
+    onClickLogout: () -> Unit = {}
 ) {
     var openUserMenu by remember { mutableStateOf(false) }
 
@@ -126,24 +128,35 @@ fun AuthAppBar(
                     },
                 )
 
-                DropdownMenuItem(
-                    onClick = onClickProfile,
-                    text = {
-                        Text(
-                            text = "View profile",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Settings,
-                            contentDescription = null,
-                            modifier = modifier.size(20.dp)
-                        )
-                    }
-                )
+                DropdownMenuItem(onClick = onClickProfile, text = {
+                    Text(
+                        text = "View profile",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }, trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = null,
+                        modifier = modifier.size(20.dp)
+                    )
+                })
+
+                DropdownMenuItem(text = {
+                    Text(
+                        text = "Sign out",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }, onClick = onClickLogout, trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Outlined.Logout,
+                        contentDescription = null,
+                        modifier = modifier.size(20.dp)
+                    )
+                })
             }
         } else {
             IconButton(

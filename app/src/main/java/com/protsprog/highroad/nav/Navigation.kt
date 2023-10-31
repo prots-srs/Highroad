@@ -1,5 +1,14 @@
 package com.protsprog.highroad.nav
 
+/*
+TO READ
+
+https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
+
+https://medium.com/androiddevelopers/advanced-layout-concepts-eb08cf2a3c8
+https://medium.com/androiddevelopers/compose-layouts-and-modifiers-mad-skills-wrap-up-1fe4621c64
+https://medium.com/androiddevelopers/mad-skills-performance-wrap-up-33688abfc51f
+ */
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,14 +37,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.protsprog.highroad.ApplicationViewModel
+import com.protsprog.highroad.BluetoothContainer
+import com.protsprog.highroad.BluetoothService
+import com.protsprog.highroad.BluetoothServiceImpl
+import com.protsprog.highroad.todo.ui.theme.ToDoTheme
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
+import com.protsprog.highroad.authentication.BiometricCryption
+import com.protsprog.highroad.authentication.ui.AuthViewModel
 import com.protsprog.highroad.authentication.ui.LoginScreen
 import com.protsprog.highroad.authentication.ui.ProfileEditScreen
 import com.protsprog.highroad.authentication.ui.ProfileScreen
 import com.protsprog.highroad.authentication.ui.theme.AuthTheme
+import com.protsprog.highroad.bluetoothcase.BluetoothScreen
 import com.protsprog.highroad.compose.ComposeScreen
 import com.protsprog.highroad.compose.accessibility.ui.theme.JetnewsTheme
 import com.protsprog.highroad.compose.animating.ui.Home
@@ -47,6 +63,8 @@ import com.protsprog.highroad.compose.bus_schedule.ui.RouteScheduleScreen
 import com.protsprog.highroad.compose.bus_schedule.ui.components.BusScheduleTopAppBar
 import com.protsprog.highroad.compose.bus_schedule.ui.theme.BusScheduleTheme
 import com.protsprog.highroad.compose.composePathways
+import com.protsprog.highroad.compose.customlayout.CustomLayoutHomeScreenDrawer
+import com.protsprog.highroad.compose.customlayout.ui.theme.JetLaggedTheme
 import com.protsprog.highroad.compose.datastore.ui.DessertReleaseApp
 import com.protsprog.highroad.compose.datastore.ui.theme.DessertReleaseTheme
 import com.protsprog.highroad.compose.introduce.LessonApp
@@ -68,13 +86,14 @@ import com.protsprog.highroad.compose.states.theme.StatesTheme
 import com.protsprog.highroad.compose.theming.ReplyScreen
 import com.protsprog.highroad.compose.theming.ui.theme.ReplyTheme
 import com.protsprog.highroad.entrance.EntranceScreen
-import com.protsprog.highroad.entrance.entranceItems
+import com.protsprog.highroad.entrance.data.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import com.protsprog.highroad.flightsearch.ui.FlightSearchScreen
 import com.protsprog.highroad.flightsearch.ui.theme.FlightSearchTheme
 import com.protsprog.highroad.motioncase.MotionScreen
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
+import com.protsprog.highroad.todo.ToDoScreen
 import com.protsprog.highroad.ui.components.AppBar
 import com.protsprog.highroad.ui.theme.IntroduceTheme
 import com.protsprog.highroad.util.DevicePosture
@@ -85,10 +104,16 @@ import com.protsprog.highroad.util.DevicePosture
 fun HighroadNavigation(
 //    appJetNewsContainer: AppJetNewsContainer,
 //    appInventoryContainer: AppInventoryContainer,
+    //    viewModel: ApplicationViewModel = hiltViewModel()
     windowWidthClass: WindowWidthSizeClass,
     devicePosture: DevicePosture,
-    viewModel: ApplicationViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    biometricCipher: BiometricCryption,
+    startRoute: String? = null,
+    bluetooth: BluetoothContainer
 ) {
+    authViewModel.setStateBiometricButton(biometricCipher.inNeedShowBiometricButton())
+
     val navController: NavHostController = rememberNavController()
 //    val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
@@ -96,14 +121,59 @@ fun HighroadNavigation(
 //    val navBackStackEntry by navController.currentBackStackEntryAsState()
     var caseTheme by rememberSaveable { mutableStateOf<TYPE_THEME>(TYPE_THEME.MAIN) }
 
+    if (startRoute != null) {
+        LaunchedEffect(Unit) {
+            navController.navigate(route = startRoute)
+        }
+    }
     NavigationThemeSwitcher(typeAppTheme = caseTheme) {
 
         NavHost(
-            navController = navController,
+            modifier = Modifier, navController = navController,
             startDestination = Entrance.route,
-//            startDestination = MotionCase.route,
-            modifier = Modifier
         ) {
+
+            composable(route = BluetoothCase.route) {
+                BluetoothScreen(
+                    onNavigateUp = { navController.navigateUp() },
+                    bluetooth = bluetooth)
+            }
+
+            composable(route = AuthDestinations.loginPage) {
+                caseTheme = TYPE_THEME.AUTH
+
+                LoginScreen(auth = authViewModel.authUIState,
+                    login = authViewModel.loginUIState,
+                    onNavigateUp = { navController.navigateUp() },
+                    onChangeEmail = authViewModel::onChangeEmail,
+                    onChangePassword = authViewModel::onChangePassword,
+                    clearForm = authViewModel::clearLoginForm,
+                    onSubmit = {
+                        authViewModel.onSubmitLogin {
+                            biometricCipher.showBiometricPromptForEncryption {
+                                navController.navigateUp()
+                            }
+                        }
+                    },
+                    biometricStrings = biometricCipher.getBiometricStrings(),
+                    showBiometricButton = authViewModel.authUIState.showBiometricButton,
+                    onClickBiometric = {
+                        biometricCipher.showBiometricPromptForDecryption {
+                            authViewModel.biometricLogin {
+                                navController.navigateUp()
+                            }
+                        }
+                    })
+            }
+            composable(route = ToDoCase.route) {
+                caseTheme = TYPE_THEME.TODO
+
+                ToDoScreen(
+                    scaffoldState = scaffoldState,
+                    onNavigateUp = { navController.navigateUp() },
+                )
+            }
+
             composable(route = Entrance.route) {
                 caseTheme = TYPE_THEME.MAIN
 
@@ -116,24 +186,20 @@ fun HighroadNavigation(
                         }
                     }.toMap(),
                     hasBack = navController.previousBackStackEntry != null,
-                    userUIState = viewModel.authUIStates,
+                    authUIStates = authViewModel.authUIState,
+                    userUIState = authViewModel.userUIState,
                     onBackPressed = { navController.navigateUp() },
                     onClickLogin = { navController.navigate(route = AuthDestinations.loginPage) },
-                    onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) }
+                    onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) },
+                    onClickLogout = authViewModel::onClickLogout
                 )
             }
 
             composable(route = Compose.route) {
                 caseTheme = TYPE_THEME.MAIN
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    topBar = {
-                        AppBar(
-                            title = Compose.title,
-                            onBackPressed = { navController.navigateUp() }
-                        )
-                    }
-                ) { innerPadding ->
+                Scaffold(scaffoldState = scaffoldState, topBar = {
+                    AppBar(title = Compose.title, onBackPressed = { navController.navigateUp() })
+                }) { innerPadding ->
                     ComposeScreen(
                         modifier = Modifier.padding(innerPadding),
                         navigations = composePathways.map {
@@ -152,8 +218,7 @@ fun HighroadNavigation(
             }
 
             composable(
-                route = ComposeCase.routeWithArgs,
-                arguments = ComposeCase.arguments
+                route = ComposeCase.routeWithArgs, arguments = ComposeCase.arguments
             ) { backStackEntry ->
                 val caseId = backStackEntry.let {
                     it.arguments?.getInt("case_id", 1)
@@ -167,6 +232,7 @@ fun HighroadNavigation(
                     5 -> caseTheme = TYPE_THEME.COMPOSE_ANIMATION
                     6 -> caseTheme = TYPE_THEME.COMPOSE_CRANE
                     11 -> caseTheme = TYPE_THEME.COMPOSE_DATASTORE
+                    12 -> caseTheme = TYPE_THEME.COMPOSE_LAYOUT
                     else -> caseTheme = TYPE_THEME.MAIN
                 }
 
@@ -175,29 +241,25 @@ fun HighroadNavigation(
                     2 -> BasicLayoutsApp()
                     3 -> WellnessScreen(Modifier.fillMaxSize())
                     4 -> ReplyScreen(
-                        windowWidthClass = windowWidthClass,
-                        foldingDevicePosture = devicePosture
+                        windowWidthClass = windowWidthClass, foldingDevicePosture = devicePosture
                     )
 
                     5 -> Home()
 
 //                Crane
-                    6 -> MainScreen(
-                        onExploreItemClicked = { cityName ->
-                            navController.navigate("${ComposeCaseMap.route}/${cityName}")
-                        }
-                    )
+                    6 -> MainScreen(onExploreItemClicked = { cityName ->
+                        navController.navigate("${ComposeCaseMap.route}/${cityName}")
+                    })
 
                     11 -> DessertReleaseApp()
-
+                    12 -> CustomLayoutHomeScreenDrawer()
                     else -> {}
                 }
             }
 
 //        Crane detail
             composable(
-                route = ComposeCaseMap.routeWithArgs,
-                arguments = ComposeCaseMap.arguments
+                route = ComposeCaseMap.routeWithArgs, arguments = ComposeCaseMap.arguments
             ) { navBackStackEntry ->
                 caseTheme = TYPE_THEME.COMPOSE_CRANE
 
@@ -210,21 +272,14 @@ fun HighroadNavigation(
 //        Articles
 //                adb shell am start -a android.intent.action.VIEW -d "highroad://articles"
             composable(
-                route = Articles.route,
-                deepLinks = listOf(navDeepLink {
+                route = Articles.route, deepLinks = listOf(navDeepLink {
                     uriPattern = "highroad://${Articles.route}"
                 })
             ) {
                 caseTheme = TYPE_THEME.ARTICLES
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    topBar = {
-                        AppBar(
-                            title = Articles.title,
-                            onBackPressed = { navController.navigateUp() }
-                        )
-                    }
-                ) { innerPadding ->
+                Scaffold(scaffoldState = scaffoldState, topBar = {
+                    AppBar(title = Articles.title, onBackPressed = { navController.navigateUp() })
+                }) { innerPadding ->
                     ArticleScreen(
                         modifier = Modifier.padding(innerPadding),
                         windowWidthClass = windowWidthClass
@@ -235,15 +290,9 @@ fun HighroadNavigation(
 //        TicTacToe
             composable(route = TicTacToe.route) {
                 caseTheme = TYPE_THEME.TICTACTOE
-                Scaffold(
-                    scaffoldState = scaffoldState,
-                    topBar = {
-                        AppBar(
-                            title = TicTacToe.title,
-                            onBackPressed = { navController.navigateUp() }
-                        )
-                    }
-                ) { innerPadding ->
+                Scaffold(scaffoldState = scaffoldState, topBar = {
+                    AppBar(title = TicTacToe.title, onBackPressed = { navController.navigateUp() })
+                }) { innerPadding ->
                     TicTacToeScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
@@ -253,19 +302,18 @@ fun HighroadNavigation(
 //            Inventory
             composable(route = InventoryHomeDestination.route) {
                 caseTheme = TYPE_THEME.COMPOSE_INVENTORY
-                InventoryHomeScreen(
-                    navigateToItemEntry = { navController.navigate(InventoryItemEntryDestination.route) },
-                    navigateToItemUpdate = {
-                        navController.navigate("${InventoryItemDetailsDestination.route}/${it}")
-                    }
-                )
+                InventoryHomeScreen(navigateToItemEntry = {
+                    navController.navigate(
+                        InventoryItemEntryDestination.route
+                    )
+                }, navigateToItemUpdate = {
+                    navController.navigate("${InventoryItemDetailsDestination.route}/${it}")
+                })
             }
             composable(route = InventoryItemEntryDestination.route) {
                 caseTheme = TYPE_THEME.COMPOSE_INVENTORY
-                InventoryItemEntryScreen(
-                    navigateBack = { navController.popBackStack() },
-                    onNavigateUp = { navController.navigateUp() }
-                )
+                InventoryItemEntryScreen(navigateBack = { navController.popBackStack() },
+                    onNavigateUp = { navController.navigateUp() })
             }
             composable(
                 route = InventoryItemDetailsDestination.routeWithArgs,
@@ -274,10 +322,8 @@ fun HighroadNavigation(
                 })
             ) {
                 caseTheme = TYPE_THEME.COMPOSE_INVENTORY
-                InventoryItemDetailsScreen(
-                    navigateToEditItem = { navController.navigate("${InventoryItemEditDestination.route}/$it") },
-                    navigateBack = { navController.navigateUp() }
-                )
+                InventoryItemDetailsScreen(navigateToEditItem = { navController.navigate("${InventoryItemEditDestination.route}/$it") },
+                    navigateBack = { navController.navigateUp() })
             }
             composable(
                 route = InventoryItemEditDestination.routeWithArgs,
@@ -286,10 +332,8 @@ fun HighroadNavigation(
                 })
             ) {
                 caseTheme = TYPE_THEME.COMPOSE_INVENTORY
-                InventoryItemEditScreen(
-                    navigateBack = { navController.popBackStack() },
-                    onNavigateUp = { navController.navigateUp() }
-                )
+                InventoryItemEditScreen(navigateBack = { navController.popBackStack() },
+                    onNavigateUp = { navController.navigateUp() })
             }
 
 
@@ -303,30 +347,24 @@ fun HighroadNavigation(
                     navController.navigateUp()
                 }
 
-                Scaffold(
-                    topBar = {
-                        BusScheduleTopAppBar(
-                            title = topAppBarTitle,
-                            canNavigateBack = navController.previousBackStackEntry != null,
-                            onBackClick = { onBackHandler() }
-                        )
-                    }
-                ) { innerPadding ->
+                Scaffold(topBar = {
+                    BusScheduleTopAppBar(title = topAppBarTitle,
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        onBackClick = { onBackHandler() })
+                }) { innerPadding ->
 
                     val viewModel: BusScheduleViewModel =
                         viewModel(factory = BusScheduleViewModel.factory)
                     val fullSchedule by viewModel.uiStateFull.collectAsState()
 
-                    FullScheduleScreen(
-                        modifier = Modifier.padding(innerPadding),
+                    FullScheduleScreen(modifier = Modifier.padding(innerPadding),
                         busSchedules = fullSchedule,
                         onScheduleClick = { busStopName ->
                             navController.navigate(
                                 "${BusScheduleDestinations.RouteSchedule.name}/$busStopName"
                             )
                             topAppBarTitle = busStopName
-                        }
-                    )
+                        })
                 }
             }
 
@@ -345,74 +383,56 @@ fun HighroadNavigation(
                     topAppBarTitle = stopName
                     navController.navigateUp()
                 }
-                Scaffold(
-                    topBar = {
-                        BusScheduleTopAppBar(
-                            title = topAppBarTitle,
-                            canNavigateBack = navController.previousBackStackEntry != null,
-                            onBackClick = { onBackHandler() }
-                        )
-                    }
-                ) { innerPadding ->
+                Scaffold(topBar = {
+                    BusScheduleTopAppBar(title = topAppBarTitle,
+                        canNavigateBack = navController.previousBackStackEntry != null,
+                        onBackClick = { onBackHandler() })
+                }) { innerPadding ->
 
                     val viewModel: BusScheduleViewModel =
                         viewModel(factory = BusScheduleViewModel.factory)
                     viewModel.getScheduleFor(stopName)
                     val routeSchedule by viewModel.uiStateRoute.collectAsState()
 
-                    RouteScheduleScreen(
-                        modifier = Modifier.padding(innerPadding),
+                    RouteScheduleScreen(modifier = Modifier.padding(innerPadding),
                         stopName = stopName,
                         busSchedules = routeSchedule,
-                        onBack = { onBackHandler() }
-                    )
+                        onBack = { onBackHandler() })
                 }
             }
 
             composable(route = FlightSearch.route) {
                 caseTheme = TYPE_THEME.FLIGHT_SEARCH
-                FlightSearchScreen(
-                    onBackPressed = { navController.navigateUp() }
-                )
+                FlightSearchScreen(onBackPressed = { navController.navigateUp() })
             }
             composable(route = MotionCase.route) {
                 caseTheme = TYPE_THEME.MOTION_CASE
-                MotionScreen(
-                    windowWidthClass = windowWidthClass,
-                    onBackPressed = { navController.navigateUp() }
-                )
+                MotionScreen(windowWidthClass = windowWidthClass,
+                    onBackPressed = { navController.navigateUp() })
             }
 
 //        RALLY
             composable(route = RallyOverview.route) {
                 caseTheme = TYPE_THEME.COMPOSE_RALLY
 
-                OverviewScreen(
-                    onTabSelected = { route ->
-                        navController.navigateSingleTopTo(route)
-                    },
-                    onClickSeeAllAccounts = {
-                        navController.navigate(RallyAccounts.route)
-                    },
-                    onClickSeeAllBills = {
-                        navController.navigate(RallyBills.route)
-                    },
-                    onAccountClick = { accountType ->
-                        navController.navigateToSingleAccount(accountType)
-                    }
-                )
+                OverviewScreen(onTabSelected = { route ->
+                    navController.navigateSingleTopTo(route)
+                }, onClickSeeAllAccounts = {
+                    navController.navigate(RallyAccounts.route)
+                }, onClickSeeAllBills = {
+                    navController.navigate(RallyBills.route)
+                }, onAccountClick = { accountType ->
+                    navController.navigateToSingleAccount(accountType)
+                })
             }
             composable(route = RallyAccounts.route) {
                 caseTheme = TYPE_THEME.COMPOSE_RALLY
 
-                AccountsScreen(
-                    onTabSelected = { route ->
-                        navController.navigateSingleTopTo(route)
-                    },
-                    onAccountClick = { accountType ->
-                        navController.navigateToSingleAccount(accountType)
-                    }
-                )
+                AccountsScreen(onTabSelected = { route ->
+                    navController.navigateSingleTopTo(route)
+                }, onAccountClick = { accountType ->
+                    navController.navigateToSingleAccount(accountType)
+                })
             }
             composable(route = RallyBills.route) {
                 caseTheme = TYPE_THEME.COMPOSE_RALLY
@@ -436,8 +456,7 @@ fun HighroadNavigation(
                 SingleAccountScreen(
                     onTabSelected = { route ->
                         navController.navigateSingleTopTo(route)
-                    },
-                    accountType
+                    }, accountType
                 )
             }
 
@@ -452,39 +471,22 @@ fun HighroadNavigation(
                 )*/
             }
 
-            composable(route = AuthDestinations.loginPage) {
-                caseTheme = TYPE_THEME.AUTH
-                LoginScreen(
-                    email = viewModel.authUIStates.user.email,
-                    password = viewModel.authUIStates.password,
-                    sendRequest = viewModel.authUIStates.sendRequest,
-                    loginError = viewModel.authUIStates.errorLogin,
-                    hasAuth = viewModel.authUIStates.hasAuth,
-                    onNavigateUp = { navController.navigateUp() },
-                    onChangeEmail = viewModel::onChangeEmail,
-                    onChangePassword = viewModel::onChangePassword,
-                    clearForm = viewModel::clearLoginForm,
-                    onSubmit = viewModel::onSubmitLogin,
-                )
-            }
-
             composable(route = AuthDestinations.profilePage) {
                 caseTheme = TYPE_THEME.AUTH
-                ProfileScreen(
-                    user = viewModel.authUIStates.user,
+                ProfileScreen(user = authViewModel.userUIState,
                     onNavigateUp = { navController.navigateUp() },
-                    sendRequest = viewModel.authUIStates.sendRequest,
-                    onSwipeUpdateData = viewModel::updateUserData,
-                    onClickEdit = { navController.navigate(AuthDestinations.profileEditPage) }
-                )
+                    sendRequest = authViewModel.authUIState.sendRequest,
+                    onSwipeUpdateData = authViewModel::updateUserData,
+                    onClickEdit = { navController.navigate(AuthDestinations.profileEditPage) })
             }
 
             composable(route = AuthDestinations.profileEditPage) {
                 caseTheme = TYPE_THEME.AUTH
                 ProfileEditScreen(
-                    user = viewModel.authUIStates.user,
+                    user = authViewModel.userUIState,
                     onNavigateUp = { navController.navigateUp() },
-                    onClickSave = viewModel::saveUserData
+                    onClickSave = authViewModel::saveUserData,
+                    saveError = authViewModel.authUIState.errorLogin,
                 )
             }
 
@@ -610,17 +612,16 @@ fun HighroadNavHost(
 }
 */
 
-fun NavHostController.navigateSingleTopTo(route: String) =
-    this.navigate(route) {
-        popUpTo(
+fun NavHostController.navigateSingleTopTo(route: String) = this.navigate(route) {
+    popUpTo(
 //            this@navigateSingleTopTo.graph.findStartDestination().id
-            Compose.route
-        ) {
-            saveState = true
-        }
-//        restoreState = true
-        launchSingleTop = true
+        Compose.route
+    ) {
+        saveState = true
     }
+//        restoreState = true
+    launchSingleTop = true
+}
 
 
 private fun NavHostController.navigateToSingleAccount(accountType: String) {
@@ -628,29 +629,12 @@ private fun NavHostController.navigateToSingleAccount(accountType: String) {
 }
 
 enum class TYPE_THEME {
-    MAIN,
-    COMPOSE_INTRODUCE,
-    COMPOSE_BASICLAYOUT,
-    COMPOSE_STATES,
-    COMPOSE_THEMING,
-    COMPOSE_ANIMATION,
-    COMPOSE_CRANE,
-    COMPOSE_RALLY,
-    COMPOSE_JETNEWS,
-    COMPOSE_INVENTORY,
-    COMPOSE_BUSSCHEDULE,
-    COMPOSE_DATASTORE,
-    ARTICLES,
-    TICTACTOE,
-    FLIGHT_SEARCH,
-    MOTION_CASE,
-    AUTH
+    TODO, MAIN, COMPOSE_INTRODUCE, COMPOSE_BASICLAYOUT, COMPOSE_STATES, COMPOSE_THEMING, COMPOSE_ANIMATION, COMPOSE_CRANE, COMPOSE_RALLY, COMPOSE_JETNEWS, COMPOSE_INVENTORY, COMPOSE_BUSSCHEDULE, COMPOSE_DATASTORE, COMPOSE_LAYOUT, ARTICLES, TICTACTOE, FLIGHT_SEARCH, MOTION_CASE, AUTH
 }
 
 @Composable
 fun NavigationThemeSwitcher(
-    typeAppTheme: TYPE_THEME,
-    content: @Composable () -> Unit
+    typeAppTheme: TYPE_THEME, content: @Composable () -> Unit
 ) {
     when (typeAppTheme) {
         TYPE_THEME.MAIN -> EntranceTheme(content = content)
@@ -662,12 +646,12 @@ fun NavigationThemeSwitcher(
         TYPE_THEME.COMPOSE_CRANE -> CraneTheme(content = content)
         TYPE_THEME.COMPOSE_RALLY -> RallyTheme(content = content)
         TYPE_THEME.COMPOSE_JETNEWS -> JetnewsTheme(content = content)
+        TYPE_THEME.COMPOSE_LAYOUT -> JetLaggedTheme(content = content)
         TYPE_THEME.ARTICLES -> ArticlesTheme(content = content)
         TYPE_THEME.TICTACTOE -> TicTacToeTheme(content = content)
         TYPE_THEME.COMPOSE_INVENTORY -> InventoryTheme {
             Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
             ) {
                 content()
             }
@@ -678,5 +662,6 @@ fun NavigationThemeSwitcher(
         TYPE_THEME.FLIGHT_SEARCH -> FlightSearchTheme(content = content)
         TYPE_THEME.MOTION_CASE -> FlightSearchTheme(content = content)
         TYPE_THEME.AUTH -> AuthTheme(content = content)
+        TYPE_THEME.TODO -> ToDoTheme(content = content)
     }
 }

@@ -21,6 +21,7 @@ import com.protsprog.highroad.compose.navigation.ui.accounts.SingleAccountScreen
 import com.protsprog.highroad.compose.navigation.ui.bills.BillsScreen
 import com.protsprog.highroad.compose.navigation.ui.overview.OverviewScreen
 import com.protsprog.highroad.entrance.EntranceScreen
+import com.protsprog.highroad.entrance.data.StringResource
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 
 interface HighroadDestination {
@@ -175,6 +176,17 @@ object InventoryItemEditDestination : InventoryDestination {
     const val itemIdArg = "itemId"
     val routeWithArgs = "$route/{$itemIdArg}"
 }
+
+object ToDoCase : InventoryDestination {
+    override val titleRes = R.string.entrance_todo_case_title
+    override val route = "todocase"
+}
+
+object BluetoothCase : InventoryDestination {
+    override val route = "bluetooth"
+    override val titleRes = R.string.entrance_bluetooth
+}
+
 
 /*
 Bus Schedule app
