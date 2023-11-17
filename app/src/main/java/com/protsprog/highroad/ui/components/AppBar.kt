@@ -23,39 +23,18 @@ import androidx.compose.ui.unit.dp
 import com.protsprog.highroad.R
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import com.protsprog.highroad.nav.Compose
-import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 
 @Composable
 fun AppBar(
-    title:String,
+    title: String,
     modifier: Modifier = Modifier,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
 ) {
     TopAppBar(
         modifier = modifier,
         backgroundColor = MaterialTheme.colorScheme.surface,
-        title = {
-            Column {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = onBackPressed,
-                modifier = Modifier.padding(8.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = stringResource(id = R.string.theming_back_button),
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-        }
+        title = { AppBarTitle(title) },
+        navigationIcon = { AppBarBackIcon(onBackPressed) },
     )
 }
 
@@ -78,6 +57,8 @@ fun AppBarPreviewThemes() {
         )
     }
 }
+
+/*
 @Preview(showBackground = true)
 @Composable
 fun AppBarPreviewThemeTicTacToe() {
@@ -88,3 +69,5 @@ fun AppBarPreviewThemeTicTacToe() {
         )
     }
 }
+
+ */

@@ -4,23 +4,27 @@ package com.protsprog.highroad
 READ
 https://developer.android.com/training/dependency-injection/hilt-android#define-bindings
 https://developer.android.com/reference/kotlin/androidx/activity/ComponentActivity
+https://developer.android.com/reference/android/bluetooth/BluetoothAdapter#ACTION_DISCOVERY_STARTED
 
 https://m3.material.io/foundations/layout/applying-layout/window-size-classes
 
 https://github.com/android/compose-samples/blob/main/JetNews
 
 https://developer.android.com/develop/connectivity/bluetooth/setup
+
  */
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_FINISHED
+import android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_STARTED
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothDevice.ACTION_BOND_STATE_CHANGED
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +36,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
 import com.protsprog.highroad.authentication.BiometricCipher
+import com.protsprog.highroad.bluetoothcase.toState
 import com.protsprog.highroad.nav.HighroadNavigation
 import com.protsprog.highroad.util.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,8 +58,15 @@ class MainActivity : AppCompatActivity() {
         bluetoothService = BluetoothServiceImpl(this)
 
 // Register for broadcasts when a device is discovered.
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        registerReceiver(receiver, filter)
+        val filterBTFound = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        val filterBTDiscoveryStart = IntentFilter(ACTION_DISCOVERY_STARTED)
+        val filterBTDiscoveryFinish = IntentFilter(ACTION_DISCOVERY_FINISHED)
+        val filterBTBondState = IntentFilter(ACTION_BOND_STATE_CHANGED)
+
+        registerReceiver(receiver, filterBTFound)
+        registerReceiver(receiver, filterBTDiscoveryStart)
+        registerReceiver(receiver, filterBTDiscoveryFinish)
+        registerReceiver(receiver, filterBTBondState)
 
         checkPermissionBluetooth()
 
@@ -144,6 +156,7 @@ class MainActivity : AppCompatActivity() {
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
             val action: String? = intent.action
+//            Log.d(TAG_BLUETOOTH_TEST, "action: ${action}")
             when (action) {
                 BluetoothDevice.ACTION_FOUND -> {
                     // Discovery has found a device. Get the BluetoothDevice
@@ -151,7 +164,25 @@ class MainActivity : AppCompatActivity() {
                     val device: BluetoothDevice? =
                         intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
 
-                    Log.d(TAG_BLUETOOTH_TEST, "device: ${device?.name} -> ${device?.address}")
+                    device?.let {
+//                        Log.d(TAG_BLUETOOTH_TEST, "device: ${it.name} -> ${it.address}")
+
+                        bluetoothService.service.showDiscoveredDevices(it.toState())
+                    }
+                }
+
+                ACTION_DISCOVERY_STARTED -> {
+                    bluetoothService.service.startDiscovering()
+//                    Log.d(TAG_BLUETOOTH_TEST, "action A: ${action}")
+                }
+
+                ACTION_DISCOVERY_FINISHED -> {
+                    bluetoothService.service.finishDiscovering()
+//                    Log.d(TAG_BLUETOOTH_TEST, "action B: ${action}")
+                }
+
+                ACTION_BOND_STATE_CHANGED -> {
+//                    Log.d(TAG_BLUETOOTH_TEST, "action B: ${action}")
                 }
             }
         }

@@ -10,6 +10,7 @@ https://medium.com/androiddevelopers/compose-layouts-and-modifiers-mad-skills-wr
 https://medium.com/androiddevelopers/mad-skills-performance-wrap-up-33688abfc51f
  */
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -38,10 +39,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.protsprog.highroad.BluetoothContainer
-import com.protsprog.highroad.BluetoothService
-import com.protsprog.highroad.BluetoothServiceImpl
-import com.protsprog.highroad.todo.ui.theme.ToDoTheme
 import com.protsprog.highroad.R
+import com.protsprog.highroad.articles.ArticleDetailScreen
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
 import com.protsprog.highroad.authentication.BiometricCryption
@@ -49,6 +48,7 @@ import com.protsprog.highroad.authentication.ui.AuthViewModel
 import com.protsprog.highroad.authentication.ui.LoginScreen
 import com.protsprog.highroad.authentication.ui.ProfileEditScreen
 import com.protsprog.highroad.authentication.ui.ProfileScreen
+import com.protsprog.highroad.authentication.ui.StateActionsAuthTopBar
 import com.protsprog.highroad.authentication.ui.theme.AuthTheme
 import com.protsprog.highroad.bluetoothcase.BluetoothScreen
 import com.protsprog.highroad.compose.ComposeScreen
@@ -94,6 +94,7 @@ import com.protsprog.highroad.motioncase.MotionScreen
 import com.protsprog.highroad.tictactoe.TicTacToeScreen
 import com.protsprog.highroad.tictactoe.ui.theme.TicTacToeTheme
 import com.protsprog.highroad.todo.ToDoScreen
+import com.protsprog.highroad.todo.ui.theme.ToDoTheme
 import com.protsprog.highroad.ui.components.AppBar
 import com.protsprog.highroad.ui.theme.IntroduceTheme
 import com.protsprog.highroad.util.DevicePosture
@@ -126,6 +127,18 @@ fun HighroadNavigation(
             navController.navigate(route = startRoute)
         }
     }
+
+    val authServices = StateActionsAuthTopBar(
+        name = authViewModel.userUIState.name,
+        email = authViewModel.userUIState.email,
+        hasAuthorization = authViewModel.authUIState.hasAuth,
+        onClickLogin = { navController.navigate(route = AuthDestinations.loginPage) },
+        onClickLogout = authViewModel::onClickLogout,
+        onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) }
+    )
+
+    val actionsArticles = remember(navController) { ArticlesActions(navController) }
+
     NavigationThemeSwitcher(typeAppTheme = caseTheme) {
 
         NavHost(
@@ -134,9 +147,12 @@ fun HighroadNavigation(
         ) {
 
             composable(route = BluetoothCase.route) {
+                caseTheme = TYPE_THEME.MAIN
+
                 BluetoothScreen(
                     onNavigateUp = { navController.navigateUp() },
-                    bluetooth = bluetooth)
+                    bluetooth = bluetooth
+                )
             }
 
             composable(route = AuthDestinations.loginPage) {
@@ -177,21 +193,64 @@ fun HighroadNavigation(
             composable(route = Entrance.route) {
                 caseTheme = TYPE_THEME.MAIN
 
+                val navEntranceRoutes = entranceItems.map {
+                    it.destination to {
+                        navController.navigate(it.destination)
+                    }
+                }.toMap()
+                val entranceList = entranceItems.filter {
+                    (it.freeShow || (it.freeShow == false && authViewModel.authUIState.hasAuth)) && navEntranceRoutes.get(
+                        it.destination
+                    ) != null
+                }
+
+//                Log.d("TEST_FLOW", "nav: entrance")
+
                 EntranceScreen(
                     scaffoldState = scaffoldState,
                     windowWidthClass = windowWidthClass,
-                    navigations = entranceItems.map {
-                        it.destination to {
-                            navController.navigate(it.destination)
-                        }
-                    }.toMap(),
+                    navigations = navEntranceRoutes,
+                    list = entranceList,
                     hasBack = navController.previousBackStackEntry != null,
-                    authUIStates = authViewModel.authUIState,
-                    userUIState = authViewModel.userUIState,
                     onBackPressed = { navController.navigateUp() },
-                    onClickLogin = { navController.navigate(route = AuthDestinations.loginPage) },
-                    onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) },
-                    onClickLogout = authViewModel::onClickLogout
+                    authService = authServices
+                )
+            }
+
+//        Articles
+//                adb shell am start -a android.intent.action.VIEW -d "highroad://articles"
+            composable(
+                route = Articles.route,
+                deepLinks = listOf(navDeepLink {
+                    uriPattern = "highroad://${Articles.route}"
+                })
+            ) {
+                caseTheme = TYPE_THEME.ARTICLES
+
+//                why double load?
+//                Log.d("TEST_FLOW", "nav: articles")
+
+                ArticleScreen(
+                    windowWidthClass = windowWidthClass,
+                    hasBack = navController.previousBackStackEntry != null,
+                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+                    authService = authServices,
+                    navigateToArticle = actionsArticles.navigateToArticle,
+                )
+            }
+
+            composable(
+                route = Articles.routeWithArgs,
+                arguments = Articles.arguments
+            ) { backStackEntry ->
+                caseTheme = TYPE_THEME.ARTICLES
+
+                ArticleDetailScreen(
+                    windowWidthClass = windowWidthClass,
+                    hasBack = navController.previousBackStackEntry != null,
+                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+                    authService = authServices,
+                    itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0
                 )
             }
 
@@ -267,24 +326,6 @@ fun HighroadNavigation(
                     navBackStackEntry.arguments?.getString(ComposeCaseMap.accountTypeArg) ?: ""
 
                 DetailScreenLaunch(cityName = cityName)
-            }
-
-//        Articles
-//                adb shell am start -a android.intent.action.VIEW -d "highroad://articles"
-            composable(
-                route = Articles.route, deepLinks = listOf(navDeepLink {
-                    uriPattern = "highroad://${Articles.route}"
-                })
-            ) {
-                caseTheme = TYPE_THEME.ARTICLES
-                Scaffold(scaffoldState = scaffoldState, topBar = {
-                    AppBar(title = Articles.title, onBackPressed = { navController.navigateUp() })
-                }) { innerPadding ->
-                    ArticleScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        windowWidthClass = windowWidthClass
-                    )
-                }
             }
 
 //        TicTacToe

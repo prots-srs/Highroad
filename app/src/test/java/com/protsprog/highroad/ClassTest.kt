@@ -13,7 +13,7 @@ class ClassTest {
         val quiz = Quiz().apply {
             printQuiz()
         }
-//        quiz.printQuiz()
+        quiz.printQuiz()
 
 
         println("-")

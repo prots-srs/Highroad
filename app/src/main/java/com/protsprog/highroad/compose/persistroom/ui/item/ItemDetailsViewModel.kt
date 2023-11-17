@@ -3,10 +3,7 @@ package com.protsprog.highroad.compose.persistroom.ui.item
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.protsprog.highroad.compose.persistroom.data.Item
 import com.protsprog.highroad.compose.persistroom.data.ItemsRepository
-import com.protsprog.highroad.compose.persistroom.ui.home.HomeUiState
-import com.protsprog.highroad.compose.persistroom.ui.home.HomeViewModel
 import com.protsprog.highroad.nav.InventoryItemDetailsDestination
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

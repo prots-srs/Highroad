@@ -15,9 +15,7 @@ import com.protsprog.highroad.compose.navigation.data.UserData
 import com.protsprog.highroad.compose.navigation.ui.components.BillRow
 import com.protsprog.highroad.compose.navigation.ui.components.RallyTopAppBar
 import com.protsprog.highroad.compose.navigation.ui.components.StatementBody
-import com.protsprog.highroad.nav.HighroadDestination
 import com.protsprog.highroad.nav.RallyBills
-import com.protsprog.highroad.nav.RallyOverview
 import com.protsprog.highroad.nav.rallyTabRowScreens
 
 /**

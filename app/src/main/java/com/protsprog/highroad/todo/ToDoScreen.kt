@@ -33,7 +33,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ToDoScreen(
-    modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState,
     onNavigateUp: () -> Unit = {},
     viewModel: ToDoListViewModel = hiltViewModel()

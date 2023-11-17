@@ -20,6 +20,13 @@ data class EntranceItem(
 
 val entranceItems = listOf(
     EntranceItem(
+        id = 1,
+        picture = R.drawable.banner_article,
+        title = StringResource(R.string.entrance_title_case_article),
+        destination = Articles.route,
+        freeShow = true
+    ),
+    EntranceItem(
         id = 7,
         picture = R.drawable.bluetothcase,
         title = StringResource(BluetoothCase.titleRes),
@@ -58,11 +65,5 @@ val entranceItems = listOf(
         picture = R.drawable.banner_compose,
         title = StringResource(R.string.entrance_title_case_compose),
         destination = Compose.route
-    ),
-    EntranceItem(
-        id = 1,
-        picture = R.drawable.banner_article,
-        title = StringResource(R.string.entrance_title_case_article),
-        destination = Articles.route
     ),
 )

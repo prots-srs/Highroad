@@ -51,7 +51,7 @@ interface ToDoListDao {
     fun getAll(): Flow<List<ToDoEntity>>
 
     @Query("SELECT * from todolist WHERE sort = :sort")
-    fun getTask(sort: Int): ToDoEntity
+    fun getTask(sort: Int): ToDoEntity?
 }
 
 @Database(entities = [ToDoEntity::class], version = 1)

@@ -31,12 +31,12 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.protsprog.highroad.nav.HighroadDestination
+import com.protsprog.highroad.nav.IconDestination
 import java.util.Locale
 
 @Composable
 fun RallyTopAppBar(
-    allScreens: List<HighroadDestination>,
+    allScreens: List<IconDestination>,
     onTabSelected: (String) -> Unit,
     currentScreenRoute:String
 ) {

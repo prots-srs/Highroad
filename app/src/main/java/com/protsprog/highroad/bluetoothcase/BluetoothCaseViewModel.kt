@@ -1,5 +1,6 @@
 package com.protsprog.highroad.bluetoothcase
 
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -13,22 +14,55 @@ import javax.inject.Inject
 
 data class StatePairDevice(
     val name: String = "",
-    val adress: String = "",
+    val address: String = "",
     val boundState: Int = 0
+)
+
+data class BTChatMessages(
+    val author: String,
+    val owner: Boolean,
+    val message: String,
+    val timestamp: Int,
+    val date: String
+)
+
+@SuppressLint("MissingPermission")
+fun BluetoothDevice.toState() = StatePairDevice(
+    name = name ?: "",
+    address = address ?: "",
+    boundState = bondState
 )
 
 data class BluetoothUIState(
     var supported: Boolean = false,
     var enabled: Boolean = false,
-    var pairDevices: List<StatePairDevice> = emptyList()
+    var finding: Boolean = false,
+    var showToast: Boolean = false,
+    var errorMessage: String = "",
+    var showThrowing: Boolean = false,
+    var deviceToThrow: StatePairDevice? = null,
+    var pairDevices: List<StatePairDevice> = emptyList(),
+    var foundDevices: List<StatePairDevice> = emptyList(),
+    var chatMessages: List<BTChatMessages> = emptyList(),
+    var messageToSend: String = ""
 )
 
 @HiltViewModel
 class BluetoothCaseViewModel @Inject constructor() : ViewModel() {
 
+    /*
+        private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    to USE:
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    if (uiState.isUserLoggedIn) {
+                        // Navigate to the Home screen.
+     */
     var uiState by mutableStateOf(BluetoothUIState())
 
-    fun checkBluetoothState(status: BluetoothStatus) {
+    fun setBluetoothState(status: BluetoothStatus) {
         uiState = when (status) {
             BluetoothStatus.NOT_SUPPORT -> uiState.copy(
                 supported = false,
@@ -48,12 +82,57 @@ class BluetoothCaseViewModel @Inject constructor() : ViewModel() {
     }
 
     fun statePairList(list: List<StatePairDevice>) {
-        uiState = uiState.copy(pairDevices = list)
-//        list?.forEach { device ->
-//            Log.d(TAG_BLUETOOTH_TEST, "device name: ${device.name}")
-//            Log.d(TAG_BLUETOOTH_TEST, "device bondState: ${device.boundState}")
-//            Log.d(TAG_BLUETOOTH_TEST, "device address: ${device.adress}")
-//        }
+        uiState = uiState.copy(pairDevices = list, foundDevices = emptyList())
     }
 
+    fun stateFoundList(list: List<StatePairDevice>) {
+        uiState = uiState.copy(foundDevices = list, pairDevices = emptyList())
+    }
+
+    fun showDiscovering(start: Boolean) {
+        uiState = uiState.copy(finding = start)
+    }
+
+    fun setError(error: String) {
+        uiState = uiState.copy(
+            showToast = true,
+            errorMessage = error
+        )
+    }
+
+    fun unsetShowToast() {
+        uiState = uiState.copy(showToast = false)
+    }
+
+    fun setThrowingState(device: StatePairDevice) {
+        uiState = uiState.copy(
+            foundDevices = emptyList(),
+            pairDevices = emptyList(),
+            chatMessages = emptyList(),
+            showThrowing = true,
+            deviceToThrow = device
+        )
+    }
+
+    fun unsetThrowingState() {
+        uiState = uiState.copy(
+            showThrowing = false,
+            deviceToThrow = null
+        )
+    }
+
+    fun addChatMessage(btChatMessages: BTChatMessages) {
+        var list = uiState.chatMessages
+        list += btChatMessages
+
+        uiState = uiState.copy(chatMessages = list)
+    }
+
+    fun clearMessageToSend() {
+        uiState = uiState.copy(messageToSend = "")
+    }
+
+    fun changeMessageToSend(s: String) {
+        uiState = uiState.copy(messageToSend = s)
+    }
 }

@@ -24,7 +24,7 @@ android {
     defaultConfig {
         applicationId = "com.protsprog.highroad"
 //        testApplicationId = "com.protsprog.highroad.test"
-        minSdk = 30
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"

@@ -10,7 +10,6 @@ https://laravel.com/docs/10.x/authorization
 https://laravel.com/docs/10.x/sanctum
 
  */
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,6 +39,24 @@ data class AuthUIState(
 //    val manualLogin: Boolean = false,
     val showBiometricButton: Boolean = false
 )
+
+interface AuthServices {
+    val onClickLogin: () -> Unit
+    val onClickProfile: () -> Unit
+    val onClickLogout: () -> Unit
+    val name: String
+    val email: String
+    val hasAuthorization: Boolean
+}
+
+class StateActionsAuthTopBar(
+    override val onClickLogin: () -> Unit,
+    override val onClickProfile: () -> Unit,
+    override val onClickLogout: () -> Unit,
+    override val name: String,
+    override val email: String,
+    override val hasAuthorization: Boolean
+) : AuthServices
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -246,8 +263,8 @@ class AuthViewModel @Inject constructor(
 
     fun biometricLogin(callback: () -> Unit = {}) {
 
-        val email = AuthAppLogin.email?: ""
-        val password = AuthAppLogin.password?: ""
+        val email = AuthAppLogin.email ?: ""
+        val password = AuthAppLogin.password ?: ""
 
         if (!validateLoginData(email, password)) {
             return

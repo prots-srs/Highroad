@@ -7,41 +7,44 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
-import com.protsprog.highroad.data.model.ArticleAnonce
+import com.protsprog.highroad.R
+import com.protsprog.highroad.articles.ArticleListModel
 
 @Composable
 fun ArticleList(
     verticalView: Boolean,
-    space: Dp,
-    articles: List<ArticleAnonce>,
+    step: Int,
+    articles: List<ArticleListModel>,
     modifier: Modifier = Modifier,
+    navigateToArticle: (Int) -> Unit,
 //    listState: LazyListState = rememberLazyListState()
 ) {
     LazyColumn(
-        modifier = modifier
-            .padding(top = space, bottom = space),
-        contentPadding = PaddingValues(
-            horizontal = space,
-            vertical = space
-        ),
-        verticalArrangement = Arrangement.spacedBy(space)
+        modifier = modifier.padding(all = 0.dp),
+//        contentPadding = PaddingValues(
+//            horizontal = dimensionResource(id = R.dimen.padding_small) * step,
+//            vertical = dimensionResource(id = R.dimen.padding_small) * step
+//        ),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_small) * step)
     ) {
         items(articles) { item ->
             if (verticalView) {
                 ArticleCardVertical(
-                    space = space,
+                    space = dimensionResource(id = R.dimen.padding_small) * step,
                     title = item.title,
                     picture = item.picture,
-                    description = item.description
+//                    description = item.description,
+                    navigateToArticle = { navigateToArticle(item.aid) }
                 )
             } else {
                 ArticleCardHorizontal(
-                    space = space,
+                    space = dimensionResource(id = R.dimen.padding_small) * step,
                     title = item.title,
                     picture = item.picture,
-                    description = item.description
+//                    description = item.description,
+                    navigateToArticle = { navigateToArticle(item.aid) }
                 )
             }
 

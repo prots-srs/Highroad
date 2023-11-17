@@ -1,48 +1,45 @@
 package com.protsprog.highroad.nav
 
-import android.content.Context
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.MoneyOff
 import androidx.compose.material.icons.filled.PieChart
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.protsprog.highroad.R
-import com.protsprog.highroad.articles.ArticleScreen
-import com.protsprog.highroad.compose.ComposeScreen
-import com.protsprog.highroad.compose.navigation.ui.accounts.AccountsScreen
-import com.protsprog.highroad.compose.navigation.ui.accounts.SingleAccountScreen
-import com.protsprog.highroad.compose.navigation.ui.bills.BillsScreen
-import com.protsprog.highroad.compose.navigation.ui.overview.OverviewScreen
-import com.protsprog.highroad.entrance.EntranceScreen
-import com.protsprog.highroad.entrance.data.StringResource
-import com.protsprog.highroad.tictactoe.TicTacToeScreen
 
-interface HighroadDestination {
+interface IconDestination {
     val icon: ImageVector?
     val title: String
     val route: String
 }
 
-object Entrance : HighroadDestination {
+/*
+Inventory Application
+ */
+interface SimpleDestination {
+    val route: String
+    val titleRes: Int
+}
+
+object Entrance : IconDestination {
     override val icon = null
     override val title = "Highroad application codesamples"
     override val route = "entrance"
 }
 
-object Compose : HighroadDestination {
+object Compose : IconDestination {
     override val icon = null
     override val title = "Compose cases"
     override val route = "compose"
 }
 
-object ComposeCase : HighroadDestination {
+object ComposeCase : IconDestination {
     override val icon = null
     override val title = ""
     override val route = "compose_case"
@@ -53,7 +50,7 @@ object ComposeCase : HighroadDestination {
     )
 }
 
-object ComposeCaseMap : HighroadDestination {
+object ComposeCaseMap : IconDestination {
     override val icon = null
     override val route = "compose_case_map"
     override val title = "City location"
@@ -64,25 +61,38 @@ object ComposeCaseMap : HighroadDestination {
     )
 }
 
-object Articles : HighroadDestination {
-    override val icon = null
-    override val title = "Network Articles case"
-    override val route = "articles"
+object Articles : SimpleDestination {
+    override val titleRes = R.string.title_network_articles_case
+    override val route = "network_articles"
+    const val itemIdArg = "itemId"
+    val routeWithArgs = "${route}/{${itemIdArg}}"
+    val arguments = listOf(
+        navArgument(itemIdArg) { type = NavType.IntType }
+    )
 }
 
-object TicTacToe : HighroadDestination {
+class ArticlesActions(navController: NavHostController) {
+    val navigateToArticle: (Int) -> Unit = { itemId ->
+        navController.navigate(route = Articles.routeWithArgs.replace("{${Articles.itemIdArg}}", itemId.toString()))
+    }
+    val upPress: () -> Unit = {
+        navController.navigateUp()
+    }
+}
+
+object TicTacToe : IconDestination {
     override val icon = null
     override val title = "TicTacToe case"
     override val route = "tictactoe"
 }
 
-object FlightSearch : HighroadDestination {
+object FlightSearch : IconDestination {
     override val icon = null
     override val title = "Flight Search"
     override val route = "flightsearch"
 }
 
-object MotionCase : HighroadDestination {
+object MotionCase : IconDestination {
     override val icon = null
     override val title = "Motion case"
     override val route = "motioncase"
@@ -91,25 +101,25 @@ object MotionCase : HighroadDestination {
 /**
  * Rally app navigation destinations
  */
-object RallyOverview : HighroadDestination {
+object RallyOverview : IconDestination {
     override val icon = Icons.Filled.PieChart
     override val route = "compose_navigation_overview"
     override val title = "overview"
 }
 
-object RallyAccounts : HighroadDestination {
+object RallyAccounts : IconDestination {
     override val icon = Icons.Filled.AttachMoney
     override val route = "compose_navigation_accounts"
     override val title = "accounts"
 }
 
-object RallyBills : HighroadDestination {
+object RallyBills : IconDestination {
     override val icon = Icons.Filled.MoneyOff
     override val route = "compose_navigation_bills"
     override val title = "bills"
 }
 
-object RallySingleAccount : HighroadDestination {
+object RallySingleAccount : IconDestination {
     override val icon = Icons.Filled.Money
     override val title = "single_account"
     override val route = "compose_navigation_single_account"
@@ -119,7 +129,7 @@ object RallySingleAccount : HighroadDestination {
         navArgument(accountTypeArg) { type = NavType.StringType }
     )
     val deepLinks = listOf(
-        navDeepLink { uriPattern = "highroad://$route/{$accountTypeArg}" }
+        navDeepLink { uriPattern = "highroad://${route}/{${accountTypeArg}}" }
     )
 }
 
@@ -145,44 +155,37 @@ class MainJetNewsActions(navController: NavHostController) {
     }
 }
 
-/*
-Inventory Application
- */
-interface InventoryDestination {
-    val route: String
-    val titleRes: Int
-}
 
-object InventoryHomeDestination : InventoryDestination {
+object InventoryHomeDestination : SimpleDestination {
     override val route = "inventory_home"
     override val titleRes = R.string.inventory_app_name
 }
 
-object InventoryItemDetailsDestination : InventoryDestination {
+object InventoryItemDetailsDestination : SimpleDestination {
     override val route = "inventory_item_details"
     override val titleRes = R.string.inventory_item_detail_title
     const val itemIdArg = "itemId"
     val routeWithArgs = "$route/{$itemIdArg}"
 }
 
-object InventoryItemEntryDestination : InventoryDestination {
+object InventoryItemEntryDestination : SimpleDestination {
     override val route = "inventory_item_entry"
     override val titleRes = R.string.inventory_item_entry_title
 }
 
-object InventoryItemEditDestination : InventoryDestination {
+object InventoryItemEditDestination : SimpleDestination {
     override val route = "inventory_item_edit"
     override val titleRes = R.string.inventory_edit_item_title
     const val itemIdArg = "itemId"
     val routeWithArgs = "$route/{$itemIdArg}"
 }
 
-object ToDoCase : InventoryDestination {
+object ToDoCase : SimpleDestination {
     override val titleRes = R.string.entrance_todo_case_title
     override val route = "todocase"
 }
 
-object BluetoothCase : InventoryDestination {
+object BluetoothCase : SimpleDestination {
     override val route = "bluetooth"
     override val titleRes = R.string.entrance_bluetooth
 }
@@ -200,7 +203,7 @@ enum class BusScheduleDestinations {
 Authorization
  */
 object AuthDestinations {
-    val loginPage = "AuthLogin"
-    val profilePage = "AuthProfile"
-    val profileEditPage = "AuthProfileEdit"
+    const val loginPage = "AuthLogin"
+    const val profilePage = "AuthProfile"
+    const val profileEditPage = "AuthProfileEdit"
 }

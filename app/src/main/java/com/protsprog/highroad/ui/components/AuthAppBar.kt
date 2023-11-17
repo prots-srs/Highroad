@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Input
 import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.outlined.Settings
@@ -36,6 +37,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,130 +46,110 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.protsprog.highroad.R
-import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
+import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
+import com.protsprog.highroad.authentication.ui.AuthServices
+import com.protsprog.highroad.authentication.ui.StateActionsAuthTopBar
 
 private val iconSize = 28.dp
-private val layoutStep = 8.dp
+
+enum class TOP_BAR_MENU_ACTIONS { RELOAD }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthAppBar(
     hasBack: Boolean,
-    hasAuth: Boolean = false,
-    userName: String = "",
-    userEmail: String = "",
+    authService: AuthServices,
     scrollBehavior: TopAppBarScrollBehavior,
     title: String,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {},
-    onClickLogin: () -> Unit = {},
-    onClickProfile: () -> Unit = {},
-    onClickLogout: () -> Unit = {}
+    actions: Map<TOP_BAR_MENU_ACTIONS, () -> Unit> = emptyMap()
 ) {
     var openUserMenu by remember { mutableStateOf(false) }
 
+    val iconModifier = modifier.size(iconSize)
+    val iconButtonModifier = modifier.padding(
+        start = 0.dp,
+        top = 0.dp,
+        bottom = 0.dp,
+        end = dimensionResource(id = R.dimen.padding_small)
+    )
+
     TopAppBar(title = {
         Text(
-            text = title, maxLines = 1, overflow = TextOverflow.Ellipsis, fontSize = 18.sp
+            text = title, maxLines = 2, overflow = TextOverflow.Ellipsis, fontSize = 18.sp
         )
     }, navigationIcon = {
         if (hasBack) {
             IconButton(
                 onClick = onBackPressed,
-                modifier = Modifier.padding(8.dp),
+                modifier = iconButtonModifier,
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = stringResource(id = R.string.theming_back_button),
-                    modifier = Modifier.size(iconSize)
+                    modifier = iconModifier
                 )
             }
         }
     }, actions = {
-        if (hasAuth) {
+        actions.forEach { action ->
+            IconButton(
+                onClick = action.value,
+                modifier = iconButtonModifier,
+            ) {
+                when (action.key) {
+                    TOP_BAR_MENU_ACTIONS.RELOAD -> Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Reload",
+                        modifier = iconModifier
+                    )
+                }
+            }
+        }
+        if (authService.hasAuthorization) {
             IconButton(
                 onClick = { openUserMenu = !openUserMenu },
-                modifier = Modifier.padding(8.dp),
+                modifier = iconButtonModifier,
             ) {
                 Icon(
                     imageVector = Icons.Filled.AccountCircle,
                     contentDescription = stringResource(R.string.auth_show_user_menu),
-                    modifier = Modifier.size(iconSize)
+                    modifier = iconModifier
                 )
             }
 
             DropdownMenu(
-                modifier = Modifier.width(width = 250.dp),
+                modifier = Modifier.width(width = 280.dp),
                 expanded = openUserMenu,
                 onDismissRequest = {
                     openUserMenu = false
                 },
-                offset = DpOffset(x = 20.dp, y = (-10).dp),
+                offset = DpOffset(x = 8.dp, y = (-4).dp),
             ) {
 
-                DropdownMenuItem(
-                    onClick = {},
-                    text = {
-                        Text(
-                            text = userName,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
+                DropDownItemInMenu(label = authService.name)
+                DropDownItemInMenu(label = authService.email)
+                DropDownItemInMenu(
+                    label = "View profile",
+                    onClick = authService.onClickProfile,
+                    icon = Icons.Outlined.Settings
                 )
-
-                DropdownMenuItem(
-                    onClick = {},
-                    text = {
-                        Text(
-                            text = userEmail,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
+                DropDownItemInMenu(
+                    label = "Sign out",
+                    onClick = authService.onClickLogout,
+                    icon = Icons.Outlined.Logout
                 )
-
-                DropdownMenuItem(onClick = onClickProfile, text = {
-                    Text(
-                        text = "View profile",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }, trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = null,
-                        modifier = modifier.size(20.dp)
-                    )
-                })
-
-                DropdownMenuItem(text = {
-                    Text(
-                        text = "Sign out",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                }, onClick = onClickLogout, trailingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Logout,
-                        contentDescription = null,
-                        modifier = modifier.size(20.dp)
-                    )
-                })
             }
         } else {
             IconButton(
-                onClick = onClickLogin,
-                modifier = Modifier.padding(8.dp),
+                onClick = authService.onClickLogin,
+                modifier = iconButtonModifier,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Input,
                     contentDescription = stringResource(R.string.auth_sign_in),
-                    modifier = Modifier.size(iconSize)
+                    modifier = iconModifier
                 )
             }
         }
@@ -184,13 +167,50 @@ fun AuthAppBar(
 @Preview(showBackground = true, device = "id:pixel_5")
 @Composable
 fun NoAuthAuthAppBarPreview() {
-    EntranceTheme {
+    ArticlesTheme {
         AuthAppBar(
-            hasBack = false,
+            hasBack = true,
             title = "ABC application",
-            hasAuth = true,
-            scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+            scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
+            actions = mapOf(TOP_BAR_MENU_ACTIONS.RELOAD to {}),
+            authService = StateActionsAuthTopBar(
+                name = "abc",
+                email = "sd@sedf",
+                hasAuthorization = false,
+                onClickLogin = {},
+                onClickLogout = {},
+                onClickProfile = {}
+            )
         )
     }
 }
 
+@Composable
+fun DropDownItemInMenu(
+    modifier: Modifier = Modifier,
+    label: String,
+    onClick: () -> Unit = {},
+    icon: ImageVector? = null
+) {
+    DropdownMenuItem(
+//        modifier = modifier.,
+        onClick = onClick,
+        text = {
+            Text(
+                text = label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        },
+        trailingIcon = {
+            icon?.let {
+                Icon(
+                    imageVector = it,
+                    contentDescription = null,
+                    modifier = modifier.size(iconSize)
+                )
+            }
+        }
+    )
+}

@@ -68,7 +68,7 @@ class ToDoRepositoryStatic @Inject constructor() : ToDoRepo {
         if (taskList.filter { it.sort == task.sort }.size == 0) {
             taskList.add(task)
         } else {
-            taskList.filter { it.sort == task.sort }?.first()?.apply {
+            taskList.first { it.sort == task.sort }.apply {
                 this.text = task.text
                 this.closed = task.closed
             }

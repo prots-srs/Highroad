@@ -7,6 +7,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material3.Button
@@ -33,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +53,13 @@ import coil.request.ImageRequest
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
 
-@Preview(showBackground = true, widthDp = 360)
+/*
+//@Preview(showBackground = true, widthDp = 360)
+@Preview(
+    showBackground = true, device = "id:pixel_5",
+    backgroundColor = 0xFFFF5599,
+    widthDp = 450
+)
 @Composable
 fun PreviewVerticalArticleCard() {
     ArticlesTheme {
@@ -56,11 +67,14 @@ fun PreviewVerticalArticleCard() {
             space = 16.dp,
             title = "1. Отвлечь внимание",
             picture = "https://protsprog.com/storage/articles/JwJMDBplxxrOrEyvcVvR4BjwDH2QpIMm5R9VsGBF.jpg",
-            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять."
+//            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять.",
         )
     }
 }
 
+ */
+
+/*
 @Preview(showBackground = true, widthDp = 600)
 @Composable
 fun PreviewHorizontalArticleCard() {
@@ -69,36 +83,34 @@ fun PreviewHorizontalArticleCard() {
             space = 24.dp,
             title = "1. Отвлечь внимание",
             picture = "https://protsprog.com/storage/articles/JwJMDBplxxrOrEyvcVvR4BjwDH2QpIMm5R9VsGBF.jpg",
-            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять."
+            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять.",
         )
     }
-}
+}*/
 
 @Composable
 fun ArticleCardVertical(
     space: Dp,
     title: String,
     picture: String? = null,
-    description: String? = null
+//    description: String? = null,
+    navigateToArticle: () -> Unit = {}
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .clickable { navigateToArticle() }
+            .fillMaxWidth()
     ) {
         if (!picture.isNullOrEmpty()) {
-            ThumbnailBox(
-                picture = picture,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 180.dp)
-            )
+            ThumbnailBox(picture)
             Spacer(Modifier.height(space))
         }
 
         Text(title, style = MaterialTheme.typography.bodyLarge)
 
-        if (!description.isNullOrEmpty()) {
-            DescriptionBox(description)
-        }
+//        if (!description.isNullOrEmpty()) {
+//            DescriptionBox(description)
+//        }
 
         Divider(
             color = MaterialTheme.colorScheme.secondary,
@@ -113,70 +125,120 @@ fun ArticleCardVertical(
 
 @Composable
 fun ArticleCardHorizontal(
+    modifier: Modifier = Modifier,
     space: Dp,
     title: String,
     picture: String? = null,
-    description: String? = null
+//    description: String? = null,
+    navigateToArticle: () -> Unit = {}
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        if (!picture.isNullOrEmpty()) {
-            ThumbnailBox(
-                picture = picture,
-                modifier = Modifier
-                    .width(320.dp)
-                    .padding(end = space)
-                    .heightIn(min = 240.dp)
-            )
+        Row(
+            modifier = modifier
+                .clickable { navigateToArticle() }
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(
+                modifier = modifier
+                    .background(Color.Blue)
+                    .weight(1f)
+            ) {
+                ThumbnailBox(picture)
+            }
+//            Spacer(Modifier.width(space).fillMaxHeight().background(Color.DarkGray))
+
+            Column(
+                modifier = modifier
+                    .padding(start = space)
+                    .weight(2f)
+            ) {
+                Text(text = title, style = MaterialTheme.typography.bodyLarge)
+
+//            if (!description.isNullOrEmpty()) {
+//                Text(
+//                    text = description, style = MaterialTheme.typography.bodyMedium,
+//                    modifier = Modifier.padding(top = space)
+//                )
+//            }
+            }
         }
 
-        Column {
-            Text(
-                text = title, style = MaterialTheme.typography.bodyLarge,
+        Row(modifier = modifier.fillMaxWidth()) {
+            Divider(
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(top = space)
+                    .height(0.5.dp)
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Preview(
+    showBackground = true, device = "id:pixel_5",
+    backgroundColor = 0xFF995533,
+    widthDp = 700
+)
+@Composable
+fun ArticleCardHorizontalPreview() {
+    ArticlesTheme {
+        ArticleCardHorizontal(
+            space = 24.dp,
+            title = "Отвлечь внимание ,oprmkvfefk rogmnreo ebo43nvbo4mb p34",
+            picture = "https://protsprog.com/storage/articles/JwJMDBplxxrOrEyvcVvR4BjwDH2QpIMm5R9VsGBF.jpg",
+//            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять.",
+        )
+    }
+}
+
+
+@Composable
+fun ThumbnailBox(
+    picture: String?,
+    modifier: Modifier = Modifier
+) {
+    if (!picture.isNullOrEmpty()) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .background(Color.LightGray)
+        ) {
+            val painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(picture)
+                    .crossfade(true)
+                    .build()
             )
 
-            if (!description.isNullOrEmpty()) {
-                Text(
-                    text = description, style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = space)
+            Image(
+                painter = painter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 120.dp, max = 240.dp)
+            )
+
+            if (painter.state is AsyncImagePainter.State.Loading) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_broken_image),
+                    contentDescription = null,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
                 )
+            } else {
             }
         }
     }
 }
 
-@Composable
-fun ThumbnailBox(
-    picture: String,
-    modifier: Modifier
-) {
-    Box {
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(picture)
-                .crossfade(true)
-                .build()
-        )
-
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier,
-        )
-
-        if (painter.state is AsyncImagePainter.State.Loading) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_broken_image),
-                contentDescription = null,
-                modifier = modifier.align(Alignment.Center)
-            )
-        }
-    }
-}
-
+/*
 @Composable
 fun DescriptionBox(
     description: String
@@ -238,3 +300,4 @@ fun DescriptionBox(
         Text(text = description, style = MaterialTheme.typography.bodyMedium)
     }
 }
+*/

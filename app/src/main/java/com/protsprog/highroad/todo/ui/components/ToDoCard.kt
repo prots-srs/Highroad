@@ -117,61 +117,61 @@ fun ToDoCard(
                     verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                Checkbox(
-                    modifier = modifier.padding(top = 6.dp, start = 6.dp),
-                    checked = stateTaskClosed,
-                    onCheckedChange = onClickCheckbox
-                )
-                Spacer(modifier = modifier.width(dimensionResource(id = R.dimen.padding_small)))
+                    Checkbox(
+                        modifier = modifier.padding(top = 6.dp, start = 6.dp),
+                        checked = stateTaskClosed,
+                        onCheckedChange = onClickCheckbox
+                    )
+                    Spacer(modifier = modifier.width(dimensionResource(id = R.dimen.padding_small)))
 
-                if (stateTaskEditing) {
+                    if (stateTaskEditing) {
 
-                    val focusManager = LocalFocusManager.current
-                    val focusRequest = remember { FocusRequester() }
+                        val focusManager = LocalFocusManager.current
+                        val focusRequest = remember { FocusRequester() }
 //                val keyboardController = LocalSoftwareKeyboardController.current
 
-                    val colorLine = MaterialTheme.colorScheme.secondary
-                    val paddingSmall = dimensionResource(id = R.dimen.padding_small)
-                    BasicTextField(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(end = dimensionResource(id = R.dimen.padding_medium))
+                        val colorLine = MaterialTheme.colorScheme.secondary
+                        val paddingSmall = dimensionResource(id = R.dimen.padding_small)
+                        BasicTextField(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(end = dimensionResource(id = R.dimen.padding_medium))
 //                        .width(intrinsicSize = IntrinsicSize.Max)
-                            .focusRequester(focusRequest)
-                            .onFocusChanged {
-                                if (it.hasFocus) {
-                                    captureFocus()
+                                .focusRequester(focusRequest)
+                                .onFocusChanged {
+                                    if (it.hasFocus) {
+                                        captureFocus()
 //                                keyboardController?.show()
-                                } else {
-                                    onTextEndChange()
+                                    } else {
+                                        onTextEndChange()
+                                    }
                                 }
-                            }
-                            .padding(
-                                top = dimensionResource(id = R.dimen.padding_medium),
-                                bottom = dimensionResource(
-                                    id = R.dimen.padding_medium
+                                .padding(
+                                    top = dimensionResource(id = R.dimen.padding_medium),
+                                    bottom = dimensionResource(
+                                        id = R.dimen.padding_medium
+                                    )
                                 )
-                            )
-                            .drawBehind {
-                                val strokeWidth = 1 * density
-                                val y = size.height - strokeWidth / 2 + paddingSmall.roundToPx()
+                                .drawBehind {
+                                    val strokeWidth = 1 * density
+                                    val y = size.height - strokeWidth / 2 + paddingSmall.roundToPx()
 
-                                drawLine(
-                                    colorLine, Offset(0f, y), Offset(size.width, y), strokeWidth
-                                )
-                            },
-                        value = stateTaskText,
-                        onValueChange = onTextChange,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = {
-                            focusManager.clearFocus()
-                        }),
-                        textStyle = TextStyle(
-                            fontSize = textSize, lineHeight = textHeight
-                        ),
-                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                                    drawLine(
+                                        colorLine, Offset(0f, y), Offset(size.width, y), strokeWidth
+                                    )
+                                },
+                            value = stateTaskText,
+                            onValueChange = onTextChange,
+                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                focusManager.clearFocus()
+                            }),
+                            textStyle = TextStyle(
+                                fontSize = textSize, lineHeight = textHeight
+                            ),
+                            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
 //                    decorationBox = @Composable { }
-                    )/* off
+                        )/* off
                 TextField(
                     modifier = modifier
                         .fillMaxWidth()
@@ -206,26 +206,26 @@ fun ToDoCard(
                     )
                 )*/
 
-                    LaunchedEffect(Unit) {
-                        focusRequest.requestFocus()
-                    }
-                } else {
-                    Text(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(end = dimensionResource(id = R.dimen.padding_medium))
+                        LaunchedEffect(Unit) {
+                            focusRequest.requestFocus()
+                        }
+                    } else {
+                        Text(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .padding(end = dimensionResource(id = R.dimen.padding_medium))
 //                        .width(intrinsicSize = IntrinsicSize.Max)
-                            .clickable(onClick = onClickTaskEdit)
-                            .padding(vertical = dimensionResource(id = R.dimen.padding_medium)),
-                        text = stateTaskText,
-                        color = if (stateTaskClosed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSecondaryContainer,
-                        textDecoration = if (stateTaskClosed) TextDecoration.LineThrough else null,
-                        fontSize = textSize,
-                        lineHeight = textHeight
-                    )
+                                .clickable(onClick = onClickTaskEdit)
+                                .padding(vertical = dimensionResource(id = R.dimen.padding_medium)),
+                            text = stateTaskText,
+                            color = if (stateTaskClosed) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSecondaryContainer,
+                            textDecoration = if (stateTaskClosed) TextDecoration.LineThrough else null,
+                            fontSize = textSize,
+                            lineHeight = textHeight
+                        )
+                    }
                 }
             }
-        }
         }
     }
 }

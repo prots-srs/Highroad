@@ -14,8 +14,6 @@ https://stackoverflow.com/questions/74670362/how-to-make-a-correct-post-request-
 APP tests:
 https://developer.android.com/docs/quality-guidelines/core-app-quality#sc
  */
-import com.protsprog.highroad.data.local.database.ArticleEntity
-import com.protsprog.highroad.data.network.ServiceArticle
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -26,7 +24,6 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Headers
 import retrofit2.http.POST
 
 private val API_SERVER = "https://protsprog.com/"

@@ -17,7 +17,7 @@ import com.protsprog.highroad.R
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
 import kotlinx.coroutines.delay
 
-private const val SplashWaitTime: Long = 250
+private const val SplashWaitTime: Long = 200
 
 @Composable
 fun LandingEntranceScreen(

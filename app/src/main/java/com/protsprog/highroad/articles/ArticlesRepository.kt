@@ -1,45 +1,62 @@
 package com.protsprog.highroad.articles
 
+/*
+TO READ
+
+ */
+import android.util.Log
 import androidx.annotation.WorkerThread
-import com.protsprog.highroad.data.local.database.ArticleDao
-import com.protsprog.highroad.data.local.database.ArticleEntity
-import com.protsprog.highroad.data.local.database.asExternalModel
-import com.protsprog.highroad.data.model.ArticleAnonce
 import kotlinx.coroutines.flow.Flow
-import com.protsprog.highroad.data.network.ServiceApi
-import com.protsprog.highroad.data.network.asEntity
-import com.protsprog.highroad.data.network.asExternalModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
+import kotlin.system.measureTimeMillis
 
 class ArticlesRepository @Inject constructor(
     private val articleDao: ArticleDao
 ) {
-    var articleList: Flow<List<ArticleAnonce>> = refreshFromLocal()
+    val articleList: Flow<List<ArticleListModel>> = articleDao.getAll().map {
+//        Log.d("TEST_FLOW", "repo: fetch list")
+        it.map(ArticleEntity::asModel)
+    }.catch { emit(ArticleListModel.exampleItem()) }
 
-    fun refreshFromLocal() = articleDao.getAll()
-        .map { it.map(ArticleEntity::asExternalModel) }
-        .catch { emit(ArticleAnonce.empty()) }
+    lateinit var articleItem: Flow<ArticleItemModel>
 
-    suspend fun refreshFromService() {
-        withContext(Dispatchers.IO) {
-            val requestData = ServiceApi.articleService.getList()
-//            articleList = flow {
-//                emit(requestData.map { item -> item.asExternalModel() })
-//            }
-            insertToDB(requestData.map { item -> item.asEntity() })
-            articleList = refreshFromLocal()
-        }
+    suspend fun fetchItemDb(id: Int) = withContext(Dispatchers.IO) {
+//        Log.d("TEST_FLOW", "repo: fetch item")
+        articleItem =
+            articleDao.getItem(id).map { it.asItemModel() }.catch { emit(ArticleItemModel()) }
     }
 
-    @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insertToDB(items: List<ArticleEntity>) {
-        articleDao.deleteAll()
-        articleDao.insertAll(items)
+    suspend fun refreshListNet() = withContext(Dispatchers.IO) {
+//        Log.d("TEST_FLOW", "repo: refresh list")
+
+//        var time = measureTimeMillis {
+        try {
+            val list = ServiceApi.articleService.getList().map { item -> item.asEntity() }
+            articleDao.deleteAll()
+            articleDao.insertAll(list)
+        } catch(e: IOException) {
+//            Log.d("TEST_FLOW", "fetch net: ${e.message}")
+        }
+//        }
+//        Log.d("TEST_SUSPEND", "delete: $time ms")
+
+        /*
+        val listDb = articleDao.getAll()
+        listDb.collect {
+            val timeDeleteItems = measureTimeMillis {
+                it.forEach { entityDb ->
+                    if (listNet.find { entityNet -> entityDb == entityNet } == null) {
+                        articleDao.delete(entityDb)
+                    }
+                }
+            }
+            Log.d("TEST_SUSPEND", "delete items: $timeDeleteItems ms")
+        }*/
     }
 }
