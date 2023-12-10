@@ -6,6 +6,8 @@ TO READ
 https://www.zacsweers.dev/exploring-moshis-kotlin-code-gen/
 
 https://square.github.io/retrofit/
+
+https://medium.com/javarevisited/10-rest-api-best-practices-cd12e3904d00
  */
 import com.protsprog.highroad.util.API_SERVER
 import com.squareup.moshi.Moshi
