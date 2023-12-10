@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,18 +40,21 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.protsprog.highroad.BluetoothContainer
+import com.protsprog.highroad.CameraXContainer
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleDetailScreen
+import com.protsprog.highroad.articles.ArticleEditScreen
 import com.protsprog.highroad.articles.ArticleScreen
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
 import com.protsprog.highroad.authentication.BiometricCryption
-import com.protsprog.highroad.authentication.ui.AuthViewModel
-import com.protsprog.highroad.authentication.ui.LoginScreen
-import com.protsprog.highroad.authentication.ui.ProfileEditScreen
-import com.protsprog.highroad.authentication.ui.ProfileScreen
-import com.protsprog.highroad.authentication.ui.StateActionsAuthTopBar
+import com.protsprog.highroad.authentication.AuthViewModel
+import com.protsprog.highroad.authentication.LoginScreen
+import com.protsprog.highroad.authentication.ProfileEditScreen
+import com.protsprog.highroad.authentication.ProfileScreen
+import com.protsprog.highroad.authentication.StateActionsAuthTopBar
 import com.protsprog.highroad.authentication.ui.theme.AuthTheme
 import com.protsprog.highroad.bluetoothcase.BluetoothScreen
+import com.protsprog.highroad.camerax.CameraXScreen
 import com.protsprog.highroad.compose.ComposeScreen
 import com.protsprog.highroad.compose.accessibility.ui.theme.JetnewsTheme
 import com.protsprog.highroad.compose.animating.ui.Home
@@ -111,7 +115,11 @@ fun HighroadNavigation(
     authViewModel: AuthViewModel = hiltViewModel(),
     biometricCipher: BiometricCryption,
     startRoute: String? = null,
-    bluetooth: BluetoothContainer
+    bluetooth: BluetoothContainer,
+    cameraX: CameraXContainer,
+//    permissionCamera: Boolean,
+//    checkPermissionCameraX: () -> Unit,
+//    takePhoto: () -> Unit
 ) {
     authViewModel.setStateBiometricButton(biometricCipher.inNeedShowBiometricButton())
 
@@ -144,6 +152,7 @@ fun HighroadNavigation(
         NavHost(
             modifier = Modifier, navController = navController,
             startDestination = Entrance.route,
+//            startDestination = CameraXCase.route,
         ) {
 
             composable(route = BluetoothCase.route) {
@@ -204,6 +213,12 @@ fun HighroadNavigation(
                     ) != null
                 }
 
+                var autoLogin by rememberSaveable { mutableStateOf(false) }
+                if (!autoLogin) {
+                    autoLogin = true
+                    authViewModel.moveTestAuth()
+                }
+
 //                Log.d("TEST_FLOW", "nav: entrance")
 
                 EntranceScreen(
@@ -215,6 +230,16 @@ fun HighroadNavigation(
                     onBackPressed = { navController.navigateUp() },
                     authService = authServices
                 )
+            }
+
+            composable(route = CameraXCase.route) {
+                caseTheme = TYPE_THEME.MAIN
+
+                CameraXScreen(
+                    onBackPressed = { navController.navigateUp() },
+                    cameraX = cameraX
+                )
+
             }
 
 //        Articles
@@ -236,6 +261,7 @@ fun HighroadNavigation(
                     onBackPressed = actionsArticles.upPress,//navController::navigateUp,
                     authService = authServices,
                     navigateToArticle = actionsArticles.navigateToArticle,
+                    navigateToEdit = actionsArticles.navigateToEdit
                 )
             }
 
@@ -251,6 +277,21 @@ fun HighroadNavigation(
                     onBackPressed = actionsArticles.upPress,//navController::navigateUp,
                     authService = authServices,
                     itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0
+                )
+            }
+
+            composable(
+                route = Articles.routeEdit,
+                arguments = Articles.arguments
+            ) { backStackEntry ->
+                caseTheme = TYPE_THEME.ARTICLES
+
+                ArticleEditScreen(
+                    windowWidthClass = windowWidthClass,
+                    hasBack = navController.previousBackStackEntry != null,
+                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+                    authService = authServices,
+                    itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0,
                 )
             }
 

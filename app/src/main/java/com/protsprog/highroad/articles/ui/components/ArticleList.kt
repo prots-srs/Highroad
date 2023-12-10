@@ -1,7 +1,6 @@
 package com.protsprog.highroad.articles.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +32,7 @@ fun ArticleList(
             if (verticalView) {
                 ArticleCardVertical(
                     space = dimensionResource(id = R.dimen.padding_small) * step,
+                    publish = item.publish,
                     title = item.title,
                     picture = item.picture,
 //                    description = item.description,
@@ -41,6 +41,7 @@ fun ArticleList(
             } else {
                 ArticleCardHorizontal(
                     space = dimensionResource(id = R.dimen.padding_small) * step,
+                    publish = item.publish,
                     title = item.title,
                     picture = item.picture,
 //                    description = item.description,

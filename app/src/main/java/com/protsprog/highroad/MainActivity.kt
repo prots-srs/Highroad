@@ -12,6 +12,10 @@ https://github.com/android/compose-samples/blob/main/JetNews
 
 https://developer.android.com/develop/connectivity/bluetooth/setup
 
+camera
+https://developer.android.com/training/camerax
+https://developer.android.com/codelabs/camerax-getting-started#1
+
  */
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -49,6 +53,15 @@ import kotlinx.coroutines.flow.stateIn
 class MainActivity : AppCompatActivity() {
 
     lateinit var bluetoothService: BluetoothContainer
+    lateinit var cameraXService: CameraXContainer
+
+    private val activityCameraXResultLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            cameraXService.service.checkPermissions(
+//                baseContext,
+                permissions
+            )
+        }
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         bluetoothService = BluetoothServiceImpl(this)
+        cameraXService = CameraXServiceImpl(this, activityCameraXResultLauncher)
 
 // Register for broadcasts when a device is discovered.
         val filterBTFound = IntentFilter(BluetoothDevice.ACTION_FOUND)
@@ -69,6 +83,8 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, filterBTBondState)
 
         checkPermissionBluetooth()
+
+        cameraXService.service.initExecutor()
 
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -100,7 +116,8 @@ class MainActivity : AppCompatActivity() {
                 devicePosture = devicePostureFlow.collectAsState().value,
                 biometricCipher = BiometricCipher(applicationContext, this),
                 startRoute = intent.getStringExtra("insertDestination"),
-                bluetooth = bluetoothService
+                bluetooth = bluetoothService,
+                cameraX = cameraXService,
             )
         }
     }
@@ -193,5 +210,7 @@ class MainActivity : AppCompatActivity() {
 
 // Don't forget to unregister the ACTION_FOUND receiver.
         unregisterReceiver(receiver)
+
+        cameraXService.service.destroyExecutor()
     }
 }

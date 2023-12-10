@@ -1,56 +1,29 @@
 package com.protsprog.highroad.articles.ui.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
 
 /*
@@ -94,7 +67,8 @@ fun ArticleCardVertical(
     title: String,
     picture: String? = null,
 //    description: String? = null,
-    navigateToArticle: () -> Unit = {}
+    navigateToArticle: () -> Unit = {},
+    publish: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -107,6 +81,10 @@ fun ArticleCardVertical(
         }
 
         Text(title, style = MaterialTheme.typography.bodyLarge)
+        if (publish) {
+            Spacer(Modifier.height(space))
+            Icon(Icons.Outlined.Visibility, "Publish")
+        }
 
 //        if (!description.isNullOrEmpty()) {
 //            DescriptionBox(description)
@@ -130,7 +108,8 @@ fun ArticleCardHorizontal(
     title: String,
     picture: String? = null,
 //    description: String? = null,
-    navigateToArticle: () -> Unit = {}
+    navigateToArticle: () -> Unit = {},
+    publish: Boolean = true
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -156,6 +135,10 @@ fun ArticleCardHorizontal(
                     .weight(2f)
             ) {
                 Text(text = title, style = MaterialTheme.typography.bodyLarge)
+                if (publish) {
+                    Spacer(Modifier.height(space))
+                    Icon(Icons.Outlined.Visibility, "Publish")
+                }
 
 //            if (!description.isNullOrEmpty()) {
 //                Text(
@@ -181,7 +164,24 @@ fun ArticleCardHorizontal(
 
 @Preview(
     showBackground = true, device = "id:pixel_5",
-    backgroundColor = 0xFF995533,
+    backgroundColor = 0xFFDDAACC,
+    widthDp = 700
+)
+@Composable
+fun ArticleCardVerticalPreview() {
+    ArticlesTheme {
+        ArticleCardVertical(
+            space = 24.dp,
+            title = "Отвлечь внимание ,oprmkvfefk rogmnreo ebo43nvbo4mb p34",
+            picture = "https://protsprog.com/storage/articles/JwJMDBplxxrOrEyvcVvR4BjwDH2QpIMm5R9VsGBF.jpg",
+//            description = "Этот метод управления гражданами можно назвать одним из основных. Правительство часто отвлекает внимание людей от реальных проблем в стране, предлагая им не очень важные сообщения. Это делается для того, чтобы не дать народу возможности интересоваться реальными проблемами в стране, которые актуальны для всех, а также развиваться, узнавать что-то новое в сферах искусства, науки и так далее. Правительству выгодно, когда люди не размышляют о серьезных вещах, а занимаются чем-то малозначительным, ведь так ими значительно легче управлять.",
+        )
+    }
+}
+
+@Preview(
+    showBackground = true, device = "id:pixel_5",
+    backgroundColor = 0xFFDDAACC,
     widthDp = 700
 )
 @Composable
@@ -196,47 +196,6 @@ fun ArticleCardHorizontalPreview() {
     }
 }
 
-
-@Composable
-fun ThumbnailBox(
-    picture: String?,
-    modifier: Modifier = Modifier
-) {
-    if (!picture.isNullOrEmpty()) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(Color.LightGray)
-        ) {
-            val painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(picture)
-                    .crossfade(true)
-                    .build()
-            )
-
-            Image(
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 120.dp, max = 240.dp)
-            )
-
-            if (painter.state is AsyncImagePainter.State.Loading) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_broken_image),
-                    contentDescription = null,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                )
-            } else {
-            }
-        }
-    }
-}
 
 /*
 @Composable

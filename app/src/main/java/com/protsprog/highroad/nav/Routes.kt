@@ -69,11 +69,25 @@ object Articles : SimpleDestination {
     val arguments = listOf(
         navArgument(itemIdArg) { type = NavType.IntType }
     )
+    val routeEdit = "${route}/edit/{${itemIdArg}}"
 }
 
 class ArticlesActions(navController: NavHostController) {
     val navigateToArticle: (Int) -> Unit = { itemId ->
-        navController.navigate(route = Articles.routeWithArgs.replace("{${Articles.itemIdArg}}", itemId.toString()))
+        navController.navigate(
+            route = Articles.routeWithArgs.replace(
+                "{${Articles.itemIdArg}}",
+                itemId.toString()
+            )
+        )
+    }
+    val navigateToEdit: (Int) -> Unit = { itemId ->
+        navController.navigate(
+            route = Articles.routeEdit.replace(
+                "{${Articles.itemIdArg}}",
+                itemId.toString()
+            )
+        )
     }
     val upPress: () -> Unit = {
         navController.navigateUp()
@@ -189,6 +203,12 @@ object BluetoothCase : SimpleDestination {
     override val route = "bluetooth"
     override val titleRes = R.string.entrance_bluetooth
 }
+
+object CameraXCase : SimpleDestination {
+    override val titleRes = R.string.entrance_camerax
+    override val route = "cameraX"
+}
+
 
 
 /*

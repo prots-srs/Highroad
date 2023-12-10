@@ -1,6 +1,6 @@
 package com.protsprog.highroad
 
-import com.protsprog.highroad.authentication.data.AuthService
+import com.protsprog.highroad.authentication.AuthService
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

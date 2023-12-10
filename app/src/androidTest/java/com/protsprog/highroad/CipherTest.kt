@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.protsprog.highroad.authentication.domen.AuthAppLogin
 import com.protsprog.highroad.util.CryptographyManager
-import com.protsprog.highroad.authentication.ui.LoginState
+import com.protsprog.highroad.authentication.LoginState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import org.junit.Before

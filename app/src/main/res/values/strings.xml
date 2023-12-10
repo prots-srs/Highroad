@@ -16,6 +16,7 @@
     <string name="entrance_title_case_compose">Compose case</string>
     <string name="entrance_title_case_article">Articles case</string>
     <string name="entrance_bluetooth">Bluetooth case</string>
+    <string name="entrance_camerax">CameraX case</string>
 
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>

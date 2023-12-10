@@ -1,4 +1,4 @@
-package com.protsprog.highroad.authentication.ui
+package com.protsprog.highroad.authentication
 
 /*
 TO READ
@@ -16,14 +16,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.protsprog.highroad.authentication.data.AuthRepository
-import com.protsprog.highroad.authentication.data.AuthResponseResource
-import com.protsprog.highroad.authentication.data.UserModel
 import com.protsprog.highroad.authentication.domen.AuthAppLogin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import javax.inject.Inject
+
+const val demoUser1Email = "testlogin@protsprog.com"
+const val demoUser1Password = "test0token"
+
+const val demoUser2Email = "prots.srs@gmail.com"
+const val demoUser2Password = "mars13uran"
 
 data class UserState(
     val name: String = "", val email: String = ""
@@ -36,7 +39,6 @@ data class LoginState(
 
 data class AuthUIState(
     val hasAuth: Boolean = false, val sendRequest: Boolean = false, val errorLogin: String = "",
-//    val manualLogin: Boolean = false,
     val showBiometricButton: Boolean = false
 )
 
@@ -64,11 +66,7 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
     var authUIState by mutableStateOf(AuthUIState())
-    var loginUIState by mutableStateOf(
-        LoginState(
-//            email = "testlogin@protsprog.com", password = "test0token"
-        )
-    )
+    var loginUIState by mutableStateOf(LoginState())
     var userUIState by mutableStateOf(UserState())
 
     fun onChangeEmail(input: String = "") {
@@ -107,9 +105,6 @@ class AuthViewModel @Inject constructor(
         if (!validateLoginData(loginUIState.email, loginUIState.password)) {
             return
         }
-//        authUIState = authUIState.copy(
-//            manualLogin = true
-//        )
         serverLogin(loginUIState.email, loginUIState.password, biometricPrompt)
     }
 
@@ -271,5 +266,9 @@ class AuthViewModel @Inject constructor(
         }
 
         serverLogin(email, password, callback)
+    }
+
+    fun moveTestAuth() {
+        serverLogin(demoUser2Email, demoUser2Password)
     }
 }

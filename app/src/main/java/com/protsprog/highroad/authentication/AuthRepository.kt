@@ -1,4 +1,4 @@
-package com.protsprog.highroad.authentication.data
+package com.protsprog.highroad.authentication
 
 /*
 TO READ
@@ -13,18 +13,12 @@ https://github.com/android/codelab-kotlin-coroutines
 LOOK FOR
 wrapContentSize
  */
-import android.util.Log
 import androidx.compose.runtime.Immutable
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 sealed interface AuthResponseResource<out T> {

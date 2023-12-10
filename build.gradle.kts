@@ -18,6 +18,8 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.44" apply false
     id("androidx.navigation.safeargs.kotlin") version "2.5.3" apply false
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
+
+//    id("com.google.gms.google-services") version "4.4.0" apply false
 }
 //https://docs.gradle.org/current/userguide/kotlin_dsl.html#extra_properties
 ext {
@@ -33,6 +35,7 @@ ext {
     extra["mochiVersion"] = "1.14.0"
     extra["coilVersion"] = "2.4.0"
     extra["accompanistVersion"] = "0.30.1"
+    extra["cameraxVersion"] = "1.2.2"
 }
 
 tasks.withType<KotlinCompile> {

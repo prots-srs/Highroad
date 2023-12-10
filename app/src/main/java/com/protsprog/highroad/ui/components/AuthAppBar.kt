@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ui.theme.ArticlesTheme
-import com.protsprog.highroad.authentication.ui.AuthServices
-import com.protsprog.highroad.authentication.ui.StateActionsAuthTopBar
+import com.protsprog.highroad.authentication.AuthServices
+import com.protsprog.highroad.authentication.StateActionsAuthTopBar
 
 private val iconSize = 28.dp
 

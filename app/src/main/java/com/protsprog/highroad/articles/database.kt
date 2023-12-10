@@ -1,10 +1,10 @@
 package com.protsprog.highroad.articles
 
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
-import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Update
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,15 +31,20 @@ data class ArticleEntity(
     @ColumnInfo(defaultValue = "")
     val description: String,
     @ColumnInfo(defaultValue = "")
-    val picture: String
+    val picture: String,
+    val publish: Boolean,
+    @ColumnInfo(defaultValue = "")
+    val createdAt: String?,
+    @ColumnInfo(defaultValue = "")
+    val updatedAt: String?
 )
 
 fun ArticleEntity.asModel() = ArticleListModel(
     aid = id,
     sort = sort.toInt(),
     title = title,
-//    description = description,
-    picture = picture
+    picture = picture,
+    publish = publish
 )
 
 fun ArticleEntity.asItemModel() = ArticleItemModel(
@@ -64,14 +70,25 @@ interface ArticleDao {
 //    @Delete
 //    suspend fun delete(entity: ArticleEntity)
 
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
-//    suspend fun insertItem(item: ArticleEntity)
+    @Insert//(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertItem(item: ArticleEntity)
+
+    @Update
+    suspend fun updateItem(item: ArticleEntity)
+
+    suspend fun upsertItem(item: ArticleEntity) {
+        try {
+            insertItem(item)
+        } catch (e: SQLiteConstraintException) {
+            updateItem(item)
+        }
+    }
 
     @Query("SELECT * FROM articles WHERE id = :id")
     fun getItem(id: Int): Flow<ArticleEntity>
 }
 
-@Database(entities = [ArticleEntity::class], version = 9)
+@Database(entities = [ArticleEntity::class], version = 10)
 abstract class ArticleDatabase : RoomDatabase() {
     abstract fun articleDao(): ArticleDao
 }

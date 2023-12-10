@@ -1,4 +1,4 @@
-package com.protsprog.highroad.authentication.ui
+package com.protsprog.highroad.authentication
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column

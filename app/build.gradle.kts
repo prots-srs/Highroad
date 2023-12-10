@@ -11,6 +11,8 @@ plugins {
     kotlin("plugin.serialization")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
+//    id("com.google.gms.google-services")
 }
 
 // Reads the Google maps key that is used in the AndroidManifest
@@ -91,6 +93,11 @@ dependencies {
 
 //    https://m2.material.io/develop/android/docs/getting-started
     implementation("com.google.android.material:material:1.9.0")
+
+//    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+//    https://firebase.google.com/docs/android/setup#available-libraries
+//    implementation("com.google.firebase:firebase-firestore")
+//    implementation("androidx.media3:media3-common:1.2.0")
 //    implementation("androidx.leanback:leanback:1.0.0")
 
     // Compose
@@ -193,6 +200,15 @@ dependencies {
     implementation("com.google.accompanist:accompanist-swiperefresh:${rootProject.ext.get("accompanistVersion")}")
     implementation("com.google.accompanist:accompanist-insets:${rootProject.ext.get("accompanistVersion")}")
     implementation("com.google.accompanist:accompanist-systemuicontroller:${rootProject.ext.get("accompanistVersion")}")
+//    implementation("com.google.accompanist:accompanist-permissions:${rootProject.ext.get("accompanistVersion")}")
+
+//camera
+    implementation("androidx.camera:camera-core:${rootProject.ext.get("cameraxVersion")}")
+    implementation("androidx.camera:camera-camera2:${rootProject.ext.get("cameraxVersion")}")
+    implementation("androidx.camera:camera-lifecycle:${rootProject.ext.get("cameraxVersion")}")
+    implementation("androidx.camera:camera-video:${rootProject.ext.get("cameraxVersion")}")
+    implementation("androidx.camera:camera-view:${rootProject.ext.get("cameraxVersion")}")
+    implementation("androidx.camera:camera-extensions:${rootProject.ext.get("cameraxVersion")}")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 

@@ -31,6 +31,14 @@
 <!--    <uses-feature android:name="android.software.leanback" android:required="false" />-->
     <uses-feature android:name="android.hardware.touchscreen" android:required="true" />
 
+    <uses-feature android:name="android.hardware.camera"  />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+<!--    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"-->
+<!--        android:maxSdkVersion="32" />-->
+<!--    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />-->
     <!--
         Android 11 package visibility changes require that apps specify which
         set of other packages on the device that they can access. Since this
@@ -111,6 +119,16 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/todolist_widget_info" />
         </receiver>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.app.id.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

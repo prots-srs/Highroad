@@ -1,4 +1,4 @@
-package com.protsprog.highroad.authentication.data
+package com.protsprog.highroad.authentication
 
 /*
 TO READ
@@ -25,8 +25,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
-
-private val API_SERVER = "https://protsprog.com/"
+import com.protsprog.highroad.util.API_SERVER
 
 @JsonClass(generateAdapter = true)
 data class AuthTokenResponse(
@@ -65,7 +64,7 @@ interface AuthApiService {
     @POST("/api/user")
     suspend fun updateUser(
         @Header("Authorization") token: String,
-        @Field("_method") _method:String = "patch",
+        @Field("_method") _method: String = "patch",
         @Field("name") name: String
     ): Response<AuthUpdateAnswer>
 }

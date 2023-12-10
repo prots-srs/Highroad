@@ -3,6 +3,7 @@ package com.protsprog.highroad.entrance.data
 import com.protsprog.highroad.R
 import com.protsprog.highroad.nav.Articles
 import com.protsprog.highroad.nav.BluetoothCase
+import com.protsprog.highroad.nav.CameraXCase
 import com.protsprog.highroad.nav.Compose
 import com.protsprog.highroad.nav.FlightSearch
 import com.protsprog.highroad.nav.MotionCase
@@ -24,6 +25,13 @@ val entranceItems = listOf(
         picture = R.drawable.banner_article,
         title = StringResource(R.string.entrance_title_case_article),
         destination = Articles.route,
+        freeShow = true
+    ),
+    EntranceItem(
+        id = 8,
+        picture = R.drawable.banner_camera,
+        title = StringResource(R.string.entrance_camerax),
+        destination = CameraXCase.route,
         freeShow = true
     ),
     EntranceItem(

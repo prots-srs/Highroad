@@ -17,7 +17,6 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import com.protsprog.highroad.R
 import com.protsprog.highroad.authentication.domen.AuthAppLogin
-import com.protsprog.highroad.authentication.ui.LoginState
 import com.protsprog.highroad.util.BiometricPromptUtils
 import com.protsprog.highroad.util.CIPHERTEXT_WRAPPER
 import com.protsprog.highroad.util.CryptographyManager

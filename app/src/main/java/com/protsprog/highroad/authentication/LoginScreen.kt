@@ -1,4 +1,4 @@
-package com.protsprog.highroad.authentication.ui
+package com.protsprog.highroad.authentication
 
 /*
 TO READ
