@@ -5,6 +5,9 @@
       <entry key="app">
         <State />
       </entry>
+      <entry key="test_parse_net_url_to_uri()">
+        <State />
+      </entry>
     </value>
   </component>
 </project>

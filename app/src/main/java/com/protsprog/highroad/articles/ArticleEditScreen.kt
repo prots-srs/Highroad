@@ -1,7 +1,5 @@
 package com.protsprog.highroad.articles
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.protsprog.highroad.CameraXContainer
+import com.protsprog.highroad.IMAGE_SOURCES
+import com.protsprog.highroad.PhotoPickerContainer
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ui.components.ArticleDetailItemEdit
 import com.protsprog.highroad.articles.ui.components.NetworkErrorIndicator
@@ -40,23 +41,34 @@ fun ArticleEditScreen(
     modifier: Modifier = Modifier,
     windowWidthClass: WindowWidthSizeClass,
     viewModel: ArticleViewModel = hiltViewModel(),
-    hasBack: Boolean = false,
-    onBackPressed: () -> Unit,
+//    hasBack: Boolean = false,
+//    onBackPressed: () -> Unit,
     authService: AuthServices,
     itemId: Int = 0,
-    takePhoto: () -> Unit = {}
+    navigateToArticle: (Int) -> Unit,
+    cameraX: CameraXContainer,
+    photoPicker: PhotoPickerContainer
 ) {
-    var fetchItem by rememberSaveable { mutableStateOf(false) }
+    var fetchItem by remember { mutableStateOf(false) }
     if (!fetchItem) {
         fetchItem = true
-        viewModel.fetchItem(itemId)
+
+//        Log.d("TEST_FLOW", "composable: itemId ${itemId}")
+        viewModel.fetchItem(itemId, fillPutModel = true)
         viewModel.fetchPermisions()
     }
 
     LaunchedEffect(key1 = authService.hasAuthorization) {
 //        Log.d("TEST_FLOW", "comp: LaunchedEffect ${authService.hasAuthorization}")
         if (!authService.hasAuthorization) {
-            onBackPressed()
+//            onBackPressed()
+            navigateToArticle(viewModel.articlePutItem.id)
+        }
+    }
+
+    LaunchedEffect(key1 = viewModel.serviceUiState.needGoToDetailScreen) {
+        if (viewModel.serviceUiState.needGoToDetailScreen) {
+            navigateToArticle(viewModel.articlePutItem.id)
         }
     }
 
@@ -77,9 +89,9 @@ fun ArticleEditScreen(
             AuthAppBar(
                 title = if (viewModel.articleItem.title.isNotEmpty()) viewModel.articleItem.title else "Compose article",
                 scrollBehavior = scrollBehavior,
-                hasBack = hasBack,
+                hasBack = true,
                 authService = authService,
-                onBackPressed = onBackPressed,
+                onBackPressed = { navigateToArticle(viewModel.articlePutItem.id) },
             )
         }
     ) { innerPadding ->
@@ -97,10 +109,34 @@ fun ArticleEditScreen(
             ) {
                 item {
                     ArticleDetailItemEdit(
-                        item = viewModel.articleItem,
+                        item = viewModel.articlePutItem,
+                        changeItemPublish = viewModel::changeInPutItemPublish,
+                        changeItemSort = viewModel::changeInPutItemSort,
+                        changeItemTitle = viewModel::changeInPutItemTitle,
+                        changeItemDescription = viewModel::changeInPutItemDescription,
+                        changeItemPicture = viewModel::changeInPutItemPicture,
+                        changeUseMedia = viewModel::changeUseMedia,
+                        changeUseCamera = viewModel::changeUseCamera,
                         errors = viewModel.putErrors,
+                        services = viewModel.serviceUiState,
                         onClickSubmit = viewModel::onClickSubmit,
-                        takePhoto = takePhoto
+                        checkPermissionCameraX = { cameraX.service.checkPermissionCameraX() },
+                        permissionCamera = cameraX.service.permissions,
+                        startCamera = { ctx, lc -> cameraX.service.startCamera(ctx, lc) },
+                        takePhoto = { cameraX.service.takePhoto() },
+                        checkPermissionPhotoPicker = { photoPicker.service.checkPermissionMedia() },
+                        permissionMedia = photoPicker.service.permissions,
+                        startPickPhoto = { photoPicker.service.launchPickMedia() },
+                        outputFiles = mapOf(
+                            IMAGE_SOURCES.CAMERA to cameraX.service.outputFile,
+                            IMAGE_SOURCES.MEDIA to photoPicker.service.outputFile
+                        ),
+                        clearOutput = { source: IMAGE_SOURCES ->
+                            when (source) {
+                                IMAGE_SOURCES.CAMERA -> cameraX.service.clearOutputFile()
+                                IMAGE_SOURCES.MEDIA -> photoPicker.service.clearOutputFile()
+                            }
+                        }
                     )
                 }
             }

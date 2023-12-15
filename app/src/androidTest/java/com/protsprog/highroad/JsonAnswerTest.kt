@@ -1,5 +1,6 @@
 package com.protsprog.highroad
 
+import android.net.Uri
 import android.util.Log
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.protsprog.highroad.articles.ArticlePutModel
@@ -18,8 +19,23 @@ import java.io.IOException
 class JsonAnswerTest {
 
     private val itemPut = ArticlePutModel(
-        id = 132, publish = false, sort = "a 0", title = "", description = ""
+        id = 132, publish = false, sort = "a 0", title = "", description = "", picture = Uri.EMPTY
     )
+
+    @Test
+    fun test_parse_net_url_to_uri() {
+        val url =
+            "http://192.168.50.107/storage/articles/K0SJXyncOp4LRZyWi9l8GQPeHuHausBtQAQ7MyKg.jpg"
+
+        Log.d("TEST_JSON", "test url: ${url}")
+
+        val uri = Uri.parse(url)
+
+        Log.d("TEST_JSON", "test uri: ${uri}")
+        Log.d("TEST_JSON", "test uri: ${uri.path}")
+        Log.d("TEST_JSON", "test uri: ${uri.host}")
+        Log.d("TEST_JSON", "test uri: ${uri.scheme}")
+    }
 
     @Test
     fun test_json_decode_response() = runTest {

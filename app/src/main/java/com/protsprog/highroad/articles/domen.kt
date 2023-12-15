@@ -1,9 +1,46 @@
 package com.protsprog.highroad.articles
 
+import android.net.Uri
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import okhttp3.MultipartBody
 
+@Entity(tableName = "articles")
+data class ArticleEntity(
+    @PrimaryKey
+    val id: Int,
+    val title: String,
+    @ColumnInfo(defaultValue = "")
+    val sort: String,
+    @ColumnInfo(defaultValue = "")
+    val description: String,
+    @ColumnInfo(defaultValue = "")
+    val picture: String,
+    val publish: Boolean,
+    @ColumnInfo(defaultValue = "")
+    val createdAt: String?,
+    @ColumnInfo(defaultValue = "")
+    val updatedAt: String?
+)
+
+fun ArticleEntity.asModel() = ArticleListModel(
+    aid = id,
+    publish = publish,
+    sort = sort.toInt(),
+    title = title,
+    picture = picture
+)
+
+fun ArticleEntity.asItemModel() = ArticleItemModel(
+    id = id,
+    publish = publish,
+    sort = sort.toInt(),
+    title = title,
+    description = description,
+    picture = picture
+)
 data class ArticleListModel(
     val aid: Int = 0,
     val sort: Int = 0,
@@ -28,21 +65,36 @@ data class ArticleItemModel(
     val id: Int = 0,
     val sort: Int = 0,
     val datetime: String = "",
-    val title: String = "demo title",
-    val description: String? = "Lorem ipsum description",
+    val title: String = "",
+    val description: String? = "",
     val picture: String? = null,
     val publish: Boolean = false
+)
+
+fun ArticleItemModel.toPutModel() = ArticlePutModel(
+    id = id,
+    publish = publish,
+    sort = sort.toString(),
+    title = title,
+    description = description ?: "",
+    picture = picture?.let { Uri.parse(picture) } ?: Uri.EMPTY
 )
 
 //common states
 data class ServiceUiState(
     var hasServiceError: Boolean = false,
-    var hasRefreshing: Boolean = false
+    var hasRefreshing: Boolean = false,
+    var needGoToDetailScreen: Boolean = false,
+    var needGoToListScreen: Boolean = false,
+    var enableSubmit: Boolean = true,
+    var useMedia: Boolean = false,
+    var useCamera: Boolean = false,
+    var hasChangePicture: Boolean = false
 )
 
 data class ArticleUiState(
     var sortBySortAsc: Boolean = true,
-    var showOnlyPublished: Boolean = true
+    var showOnlyPublished: Boolean = false
 )
 
 //permissions states
@@ -61,12 +113,12 @@ data class ArticlePutErrorsUiState(
 )
 
 data class ArticlePutModel(
-    val id: Int,
-    val picture: MultipartBody.Part,
-    val publish: Boolean,
-    val sort: String,
-    val title: String,
-    val description: String
+    val id: Int = 0,
+    val picture: Uri = Uri.EMPTY,
+    val publish: Boolean = false,
+    val sort: String = "",
+    val title: String = "",
+    val description: String = ""
 )
 
 data class ArticleResponsePutModel(
@@ -81,11 +133,11 @@ data class ArticleResponsePutModel(
 @JsonClass(generateAdapter = true)
 data class ArticleService(
     val id: Int,
-    val title: String,
+    val publish: Boolean,
     val sort: String?,
+    val title: String,
     val description: String?,
     val picture: String?,
-    val publish: Boolean,
     @Json(name = "created_at") val createdAt: String?,
     @Json(name = "updated_at") val updatedAt: String?
 )
@@ -111,22 +163,24 @@ data class TestJsonContainer(
     val id: Int
 )
 
+@JsonClass(generateAdapter = true)
+data class ArticleDeleteAnswer(
+    val code: Int,
+    val message: String,
+    val context: Int
+)
+
 
 fun ArticleService.asEntity() = ArticleEntity(
     id = id,
-    title = title,
+    publish = publish,
     sort = sort ?: "",
+    title = title,
     description = description ?: "",
     picture = picture ?: "",
-    publish = publish,
     createdAt = createdAt ?: "",
     updatedAt = updatedAt ?: ""
 )
-
-//to repo
-//data class PermissionAnswer(
-//    val can: Boolean
-//)
 
 
 /*@Retention(AnnotationRetention.RUNTIME)

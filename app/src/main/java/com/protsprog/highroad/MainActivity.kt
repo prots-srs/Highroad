@@ -48,20 +48,35 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+enum class IMAGE_SOURCES {
+    CAMERA, MEDIA
+}
+
 @AndroidEntryPoint
 //class MainActivity : ComponentActivity() {
 class MainActivity : AppCompatActivity() {
 
     lateinit var bluetoothService: BluetoothContainer
     lateinit var cameraXService: CameraXContainer
+    lateinit var photoPickerService: PhotoPickerContainer
 
+//    Camera
     private val activityCameraXResultLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-            cameraXService.service.checkPermissions(
-//                baseContext,
-                permissions
-            )
+            cameraXService.service.checkPermissions(permissions)
         }
+
+    //    access to MEDIA
+    private val activityPhotoPickerRequestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            photoPickerService.service.checkPermissions(permissions)
+        }
+
+    private val activityPhotoPickerRequestPickMediaLauncher =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            photoPickerService.service.processMedia(uri)
+        }
+
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +85,11 @@ class MainActivity : AppCompatActivity() {
 
         bluetoothService = BluetoothServiceImpl(this)
         cameraXService = CameraXServiceImpl(this, activityCameraXResultLauncher)
+        photoPickerService = PhotoPickerServiceImpl(
+            this,
+            activityPhotoPickerRequestPermissionLauncher,
+            activityPhotoPickerRequestPickMediaLauncher
+        )
 
 // Register for broadcasts when a device is discovered.
         val filterBTFound = IntentFilter(BluetoothDevice.ACTION_FOUND)
@@ -87,28 +107,7 @@ class MainActivity : AppCompatActivity() {
         cameraXService.service.initExecutor()
 
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
-
-        /**
-         * Flow of [DevicePosture] that emits every time there's a change in the windowLayoutInfo
-         */
-        val devicePostureFlow = WindowInfoTracker.getOrCreate(this).windowLayoutInfo(this)
-            .flowWithLifecycle(this.lifecycle).map { layoutInfo ->
-                val foldingFeature =
-                    layoutInfo.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
-                when {
-                    isBookPosture(foldingFeature) -> DevicePosture.BookPosture(foldingFeature.bounds)
-
-                    isSeparating(foldingFeature) -> DevicePosture.Separating(
-                        foldingFeature.bounds, foldingFeature.orientation
-                    )
-
-                    else -> DevicePosture.NormalPosture
-                }
-            }.stateIn(
-                scope = lifecycleScope,
-                started = SharingStarted.Eagerly,
-                initialValue = DevicePosture.NormalPosture
-            )
+        val devicePostureFlow = getDevicePosture()
 
         setContent {
             HighroadNavigation(
@@ -118,9 +117,32 @@ class MainActivity : AppCompatActivity() {
                 startRoute = intent.getStringExtra("insertDestination"),
                 bluetooth = bluetoothService,
                 cameraX = cameraXService,
+                photoPicker = photoPickerService
             )
         }
     }
+
+    /**
+     * Flow of [DevicePosture] that emits every time there's a change in the windowLayoutInfo
+     */
+    private fun getDevicePosture() = WindowInfoTracker.getOrCreate(this).windowLayoutInfo(this)
+        .flowWithLifecycle(this.lifecycle).map { layoutInfo ->
+            val foldingFeature =
+                layoutInfo.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()
+            when {
+                isBookPosture(foldingFeature) -> DevicePosture.BookPosture(foldingFeature.bounds)
+
+                isSeparating(foldingFeature) -> DevicePosture.Separating(
+                    foldingFeature.bounds, foldingFeature.orientation
+                )
+
+                else -> DevicePosture.NormalPosture
+            }
+        }.stateIn(
+            scope = lifecycleScope,
+            started = SharingStarted.Eagerly,
+            initialValue = DevicePosture.NormalPosture
+        )
 
     private fun checkPermissionBluetooth() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

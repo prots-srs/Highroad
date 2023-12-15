@@ -10,9 +10,9 @@ https://developer.android.com/codelabs/camerax-getting-started4
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.CameraSelector
@@ -43,6 +43,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 typealias LumaListener = (luma: Double) -> Unit
+
 interface CameraXContainer {
     val service: CameraXService
 }
@@ -60,8 +61,9 @@ class CameraXService(
     private val activityContext: Context,
     private val activityCameraXResultLauncher: ActivityResultLauncher<Array<String>>
 ) {
-    var permissionCamera by mutableStateOf(false)
+    var permissions by mutableStateOf(false)
     var capturingVideo by mutableStateOf(false)
+    var outputFile by mutableStateOf<Uri>(Uri.EMPTY)
 
     private var imageCapture: ImageCapture? = null
 
@@ -79,25 +81,22 @@ class CameraXService(
     }
 
     fun checkPermissions(
-//        baseContext: Context,
         permissions: Map<String, @JvmSuppressWildcards Boolean>
     ) {
         // Handle Permission granted/rejected
         var permissionGranted = true
         permissions.entries.forEach {
-            if (it.key in REQUIRED_PERMISSIONS_CAMERA && it.value == false)
-                permissionGranted = false
+            if (it.key in REQUIRED_PERMISSIONS_CAMERA && it.value == false) permissionGranted =
+                false
         }
         if (!permissionGranted) {
-            permissionCamera = false
+            this.permissions = false
 
             Toast.makeText(
-                activityContext,
-                "Permission camera request denied",
-                Toast.LENGTH_SHORT
+                activityContext, "Permission camera request denied", Toast.LENGTH_SHORT
             ).show()
         } else {
-            permissionCamera = true
+            this.permissions = true
 //            startCamera()
         }
 
@@ -116,20 +115,18 @@ class CameraXService(
     companion object {
         private const val TAG = "CameraXApp"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private val REQUIRED_PERMISSIONS_CAMERA =
-            mutableListOf(
-                android.Manifest.permission.CAMERA,
-                android.Manifest.permission.RECORD_AUDIO
-            ).apply {
-                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                    add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                }
-            }.toTypedArray()
+        private val REQUIRED_PERMISSIONS_CAMERA = mutableListOf(
+            android.Manifest.permission.CAMERA, android.Manifest.permission.RECORD_AUDIO
+        ).apply {
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+        }.toTypedArray()
     }
 
     fun checkPermissionCameraX() {
         if (allCameraPermissionsGranted()) {
-            permissionCamera = true
+            permissions = true
 
 //            Log.d("CameraXApp", "service permissions: ${permissionCamera}")
 //            startCamera()
@@ -159,22 +156,18 @@ class CameraXService(
             imageCapture = ImageCapture.Builder().build()
 
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build().also {
                     it.setAnalyzer(cameraExecutor, LuminosityAnalyzer { luma ->
-                        Log.d(TAG, "Average luminosity: $luma")
+//                        Log.d(TAG, "Average luminosity: $luma")
                     })
                 }
 
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
-                .build()
+            val recorder =
+                Recorder.Builder().setQualitySelector(QualitySelector.from(Quality.HIGHEST)).build()
             videoCapture = VideoCapture.withOutput(recorder)
 
-            val cameraSelector = CameraSelector.Builder()
-                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                .build()
+            val cameraSelector =
+                CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
             try {
                 cameraProvider.unbindAll()
@@ -187,7 +180,7 @@ class CameraXService(
 //                    imageAnalyzer
                 )
             } catch (exc: Exception) {
-                Log.d(TAG, "Use case binding failed", exc)
+//                Log.d(TAG, "Use case binding failed", exc)
             }
         }, executor)
 
@@ -203,8 +196,7 @@ class CameraXService(
         val imageCapture = imageCapture ?: return
 
         // Create time stamped name and MediaStore entry.
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -214,38 +206,33 @@ class CameraXService(
         }
 
         // Create output options object which contains file + metadata
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(
-                activityContext.contentResolver,
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
+            activityContext.contentResolver,
 //                contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues
-            )
-            .build()
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues
+        ).build()
 
         // Set up image capture listener, which is triggered after photo has
         // been taken
-        imageCapture.takePicture(
-            outputOptions,
+        imageCapture.takePicture(outputOptions,
             ContextCompat.getMainExecutor(activityContext),
             object : ImageCapture.OnImageSavedCallback {
                 override fun onError(exc: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+//                    Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
                 }
 
-                override fun
-                        onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Toast.makeText(activityContext, msg, Toast.LENGTH_SHORT).show()
-                    Log.d(TAG, msg)
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    outputFile = output.savedUri ?: Uri.EMPTY
+//                    val msg = "Photo capture succeeded: ${output.savedUri}"
+//                    Toast.makeText(activityContext, msg, Toast.LENGTH_SHORT).show()
+//                    Log.d(TAG, msg)
                 }
-            }
-        )
+            })
     }
 
     fun captureVideo() {
 
-        Log.d(TAG, "captureVideo ${videoCapture}")
+//        Log.d(TAG, "captureVideo ${videoCapture}")
 
         val videoCapture = videoCapture ?: return
 
@@ -260,8 +247,7 @@ class CameraXService(
         }
 
         // create and start a new recording session
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
+        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
@@ -270,23 +256,21 @@ class CameraXService(
             }
         }
 
-        val mediaStoreOutputOptions = MediaStoreOutputOptions
-            .Builder(activityContext.contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-            .setContentValues(contentValues)
-            .build()
+        val mediaStoreOutputOptions = MediaStoreOutputOptions.Builder(
+            activityContext.contentResolver,
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+        ).setContentValues(contentValues).build()
 
-        recording = videoCapture.output
-            .prepareRecording(activityContext, mediaStoreOutputOptions)
-            .apply {
-                if (PermissionChecker.checkSelfPermission(activityContext,
-                        android.Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
+        recording =
+            videoCapture.output.prepareRecording(activityContext, mediaStoreOutputOptions).apply {
+                if (PermissionChecker.checkSelfPermission(
+                        activityContext, android.Manifest.permission.RECORD_AUDIO
+                    ) == PermissionChecker.PERMISSION_GRANTED
+                ) {
                     withAudioEnabled()
                 }
-            }
-            .start(ContextCompat.getMainExecutor(activityContext)) { recordEvent ->
-                when(recordEvent) {
+            }.start(ContextCompat.getMainExecutor(activityContext)) { recordEvent ->
+                when (recordEvent) {
                     is VideoRecordEvent.Start -> {
 //                        viewBinding.videoCaptureButton.apply {
 //                            text = getString(R.string.stop_capture)
@@ -295,18 +279,17 @@ class CameraXService(
 
                         capturingVideo = false
                     }
+
                     is VideoRecordEvent.Finalize -> {
                         if (!recordEvent.hasError()) {
-                            val msg = "Video capture succeeded: " +
-                                    "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(activityContext, msg, Toast.LENGTH_SHORT)
-                                .show()
-                            Log.d(TAG, msg)
+                            val msg =
+                                "Video capture succeeded: " + "${recordEvent.outputResults.outputUri}"
+                            Toast.makeText(activityContext, msg, Toast.LENGTH_SHORT).show()
+//                            Log.d(TAG, msg)
                         } else {
                             recording?.close()
                             recording = null
-                            Log.e(TAG, "Video capture ends with error: " +
-                                    "${recordEvent.error}")
+//                            Log.e(TAG, "Video capture ends with error: " + "${recordEvent.error}")
                         }
                         capturingVideo = false
 
@@ -317,6 +300,10 @@ class CameraXService(
                     }
                 }
             }
+    }
+
+    fun clearOutputFile() {
+        outputFile = Uri.EMPTY
     }
 }
 

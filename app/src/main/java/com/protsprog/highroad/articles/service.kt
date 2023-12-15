@@ -17,6 +17,7 @@ import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -54,8 +55,8 @@ interface ArticleApiService {
     @POST("api/article")
     suspend fun putItem(
         @Header("Authorization") token: String,
-        @Part image: MultipartBody.Part,
-        @Part("image") requestBody: RequestBody,
+        @Part picture: MultipartBody.Part,
+//        @Part("picture") requestBody: RequestBody,
         @Part("id") id: RequestBody,
         @Part("publish") publish: RequestBody,
         @Part("sort") sort: RequestBody,
@@ -72,6 +73,12 @@ interface ArticleApiService {
 //        @Part("title") title: RequestBody,
 //        @Part("description") description: RequestBody,
     ): Response<TestJsonContainer>
+
+    @DELETE("api/article/{id}")
+    suspend fun deleteItem(
+        @Header("Authorization") token: String,
+        @Path("id") id: Int
+    ): Response<ArticleDeleteAnswer>
 
 }
 

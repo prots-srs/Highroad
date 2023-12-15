@@ -12,6 +12,7 @@ https://developer.android.com/reference/kotlin/androidx/compose/material/pullref
 to flow fron network and db
 https://developer.android.com/codelabs/advanced-kotlin-coroutines?hl=en#0
  */
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -70,8 +71,8 @@ fun ArticleScreen(
     var fetchList by rememberSaveable { mutableStateOf(false) }
     if (!fetchList) {
         fetchList = true
-        viewModel.fetchList()
         viewModel.fetchPermisions()
+        viewModel.fetchList()
     }
 
     LaunchedEffect(key1 = authService.hasAuthorization) {

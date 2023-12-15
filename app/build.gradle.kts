@@ -93,6 +93,7 @@ dependencies {
 
 //    https://m2.material.io/develop/android/docs/getting-started
     implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.media3:media3-common:1.2.0")
 
 //    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
 //    https://firebase.google.com/docs/android/setup#available-libraries
@@ -202,6 +203,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-systemuicontroller:${rootProject.ext.get("accompanistVersion")}")
 //    implementation("com.google.accompanist:accompanist-permissions:${rootProject.ext.get("accompanistVersion")}")
 
+    implementation("com.google.android.gms:play-services-home:16.0.0")
 //camera
     implementation("androidx.camera:camera-core:${rootProject.ext.get("cameraxVersion")}")
     implementation("androidx.camera:camera-camera2:${rootProject.ext.get("cameraxVersion")}")

@@ -23,7 +23,7 @@ fun ArticleDetailItem(
     title: String,
     picture: String?,
     description: String?,
-    publish: Boolean = true
+    publish: Boolean = false
 ) {
     Column {
         Text(

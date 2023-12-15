@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Input
 import androidx.compose.material.icons.outlined.Logout
@@ -52,7 +53,7 @@ import com.protsprog.highroad.authentication.StateActionsAuthTopBar
 
 private val iconSize = 28.dp
 
-enum class TOP_BAR_MENU_ACTIONS { RELOAD }
+enum class TOP_BAR_MENU_ACTIONS { RELOAD, DELETE }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,6 +103,11 @@ fun AuthAppBar(
                     TOP_BAR_MENU_ACTIONS.RELOAD -> Icon(
                         imageVector = Icons.Filled.Refresh,
                         contentDescription = "Reload",
+                        modifier = iconModifier
+                    )
+                    TOP_BAR_MENU_ACTIONS.DELETE -> Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Delete",
                         modifier = iconModifier
                     )
                 }

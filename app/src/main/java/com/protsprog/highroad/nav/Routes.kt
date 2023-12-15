@@ -79,7 +79,9 @@ class ArticlesActions(navController: NavHostController) {
                 "{${Articles.itemIdArg}}",
                 itemId.toString()
             )
-        )
+        ) {
+            launchSingleTop = true
+        }
     }
     val navigateToEdit: (Int) -> Unit = { itemId ->
         navController.navigate(
@@ -87,7 +89,9 @@ class ArticlesActions(navController: NavHostController) {
                 "{${Articles.itemIdArg}}",
                 itemId.toString()
             )
-        )
+        ) {
+            launchSingleTop = true
+        }
     }
     val upPress: () -> Unit = {
         navController.navigateUp()
@@ -208,7 +212,6 @@ object CameraXCase : SimpleDestination {
     override val titleRes = R.string.entrance_camerax
     override val route = "cameraX"
 }
-
 
 
 /*

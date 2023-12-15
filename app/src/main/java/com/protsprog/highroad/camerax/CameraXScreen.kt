@@ -1,6 +1,5 @@
 package com.protsprog.highroad.camerax
 
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,10 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -52,7 +49,7 @@ fun CameraXScreen(
                 .fillMaxWidth()
                 .padding(innerPadding)
         ) {
-            AnimatedVisibility(visible = cameraX.service.permissionCamera) {
+            AnimatedVisibility(visible = cameraX.service.permissions) {
                 Row(modifier = modifier.fillMaxWidth()) {
                     Column(modifier = modifier.fillMaxWidth()) {
 //                        CameraXPreviewScreen(cameraX = cameraX)

@@ -1,7 +1,5 @@
 package com.protsprog.highroad.articles
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -12,34 +10,39 @@ import com.protsprog.highroad.authentication.domen.AuthAppLogin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.OutputStream
 import javax.inject.Inject
 
 interface JobsRepository {
     fun fetchList(): Job
     fun refreshList(): Job
-    fun fetchItem(id: Int): Job
+    fun fetchItem(id: Int, fillPutModel: Boolean = false): Job
     fun refreshItem(id: Int): Job
     suspend fun fetchRepoPermission(operation: AccessOperation)
-    fun onClickSubmit(putModel: ArticlePutModel): Job
+    fun onClickSubmit(): Job
+    fun deleteItem(id: Int): Job
 }
 
 interface IndicateServiceWork {
     fun viewRefreshing(show: Boolean)
     fun viewServiceError(show: Boolean)
+    fun enablingSubmitButton(enable: Boolean = true)
+}
+
+interface ServicesEditItem {
+    fun changeInPutItemPublish(v: Boolean)
+    fun changeInPutItemSort(v: String)
+    fun changeInPutItemTitle(v: String)
+    fun changeInPutItemDescription(v: String)
+    fun changeInPutItemPicture(v: Uri)
+    fun changeUseMedia(v: Boolean)
+    fun changeUseCamera(v: Boolean)
 }
 
 @HiltViewModel
 class ArticleViewModel @Inject constructor(
     private val repo: ArticlesRepository,
-) : ViewModel(), JobsRepository, IndicateServiceWork {
+) : ViewModel(), JobsRepository, IndicateServiceWork, ServicesEditItem {
 
     var commonUiState by mutableStateOf(ArticleUiState())
     var serviceUiState by mutableStateOf(ServiceUiState())
@@ -48,6 +51,7 @@ class ArticleViewModel @Inject constructor(
 
     var articleList by mutableStateOf(emptyList<ArticleListModel>())
     var articleItem by mutableStateOf(ArticleItemModel())
+    var articlePutItem by mutableStateOf(ArticlePutModel())
 
     var putErrors by mutableStateOf(ArticlePutErrorsUiState())
 
@@ -67,19 +71,14 @@ class ArticleViewModel @Inject constructor(
                     item.aid
                 }
             }
-
-
-//            listModel.filter { item ->
-//                    (uiState.showOnlyPublished && item.publish) || !uiState.showOnlyPublished
-//                }.sortedBy { item ->
-//                    if (uiState.sortBySortAsc) item.sort else item.aid
-//                }
-//            }
         }
     }
 
     override fun refreshList() = viewModelScope.launch {
 //        Log.d("TEST_FLOW", "vm: refresh list")
+
+//        serviceUiState = serviceUiState.copy(needRefresh = false)
+
         viewRefreshing(true)
         try {
             repo.refreshListNet()
@@ -95,13 +94,23 @@ class ArticleViewModel @Inject constructor(
     }
 
     //    "fetch" - from Db
-    override fun fetchItem(id: Int) = viewModelScope.launch {
+    override fun fetchItem(id: Int, fillPutModel: Boolean) = viewModelScope.launch {
 //        Log.d("TEST_FLOW", "vm: fetch item")
         if (id > 0) {
             repo.fetchItemDb(id)
-            repo.articleItem.collect { itemModel -> articleItem = itemModel }
+            repo.articleItem.collect { itemModel ->
+                if (fillPutModel) {
+                    articlePutItem = itemModel.toPutModel()
+                } else {
+                    articleItem = itemModel
+                }
+            }
         } else {
-            articleItem = ArticleItemModel()
+            if (fillPutModel) {
+                articlePutItem = ArticlePutModel()
+            } else {
+                articleItem = ArticleItemModel()
+            }
         }
     }
 
@@ -114,6 +123,8 @@ class ArticleViewModel @Inject constructor(
             fetchPermisions()
 
             viewServiceError(false)
+
+            serviceUiState = serviceUiState.copy(needGoToDetailScreen = true)
         } catch (e: IOException) {
             viewServiceError(true)
         } finally {
@@ -139,7 +150,7 @@ class ArticleViewModel @Inject constructor(
 
         commonUiState = commonUiState.copy(
             sortBySortAsc = true,
-            showOnlyPublished = true
+            showOnlyPublished = false
         )
 
         if (AuthAppLogin.token != null) {
@@ -190,16 +201,25 @@ class ArticleViewModel @Inject constructor(
         permissionUiState = PermissionsUiState()
     }
 
-    override fun onClickSubmit(putModel: ArticlePutModel) = viewModelScope.launch {
+    override fun onClickSubmit() = viewModelScope.launch {
         putErrors = ArticlePutErrorsUiState()
 
         viewRefreshing(true)
 
-        repo.putItem(putModel).collect { response ->
+        if (!serviceUiState.hasChangePicture) {
+            articlePutItem = articlePutItem.copy(picture = Uri.EMPTY)
+        }
+
+//        Log.d("TEST_FLOW", "vm putModel: ${putModel}")
+
+        repo.putItem(articlePutItem).collect { response ->
             when (response) {
                 is ResponseData.Loading -> {
                     viewRefreshing(response.status)
                     viewServiceError(false)
+                    if (response.status) {
+                        enablingSubmitButton(false)
+                    }
                 }
 
                 is ResponseData.Error -> {
@@ -207,16 +227,21 @@ class ArticleViewModel @Inject constructor(
 
                     viewRefreshing(false)
                     viewServiceError(true)
+                    enablingSubmitButton()
                 }
 
                 is ResponseData.Success -> {
                     response.data?.let { response ->
                         if (response.errors == null) {
-
-                            Log.d("TEST_FLOW", "vm put true: ${response.id}")
+                            articlePutItem = articlePutItem.copy(id = response.id)
+//                            serviceUiState = serviceUiState.copy(idDetailScreen = response.id)
+                            refreshItem(response.id)
+//                            Log.d("TEST_FLOW", "vm put true: ${response.id}")
                         }
-                        Log.d("TEST_FLOW", "vm put errors: ${response.errors}")
+//                        Log.d("TEST_FLOW", "vm put errors: ${response.errors}")
                         response.errors?.let { fullMap ->
+                            enablingSubmitButton()
+
                             fullMap.keys.forEach { key ->
                                 fullMap[key]?.let { list ->
                                     putErrors = when (key) {
@@ -243,21 +268,10 @@ class ArticleViewModel @Inject constructor(
 
                     viewRefreshing(false)
                     viewServiceError(false)
-
                 }
             }
         }
 
-    }
-
-    fun createMultipartBody(uri: Uri, multipartName: String): MultipartBody.Part {
-        val documentImage = BitmapFactory.decodeFile(uri.path!!)
-        val file = File(uri.path!!)
-        val os: OutputStream = BufferedOutputStream(FileOutputStream(file))
-        documentImage.compress(Bitmap.CompressFormat.JPEG, 100, os)
-        os.close()
-        val requestBody = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        return MultipartBody.Part.createFormData(name = multipartName, file.name, requestBody)
     }
 
     override fun viewRefreshing(show: Boolean) {
@@ -268,6 +282,73 @@ class ArticleViewModel @Inject constructor(
         serviceUiState = serviceUiState.copy(hasServiceError = show)
     }
 
+    override fun enablingSubmitButton(enable: Boolean) {
+        serviceUiState = serviceUiState.copy(enableSubmit = enable)
+    }
+
+    override fun changeInPutItemPublish(v: Boolean) {
+        articlePutItem = articlePutItem.copy(publish = v)
+    }
+
+    override fun changeInPutItemSort(v: String) {
+        articlePutItem = articlePutItem.copy(sort = v)
+    }
+
+    override fun changeInPutItemTitle(v: String) {
+        articlePutItem = articlePutItem.copy(title = v)
+    }
+
+    override fun changeInPutItemDescription(v: String) {
+        articlePutItem = articlePutItem.copy(description = v)
+    }
+
+    override fun changeInPutItemPicture(v: Uri) {
+        articlePutItem = articlePutItem.copy(picture = v)
+        serviceUiState =
+            if (v != Uri.EMPTY) serviceUiState.copy(hasChangePicture = true) else serviceUiState.copy(
+                hasChangePicture = false
+            )
+    }
+
+    override fun changeUseCamera(v: Boolean) {
+        serviceUiState = serviceUiState.copy(useCamera = v)
+    }
+
+    override fun changeUseMedia(v: Boolean) {
+        serviceUiState = serviceUiState.copy(useMedia = v)
+    }
+
+    override fun deleteItem(id: Int) = viewModelScope.launch {
+
+        repo.deleteItem(id).collect { response ->
+            when (response) {
+                is ResponseData.Loading -> {
+                    viewRefreshing(response.status)
+                    viewServiceError(false)
+                }
+
+                is ResponseData.Error -> {
+                    putErrors = putErrors.copy(common = response.error)
+
+                    viewRefreshing(false)
+                    viewServiceError(true)
+                }
+
+                is ResponseData.Success -> {
+                    response.data?.let {
+                        if (it.code == 1 && it.context == id) {
+                            serviceUiState = serviceUiState.copy(needGoToListScreen = true)
+                        } else {
+                            putErrors = putErrors.copy(common = it.message)
+                        }
+                    }
+
+                    viewRefreshing(false)
+                    viewServiceError(false)
+                }
+            }
+        }
+    }
 }
 
 /*

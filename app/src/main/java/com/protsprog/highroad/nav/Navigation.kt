@@ -41,6 +41,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.protsprog.highroad.BluetoothContainer
 import com.protsprog.highroad.CameraXContainer
+import com.protsprog.highroad.PhotoPickerContainer
 import com.protsprog.highroad.R
 import com.protsprog.highroad.articles.ArticleDetailScreen
 import com.protsprog.highroad.articles.ArticleEditScreen
@@ -117,9 +118,7 @@ fun HighroadNavigation(
     startRoute: String? = null,
     bluetooth: BluetoothContainer,
     cameraX: CameraXContainer,
-//    permissionCamera: Boolean,
-//    checkPermissionCameraX: () -> Unit,
-//    takePhoto: () -> Unit
+    photoPicker: PhotoPickerContainer
 ) {
     authViewModel.setStateBiometricButton(biometricCipher.inNeedShowBiometricButton())
 
@@ -273,10 +272,12 @@ fun HighroadNavigation(
 
                 ArticleDetailScreen(
                     windowWidthClass = windowWidthClass,
-                    hasBack = navController.previousBackStackEntry != null,
-                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+//                    hasBack = navController.previousBackStackEntry != null,
+//                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
                     authService = authServices,
-                    itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0
+                    itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0,
+                    navigateToEdit = actionsArticles.navigateToEdit,
+                    navigationToList = { navController.navigate(Articles.route) }
                 )
             }
 
@@ -288,10 +289,13 @@ fun HighroadNavigation(
 
                 ArticleEditScreen(
                     windowWidthClass = windowWidthClass,
-                    hasBack = navController.previousBackStackEntry != null,
-                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+//                    hasBack = navController.previousBackStackEntry != null,
+//                    onBackPressed = navController::popBackStack,
+                    navigateToArticle = { id: Int -> actionsArticles.navigateToArticle(id) },
                     authService = authServices,
                     itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0,
+                    cameraX = cameraX,
+                    photoPicker = photoPicker
                 )
             }
 

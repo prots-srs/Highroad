@@ -2,13 +2,11 @@ package com.protsprog.highroad.articles
 
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
-import androidx.room.Entity
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -20,40 +18,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Singleton
-
-@Entity(tableName = "articles")
-data class ArticleEntity(
-    @PrimaryKey
-    val id: Int,
-    val title: String,
-    @ColumnInfo(defaultValue = "")
-    val sort: String,
-    @ColumnInfo(defaultValue = "")
-    val description: String,
-    @ColumnInfo(defaultValue = "")
-    val picture: String,
-    val publish: Boolean,
-    @ColumnInfo(defaultValue = "")
-    val createdAt: String?,
-    @ColumnInfo(defaultValue = "")
-    val updatedAt: String?
-)
-
-fun ArticleEntity.asModel() = ArticleListModel(
-    aid = id,
-    sort = sort.toInt(),
-    title = title,
-    picture = picture,
-    publish = publish
-)
-
-fun ArticleEntity.asItemModel() = ArticleItemModel(
-    id = id,
-    sort = sort.toInt(),
-    title = title,
-    description = description,
-    picture = picture
-)
 
 @Dao
 interface ArticleDao {
@@ -67,8 +31,8 @@ interface ArticleDao {
     @Query("DELETE FROM articles")
     suspend fun deleteAll()
 
-//    @Delete
-//    suspend fun delete(entity: ArticleEntity)
+    @Delete
+    suspend fun delete(item: ArticleEntity)
 
     @Insert//(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertItem(item: ArticleEntity)
@@ -79,13 +43,18 @@ interface ArticleDao {
     suspend fun upsertItem(item: ArticleEntity) {
         try {
             insertItem(item)
+//            Log.d("TEST_FLOW", "database insert: ${item}")
         } catch (e: SQLiteConstraintException) {
             updateItem(item)
+//            Log.d("TEST_FLOW", "database update: ${item}")
         }
     }
 
     @Query("SELECT * FROM articles WHERE id = :id")
-    fun getItem(id: Int): Flow<ArticleEntity>
+    fun getItemStream(id: Int): Flow<ArticleEntity>
+
+    @Query("SELECT * FROM articles WHERE id = :id")
+    suspend fun getItem(id: Int): ArticleEntity
 }
 
 @Database(entities = [ArticleEntity::class], version = 10)

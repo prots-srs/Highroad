@@ -1,5 +1,6 @@
 package com.protsprog.highroad.articles
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,10 +45,12 @@ fun ArticleDetailScreen(
     modifier: Modifier = Modifier,
     windowWidthClass: WindowWidthSizeClass,
     viewModel: ArticleViewModel = hiltViewModel(),
-    hasBack: Boolean = false,
-    onBackPressed: () -> Unit,
+//    hasBack: Boolean = false,
+//    onBackPressed: () -> Unit,
     authService: AuthServices,
-    itemId: Int = 0
+    itemId: Int = 0,
+    navigateToEdit: (Int) -> Unit,
+    navigationToList: () -> Unit
 ) {
     var fetchList by rememberSaveable { mutableStateOf(false) }
     if (!fetchList) {
@@ -58,6 +61,8 @@ fun ArticleDetailScreen(
 //        Log.d("TEST_FLOW", "comp: fetching")
     }
 
+//    Log.d("TEST_FLOW", "composable item detail: ${viewModel.articleItem}")
+
     LaunchedEffect(key1 = authService.hasAuthorization) {
 //        Log.d("TEST_FLOW", "comp: LaunchedEffect ${authService.hasAuthorization}")
         if (authService.hasAuthorization) {
@@ -66,6 +71,18 @@ fun ArticleDetailScreen(
             viewModel.breakPermissions()
         }
     }
+
+//    Log.d(
+//        "TEST_FLOW",
+//        "composable needGoToListScreen: ${viewModel.serviceUiState.needGoToListScreen}"
+//    )
+
+    LaunchedEffect(key1 = viewModel.serviceUiState.needGoToListScreen) {
+        if (viewModel.serviceUiState.needGoToListScreen) {
+            navigationToList()
+        }
+    }
+
 
 //    Log.d("TEST_FLOW", "comp: permission edit ${viewModel.permissionUiState.update}")
 //    Log.d("TEST_FLOW", "comp: permission delete ${viewModel.permissionUiState.delete}")
@@ -82,28 +99,25 @@ fun ArticleDetailScreen(
 //        onRefresh = { viewModel.refreshItem(itemId) }
 //    )
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            AuthAppBar(
-                title = viewModel.articleItem.title,
-                scrollBehavior = scrollBehavior,
-                hasBack = hasBack,
-                authService = authService,
-                onBackPressed = onBackPressed,
-                actions = mapOf(TOP_BAR_MENU_ACTIONS.RELOAD to { viewModel.refreshItem(itemId) })
-            )
-        },
-        floatingActionButton = {
-            if (viewModel.permissionUiState.update) {
-                FloatingActionButton(
-                    onClick = { },
-                ) {
-                    Icon(Icons.Outlined.Edit, "Edit")
-                }
+    Scaffold(modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection), topBar = {
+        AuthAppBar(
+            title = viewModel.articleItem.title,
+            scrollBehavior = scrollBehavior,
+            hasBack = true,
+            authService = authService,
+            onBackPressed = navigationToList,
+            actions = mapOf(TOP_BAR_MENU_ACTIONS.RELOAD to { viewModel.refreshItem(itemId) },
+                TOP_BAR_MENU_ACTIONS.DELETE to { viewModel.deleteItem(itemId) })
+        )
+    }, floatingActionButton = {
+        if (viewModel.permissionUiState.update) {
+            FloatingActionButton(
+                onClick = { navigateToEdit(itemId) },
+            ) {
+                Icon(Icons.Outlined.Edit, "Edit")
             }
         }
-    ) { innerPadding ->
+    }) { innerPadding ->
 
         Box(
             modifier = Modifier
