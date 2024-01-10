@@ -41,8 +41,8 @@ fun ArticleEditScreen(
     modifier: Modifier = Modifier,
     windowWidthClass: WindowWidthSizeClass,
     viewModel: ArticleViewModel = hiltViewModel(),
-//    hasBack: Boolean = false,
-//    onBackPressed: () -> Unit,
+    hasBack: Boolean = false,
+    onBackPressed: () -> Unit,
     authService: AuthServices,
     itemId: Int = 0,
     navigateToArticle: (Int) -> Unit,
@@ -61,8 +61,8 @@ fun ArticleEditScreen(
     LaunchedEffect(key1 = authService.hasAuthorization) {
 //        Log.d("TEST_FLOW", "comp: LaunchedEffect ${authService.hasAuthorization}")
         if (!authService.hasAuthorization) {
-//            onBackPressed()
-            navigateToArticle(viewModel.articlePutItem.id)
+            onBackPressed()
+//            navigateToArticle(viewModel.articlePutItem.id)
         }
     }
 
@@ -78,10 +78,10 @@ fun ArticleEditScreen(
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-    val state = rememberPullRefreshState(
-        refreshing = viewModel.serviceUiState.hasRefreshing,
-        onRefresh = { }
-    )
+//    val state = rememberPullRefreshState(
+//        refreshing = viewModel.serviceUiState.hasRefreshing,
+//        onRefresh = { }
+//    )
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -89,15 +89,16 @@ fun ArticleEditScreen(
             AuthAppBar(
                 title = if (viewModel.articleItem.title.isNotEmpty()) viewModel.articleItem.title else "Compose article",
                 scrollBehavior = scrollBehavior,
-                hasBack = true,
+                hasBack = hasBack,
                 authService = authService,
-                onBackPressed = { navigateToArticle(viewModel.articlePutItem.id) },
+//                onBackPressed = { navigateToArticle(viewModel.articlePutItem.id) },
+                onBackPressed = onBackPressed,
             )
         }
     ) { innerPadding ->
         Box(
             modifier = Modifier
-                .pullRefresh(state)
+//                .pullRefresh(state)
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
@@ -145,11 +146,11 @@ fun ArticleEditScreen(
                 NetworkErrorIndicator(step = step)
             }
 
-            PullRefreshIndicator(
-                refreshing = viewModel.serviceUiState.hasRefreshing,
-                state = state,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
+//            PullRefreshIndicator(
+//                refreshing = viewModel.serviceUiState.hasRefreshing,
+//                state = state,
+//                modifier = Modifier.align(Alignment.TopCenter)
+//            )
         }
     }
 }

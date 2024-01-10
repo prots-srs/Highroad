@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Highroad"
 include(":app")
+include(":macrobenchmark")
+include(":baselineprofile")

@@ -45,12 +45,12 @@ fun ArticleDetailScreen(
     modifier: Modifier = Modifier,
     windowWidthClass: WindowWidthSizeClass,
     viewModel: ArticleViewModel = hiltViewModel(),
-//    hasBack: Boolean = false,
-//    onBackPressed: () -> Unit,
+    hasBack: Boolean = false,
+    onBackPressed: () -> Unit,
     authService: AuthServices,
     itemId: Int = 0,
     navigateToEdit: (Int) -> Unit,
-    navigationToList: () -> Unit
+//    navigationToList: () -> Unit
 ) {
     var fetchList by rememberSaveable { mutableStateOf(false) }
     if (!fetchList) {
@@ -79,10 +79,9 @@ fun ArticleDetailScreen(
 
     LaunchedEffect(key1 = viewModel.serviceUiState.needGoToListScreen) {
         if (viewModel.serviceUiState.needGoToListScreen) {
-            navigationToList()
+            onBackPressed()
         }
     }
-
 
 //    Log.d("TEST_FLOW", "comp: permission edit ${viewModel.permissionUiState.update}")
 //    Log.d("TEST_FLOW", "comp: permission delete ${viewModel.permissionUiState.delete}")
@@ -103,9 +102,9 @@ fun ArticleDetailScreen(
         AuthAppBar(
             title = viewModel.articleItem.title,
             scrollBehavior = scrollBehavior,
-            hasBack = true,
+            hasBack = hasBack,
             authService = authService,
-            onBackPressed = navigationToList,
+            onBackPressed = onBackPressed,
             actions = mapOf(TOP_BAR_MENU_ACTIONS.RELOAD to { viewModel.refreshItem(itemId) },
                 TOP_BAR_MENU_ACTIONS.DELETE to { viewModel.deleteItem(itemId) })
         )

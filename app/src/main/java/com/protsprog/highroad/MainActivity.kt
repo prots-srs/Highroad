@@ -10,14 +10,23 @@ https://m3.material.io/foundations/layout/applying-layout/window-size-classes
 
 https://github.com/android/compose-samples/blob/main/JetNews
 
+bluetooth
 https://developer.android.com/develop/connectivity/bluetooth/setup
 
 camera
 https://developer.android.com/training/camerax
 https://developer.android.com/codelabs/camerax-getting-started#1
 
+permissions
+https://developer.android.com/codelabs/android-privacy-codelab#3
+https://developer.android.com/training/permissions/requesting#principles
  */
 import android.annotation.SuppressLint
+import android.app.AppOpsManager
+import android.app.AppOpsManager.OPSTR_CAMERA
+import android.app.AppOpsManager.OPSTR_COARSE_LOCATION
+import android.app.AsyncNotedAppOp
+import android.app.SyncNotedAppOp
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_FINISHED
 import android.bluetooth.BluetoothAdapter.ACTION_DISCOVERY_STARTED
@@ -29,8 +38,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -83,6 +94,11 @@ class MainActivity : AppCompatActivity() {
 //        (application as HighroadApplication).todoAppComponent.inject(this)
         super.onCreate(savedInstanceState)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val appOpsManager = getSystemService(AppOpsManager::class.java) as AppOpsManager
+            appOpsManager.setOnOpNotedCallback(mainExecutor, DataAccessAuditListener)
+        }
+
         bluetoothService = BluetoothServiceImpl(this)
         cameraXService = CameraXServiceImpl(this, activityCameraXResultLauncher)
         photoPickerService = PhotoPickerServiceImpl(
@@ -102,8 +118,6 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, filterBTDiscoveryFinish)
         registerReceiver(receiver, filterBTBondState)
 
-        checkPermissionBluetooth()
-
         cameraXService.service.initExecutor()
 
 //        WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -116,6 +130,7 @@ class MainActivity : AppCompatActivity() {
                 biometricCipher = BiometricCipher(applicationContext, this),
                 startRoute = intent.getStringExtra("insertDestination"),
                 bluetooth = bluetoothService,
+                checkPermissionBluetooth = {checkPermissionBluetooth()},
                 cameraX = cameraXService,
                 photoPicker = photoPickerService
             )
@@ -171,6 +186,9 @@ class MainActivity : AppCompatActivity() {
                 //granted
             } else {
                 //deny
+//                coroutineScope.launch {
+//                    snackbarHostState.showSnackbar("Camera currently disabled due to denied permission.")
+//                }
             }
         }
 
@@ -234,5 +252,26 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(receiver)
 
         cameraXService.service.destroyExecutor()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.R)
+object DataAccessAuditListener : AppOpsManager.OnOpNotedCallback() {
+    override fun onNoted(op: SyncNotedAppOp) {
+        Log.d("DataAccessAuditListener","Sync Private Data Accessed: ${op.op}")
+    }
+
+    override fun onSelfNoted(op: SyncNotedAppOp) {
+        Log.d("DataAccessAuditListener","Self Private Data accessed: ${op.op}")
+    }
+
+    override fun onAsyncNoted(asyncNotedAppOp: AsyncNotedAppOp) {
+        var emoji = when (asyncNotedAppOp.op) {
+            OPSTR_COARSE_LOCATION -> "\uD83D\uDDFA"
+            OPSTR_CAMERA -> "\uD83D\uDCF8"
+            else -> "?"
+        }
+
+        Log.d("DataAccessAuditListener", "Async Private Data ($emoji) Accessed: ${asyncNotedAppOp.op}")
     }
 }

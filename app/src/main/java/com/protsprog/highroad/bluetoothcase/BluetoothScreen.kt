@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -24,6 +25,7 @@ import com.protsprog.highroad.ui.components.ItemMenu
 @Composable
 fun BluetoothScreen(
     modifier: Modifier = Modifier,
+    checkPermissionBluetooth: () -> Unit = {},
     onNavigateUp: () -> Unit = {},
     bluetooth: BluetoothContainer,
     viewModel: BluetoothCaseViewModel = hiltViewModel()
@@ -32,6 +34,10 @@ fun BluetoothScreen(
     bluetooth.service.also {
         it.injectViewModule(viewModel)
         it.checkStatus()
+    }
+
+    LaunchedEffect(Unit) {
+        checkPermissionBluetooth()
     }
 
     Scaffold(

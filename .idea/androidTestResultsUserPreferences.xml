@@ -55,6 +55,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="-1480546201">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="motorola moto g32" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="-1447476374">
           <value>
             <AndroidTestResultsTableState>
@@ -101,6 +114,19 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_4_XL_API_30" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="motorola moto g32" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="-887684128">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
                   <entry key="motorola moto g32" value="120" />
                 </map>
@@ -203,6 +229,19 @@
             </AndroidTestResultsTableState>
           </value>
         </entry>
+        <entry key="177304457">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="motorola moto g32" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
         <entry key="555709709">
           <value>
             <AndroidTestResultsTableState>
@@ -249,6 +288,32 @@
                 <map>
                   <entry key="Duration" value="90" />
                   <entry key="Pixel_4_XL_API_30" value="120" />
+                  <entry key="Tests" value="360" />
+                  <entry key="motorola moto g32" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1479670156">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
+                  <entry key="Tests" value="360" />
+                  <entry key="motorola moto g32" value="120" />
+                </map>
+              </option>
+            </AndroidTestResultsTableState>
+          </value>
+        </entry>
+        <entry key="1496679363">
+          <value>
+            <AndroidTestResultsTableState>
+              <option name="preferredColumnWidths">
+                <map>
+                  <entry key="Duration" value="90" />
                   <entry key="Tests" value="360" />
                   <entry key="motorola moto g32" value="120" />
                 </map>

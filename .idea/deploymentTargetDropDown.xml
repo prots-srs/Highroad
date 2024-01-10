@@ -2,10 +2,25 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="ExampleStartupBenchmark">
+        <State />
+      </entry>
+      <entry key="ScrollBenchmarks">
+        <State />
+      </entry>
+      <entry key="StartupBenchmark">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="test_parse_net_url_to_uri()">
+      <entry key="macrobenchmark">
+        <State />
+      </entry>
+      <entry key="scroll()">
+        <State />
+      </entry>
+      <entry key="startup()">
         <State />
       </entry>
     </value>

@@ -1,5 +1,6 @@
 package com.protsprog.highroad.entrance.ui.components
 
+import androidx.activity.compose.ReportDrawnWhen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -48,12 +49,14 @@ fun PreviewHorizontalEntranceCard() {
 
 @Composable
 fun EntranceCardVertical(
+    modifier: Modifier = Modifier,
     item: EntranceItem,
     onNavigationToScreen: () -> Unit
 ) {
+
     val desc = stringResource(id = item.title.value)
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onNavigationToScreen)
             .semantics { contentDescription = desc },
@@ -84,12 +87,13 @@ fun EntranceCardVertical(
 
 @Composable
 fun EntranceCardHorizontal(
+    modifier: Modifier = Modifier,
     item: EntranceItem,
     onNavigationToScreen: () -> Unit
 ) {
     val desc = stringResource(id = item.title.value)
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onNavigationToScreen)
             .semantics { contentDescription = desc },

@@ -217,5 +217,6 @@
     <string name="glance_timebutton_title">Current time</string>
     <string name="glance_todo_list_title">Simple ToDo list</string>
     <string name="title_network_articles_case">Network Articles case</string>
+    <string name="title_datetime_case">Date time case</string>
 
 </resources>

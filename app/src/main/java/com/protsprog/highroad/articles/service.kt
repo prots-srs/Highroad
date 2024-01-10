@@ -5,6 +5,8 @@ TO READ
 
 https://www.zacsweers.dev/exploring-moshis-kotlin-code-gen/
 
+https://bbluecoder.medium.com/a-deep-dive-into-okhttp-interceptors-8fd8d79869ec
+
 https://square.github.io/retrofit/
 
 https://medium.com/javarevisited/10-rest-api-best-practices-cd12e3904d00

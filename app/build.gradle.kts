@@ -1,6 +1,12 @@
 import java.io.FileInputStream
 import java.util.Properties
 
+/*
+TO READ
+
+https://developer.android.com/build/migrate-to-ksp
+
+ */
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -16,9 +22,8 @@ plugins {
 }
 
 // Reads the Google maps key that is used in the AndroidManifest
-val keystoreProperties = Properties().apply {
-    FileInputStream(rootProject.file("keystore.properties"))
-}
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
 
 android {
     compileSdk = 34
@@ -34,18 +39,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_API_KEY"] = keystoreProperties["MAPS_API_KEY"].toString()
     }
-    buildTypes {
-        getByName("debug") {
-            isDebuggable = true
-            signingConfig = signingConfigs.getByName("debug")
-        }
-        getByName("release") {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-        }
-    }
+
     signingConfigs {
 // We use a bundled debug keystore, to allow debug builds from CI to be upgradable
         getByName("debug") {
@@ -54,7 +48,45 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        create("release") {
+            storeFile = rootProject.file(keystoreProperties["RELEASE_STORE_FILE"] as String)
+            storePassword = keystoreProperties["RELEASE_STORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["RELEASE_KEY_ALIAS"] as String
+            keyPassword = keystoreProperties["RELEASE_KEY_PASSWORD"] as String
+        }
+
     }
+
+    buildTypes {
+        getByName("debug") {
+            isDebuggable = true
+            signingConfig = signingConfigs.getByName("debug")
+        }
+
+        create("benchmark") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("release")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
+        create("baselineprofile") {
+            initWith(buildTypes.getByName("release"))
+            signingConfig = signingConfigs.getByName("release")
+            matchingFallbacks += listOf("release")
+            isDebuggable = false
+        }
+
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            isDebuggable = false
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+        }
+    }
+
     buildFeatures {
         compose = true
         aidl = false
@@ -92,8 +124,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:${rootProject.ext.get("lifecycleVersion")}")
 
 //    https://m2.material.io/develop/android/docs/getting-started
+//    implementation("com.google.android.material:material:${rootProject.ext.get("appCompatVersion")}")//1.9.0
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.media3:media3-common:1.2.0")
+    implementation("androidx.benchmark:benchmark-macro:1.2.2")
 
 //    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
 //    https://firebase.google.com/docs/android/setup#available-libraries
@@ -121,9 +155,6 @@ dependencies {
 // Tooling
     implementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-tooling")
-// Instrumented tests
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
 
 //    Hilt
 //https://dagger.dev/hilt/gradle-setup.html
@@ -143,7 +174,7 @@ dependencies {
 
 // https://developers.google.com/maps/documentation/android-sdk/config
     implementation("com.google.android.gms:play-services-maps:18.1.0")
-//    implementation("com.google.android.libraries.maps:maps:3.1.0-beta")
+    implementation("com.google.android.libraries.maps:maps:3.1.0-beta")
     implementation("com.google.maps.android:maps-v3-ktx:3.4.0")
     constraints {
 // Volley is a transitive dependency of maps
@@ -163,7 +194,8 @@ dependencies {
     implementation("androidx.room:room-runtime:${rootProject.ext.get("roomVersion")}")
     annotationProcessor("androidx.room:room-compiler:${rootProject.ext.get("roomVersion")}")
     implementation("androidx.room:room-ktx:${rootProject.ext.get("roomVersion")}")
-    ksp("androidx.room:room-compiler:${rootProject.ext.get("roomVersion")}")
+    kapt("androidx.room:room-compiler:${rootProject.ext.get("roomVersion")}")
+//    ksp("androidx.room:room-compiler:${rootProject.ext.get("roomVersion")}")
     testImplementation("androidx.room:room-testing:${rootProject.ext.get("roomVersion")}")
 
 // Coil
@@ -184,19 +216,6 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:${rootProject.ext.get("mochiVersion")}")
 
     implementation("androidx.window:window:1.0.0")
-
-//    TEST
-    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    testImplementation("androidx.test:core-ktx:1.5.0")
-    testImplementation("org.robolectric:robolectric:4.9.2")
-
-    androidTestImplementation("androidx.test:core:1.5.0")
-    androidTestImplementation("androidx.test:core-ktx:1.5.0")
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test:rules:1.5.0")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("com.google.accompanist:accompanist-swiperefresh:${rootProject.ext.get("accompanistVersion")}")
     implementation("com.google.accompanist:accompanist-insets:${rootProject.ext.get("accompanistVersion")}")
@@ -233,5 +252,35 @@ dependencies {
 
 //    implementation("androidx.credentials:credentials:1.2.0-beta02")
 
+//    TEST
+    testImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("org.robolectric:robolectric:4.9.2")
+
+    androidTestImplementation("androidx.test:core:1.5.0")
+//    androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test:runner:1.5.0")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    implementation("androidx.compose.runtime:runtime-tracing:1.0.0-alpha04")
+
+    androidTestImplementation("junit:junit:4.13.2")
+// Instrumented tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+//    baseline profile
+//    implementation("com.android.tools.build:8.0.0")
+    implementation("androidx.benchmark:benchmark-macro-junit4:1.2.2")
+    implementation("androidx.profileinstaller:profileinstaller:1.3.1")
+
+//    Date time
+    //https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-datetime
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
 }

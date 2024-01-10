@@ -1,6 +1,5 @@
 package com.protsprog.highroad.nav
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.Money
@@ -72,6 +71,12 @@ object Articles : SimpleDestination {
     val routeEdit = "${route}/edit/{${itemIdArg}}"
 }
 
+object DateTimeCase : SimpleDestination {
+    override val route: String = "datetime_case"
+    override val titleRes: Int = R.string.title_datetime_case
+}
+
+/*
 class ArticlesActions(navController: NavHostController) {
     val navigateToArticle: (Int) -> Unit = { itemId ->
         navController.navigate(
@@ -96,7 +101,12 @@ class ArticlesActions(navController: NavHostController) {
     val upPress: () -> Unit = {
         navController.navigateUp()
     }
+    val backPress: () -> Unit = {
+        navController.popBackStack()
+    }
 }
+
+ */
 
 object TicTacToe : IconDestination {
     override val icon = null

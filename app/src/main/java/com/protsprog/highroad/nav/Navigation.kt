@@ -3,6 +3,8 @@ package com.protsprog.highroad.nav
 /*
 TO READ
 
+https://developer.android.com/guide/navigation/backstack
+
 https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary
 
 https://medium.com/androiddevelopers/advanced-layout-concepts-eb08cf2a3c8
@@ -27,9 +29,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -90,6 +95,7 @@ import com.protsprog.highroad.compose.states.WellnessScreen
 import com.protsprog.highroad.compose.states.theme.StatesTheme
 import com.protsprog.highroad.compose.theming.ReplyScreen
 import com.protsprog.highroad.compose.theming.ui.theme.ReplyTheme
+import com.protsprog.highroad.datetime.DatetimeScreen
 import com.protsprog.highroad.entrance.EntranceScreen
 import com.protsprog.highroad.entrance.data.entranceItems
 import com.protsprog.highroad.entrance.ui.theme.EntranceTheme
@@ -105,7 +111,7 @@ import com.protsprog.highroad.ui.theme.IntroduceTheme
 import com.protsprog.highroad.util.DevicePosture
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun HighroadNavigation(
 //    appJetNewsContainer: AppJetNewsContainer,
@@ -117,6 +123,7 @@ fun HighroadNavigation(
     biometricCipher: BiometricCryption,
     startRoute: String? = null,
     bluetooth: BluetoothContainer,
+    checkPermissionBluetooth: () -> Unit = {},
     cameraX: CameraXContainer,
     photoPicker: PhotoPickerContainer
 ) {
@@ -144,12 +151,15 @@ fun HighroadNavigation(
         onClickProfile = { navController.navigate(route = AuthDestinations.profilePage) }
     )
 
-    val actionsArticles = remember(navController) { ArticlesActions(navController) }
+//    val actionsArticles = remember(navController) { ArticlesActions(navController) }
 
     NavigationThemeSwitcher(typeAppTheme = caseTheme) {
 
         NavHost(
-            modifier = Modifier, navController = navController,
+            modifier = Modifier.semantics {
+                testTagsAsResourceId = true
+            },
+            navController = navController,
             startDestination = Entrance.route,
 //            startDestination = CameraXCase.route,
         ) {
@@ -158,6 +168,7 @@ fun HighroadNavigation(
                 caseTheme = TYPE_THEME.MAIN
 
                 BluetoothScreen(
+                    checkPermissionBluetooth = checkPermissionBluetooth,
                     onNavigateUp = { navController.navigateUp() },
                     bluetooth = bluetooth
                 )
@@ -212,11 +223,13 @@ fun HighroadNavigation(
                     ) != null
                 }
 
-                var autoLogin by rememberSaveable { mutableStateOf(false) }
+                /*var autoLogin by rememberSaveable { mutableStateOf(false) }
                 if (!autoLogin) {
                     autoLogin = true
                     authViewModel.moveTestAuth()
                 }
+
+                 */
 
 //                Log.d("TEST_FLOW", "nav: entrance")
 
@@ -257,10 +270,22 @@ fun HighroadNavigation(
                 ArticleScreen(
                     windowWidthClass = windowWidthClass,
                     hasBack = navController.previousBackStackEntry != null,
-                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+                    onBackPressed = navController::navigateUp,//actionsArticles.backPress,
                     authService = authServices,
-                    navigateToArticle = actionsArticles.navigateToArticle,
-                    navigateToEdit = actionsArticles.navigateToEdit
+                    navigateToArticle = { itemId ->
+                        navController.navigate(
+                            Articles.routeWithArgs.replace(
+                                "{${Articles.itemIdArg}}", itemId.toString()
+                            )
+                        )
+                    },//actionsArticles.navigateToArticle,
+                    navigateToEdit = { itemId ->
+                        navController.navigate(
+                            Articles.routeEdit.replace(
+                                "{${Articles.itemIdArg}}", itemId.toString()
+                            )
+                        )
+                    }//actionsArticles.navigateToEdit
                 )
             }
 
@@ -272,12 +297,16 @@ fun HighroadNavigation(
 
                 ArticleDetailScreen(
                     windowWidthClass = windowWidthClass,
-//                    hasBack = navController.previousBackStackEntry != null,
-//                    onBackPressed = actionsArticles.upPress,//navController::navigateUp,
+                    hasBack = navController.previousBackStackEntry != null,
+                    onBackPressed = navController::navigateUp,
                     authService = authServices,
                     itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0,
-                    navigateToEdit = actionsArticles.navigateToEdit,
-                    navigationToList = { navController.navigate(Articles.route) }
+                    navigateToEdit = { itemId ->
+                        navController.navigate(
+                            Articles.routeEdit.replace("{${Articles.itemIdArg}}", itemId.toString())
+                        )
+                    }//actionsArticles.navigateToEdit,
+//                    navigationToList = { navController.navigate(Articles.route) }
                 )
             }
 
@@ -289,9 +318,19 @@ fun HighroadNavigation(
 
                 ArticleEditScreen(
                     windowWidthClass = windowWidthClass,
-//                    hasBack = navController.previousBackStackEntry != null,
-//                    onBackPressed = navController::popBackStack,
-                    navigateToArticle = { id: Int -> actionsArticles.navigateToArticle(id) },
+                    hasBack = navController.previousBackStackEntry != null,
+                    onBackPressed = navController::navigateUp,
+                    navigateToArticle = { itemId ->
+                        navController.navigate(
+                            Articles.routeWithArgs.replace(
+                                "{${Articles.itemIdArg}}", itemId.toString()
+                            )
+                        ) {
+                            popUpTo(Articles.route) {
+//                                inclusive = true
+                            }
+                        }
+                    },
                     authService = authServices,
                     itemId = backStackEntry.arguments?.getInt(Articles.itemIdArg) ?: 0,
                     cameraX = cameraX,
@@ -576,6 +615,14 @@ fun HighroadNavigation(
                 )
             }
 
+            composable(route = DateTimeCase.route) {
+                caseTheme = TYPE_THEME.MAIN
+
+                DatetimeScreen(
+                    onNavigateUp = { navController.navigateUp() },
+                )
+
+            }
         }
     }
 }
