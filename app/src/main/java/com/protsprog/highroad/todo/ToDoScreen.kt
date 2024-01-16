@@ -5,6 +5,9 @@ TO READ
 
 https://developer.android.com/jetpack/compose/libraries
 https://developer.android.com/jetpack/compose/compositionlocal
+
+one example
+https://medium.com/@kenruizinoue/intermediate-android-compose-todo-app-ui-1d808ef7882d
  */
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

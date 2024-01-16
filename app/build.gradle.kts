@@ -26,13 +26,13 @@ val keystoreProperties = Properties()
 keystoreProperties.load(FileInputStream(rootProject.file("keystore.properties")))
 
 android {
-    compileSdk = 34
+    compileSdk = 34 //android 14
     namespace = "com.protsprog.highroad"
     defaultConfig {
         applicationId = "com.protsprog.highroad"
 //        testApplicationId = "com.protsprog.highroad.test"
-        minSdk = 26
-        targetSdk = 33
+        minSdk = 26 //android 8.0
+        targetSdk = 33 //android 13
         versionCode = 1
         versionName = "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -71,6 +71,7 @@ android {
         }
         create("baselineprofile") {
             initWith(buildTypes.getByName("release"))
+            proguardFiles("benchmark-rules.pro")
             signingConfig = signingConfigs.getByName("release")
             matchingFallbacks += listOf("release")
             isDebuggable = false

@@ -20,9 +20,9 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
 
 //    id("com.google.gms.google-services") version "4.4.0" apply false
-
-    id("com.android.test") version "8.2.1" apply false
-    id("org.jetbrains.kotlin.plugin.parcelize") version "1.8.20" apply false
+//    id("com.android.test") version "8.2.1" apply false
+//    id("org.jetbrains.kotlin.plugin.parcelize") version "1.8.20" apply false
+//    id("androidx.baselineprofile")
 }
 //https://docs.gradle.org/current/userguide/kotlin_dsl.html#extra_properties
 ext {
@@ -41,16 +41,23 @@ ext {
     extra["cameraxVersion"] = "1.2.2"
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
+//subprojects {
+//    repositories {
+//        google()
+//        mavenCentral()
+//    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
 //             Use experimental APIs
 //        freeCompilerArgs = listOf("-progressive", "-opt-in=kotlin.RequiresOptIn")
-        freeCompilerArgs += "-progressive"
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-        freeCompilerArgs += "-opt-in=kotlin.Experimental"
+            freeCompilerArgs += "-progressive"
+            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+            freeCompilerArgs += "-opt-in=kotlin.Experimental"
 //            jvmTarget = "17"
-        jvmTarget = JavaVersion.VERSION_17.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
 //        freeCompilerArgs = listOf("-progressive",
-    //        "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+            //        "-opt-in=androidx.compose.material3.ExperimentalMaterial3Api")
+        }
     }
-}
+//}
